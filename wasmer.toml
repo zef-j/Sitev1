@@ -1,0 +1,16 @@
+# wasmer.toml — deploy the *static frontend* (portal + form) on Wasmer Edge
+# Run from repo root:  wasmer login && wasmer deploy
+
+[package]
+name = "sitev1-web"
+version = "0.1.0"
+description = "Sitev1 — portal + dynamic form (static frontend only)"
+
+[fs]
+public = "client-demo/web"
+
+[dependencies]
+"wasmer/static-web-server" = "*"
+
+[commands]
+start = "static-web-server --host 0.0.0.0 --port $PORT --root client-demo/web --directory-listing true"
