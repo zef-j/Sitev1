@@ -1,5 +1,13 @@
 kind: wasmer.io/App.v0
-owner: zef-j                # ← change if different
-name: CPVAL_SWE             # ← your app name
-package: .                  # ← build package from this repo using wasmer.toml
-# No cli_args needed: we use the start command from wasmer.toml
+owner: zef-j
+name: CPVAL_SWE
+package: wasmer/static-web-server@2
+cli_args:
+  - "--root"
+  - "__root/client-demo/web"   # serve your web folder from the Git checkout
+  - "--directory-listing"
+  - "true"
+  - "--host"
+  - "::"
+  - "--port"
+  - "80"
