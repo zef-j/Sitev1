@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><span id="page-title">Évaluation Bâtiment — Dynamic</span></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <link rel="icon" href="./favicon.ico" />
+  <style>
+    .form-section { transition: all 0.3s ease; width: 100%; position: relative; z-index: 0; }
+    .form-section + .form-section { margin-top: 1.5rem; }
+    .section-header { border-radius: 0.75rem; }
+    .progress-bar { transition: width 0.5s ease-in-out; }
+    html { scroll-behavior: smooth; }
+    section.form-section { scroll-margin-top: 160px; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
+  <div class="min-h-screen flex flex-col">
+    <header class="bg-white shadow-sm sticky top-0 z-20">
+      <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold text-blue-800 flex items-center">
+            <i data-feather="home" class="mr-2"></i>
+            <span id="page-title">Évaluation Bâtiment — Dynamic</span>
+          </h1>
+          <div class="flex items-center space-x-4">
+            <div class="hidden md:block">
+              <div class="text-sm text-gray-600">Progression</div>
+              <div class="w-32 bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="progress-bar bg-blue-600 h-2.5 rounded-full relative" style="width:0%"><div id="progress-bar-l2" class="absolute bottom-0 left-0 h-1 bg-blue-800/60 rounded-full" style="width:0%"></div></div>
+              </div>
+            </div>
+            <div id="progress-readout" class="text-xs text-gray-600"></div>
+            <span id="data-version" class="text-xs text-gray-500">v1</span>
+            <button id="review-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hidden md:inline-flex items-center"><i data-feather="git-commit" class="mr-2"></i>Revue</button>
+            <button id="publish-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg flex items-center"><i data-feather="upload" class="mr-2"></i>Publier</button>
+            <button id="save-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+              <i data-feather="save" class="mr-2"></i>
+              Sauvegarder
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow container mx-auto px-4 py-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="mb-8 bg-white rounded-lg shadow p-4 sticky top-16 z-10">
+          <div id="chips" class="flex overflow-x-auto space-x-2 pb-2"></div>
+        </div>
+        <div id="boot-error" class="hidden bg-red-50 text-red-700 border border-red-200 rounded-lg p-3 text-sm mb-4"></div>
+        <form id="building-form" class="space-y-6"></form>
+      </div>
+    </main>
+  </div>
+
+  <!-- inline diag overlay (toggle with ?diag=1) -->
+  <div id="diag-overlay" class="hidden fixed bottom-3 left-3 w-[38rem] max-w-[95vw] max-h-[50vh] overflow-auto bg-gray-900 text-green-200 border border-gray-700 rounded-lg p-3 text-xs font-mono z-50 shadow-xl"></div>
+
+  <!-- very early visible marker to avoid blank page -->
+  <div id="boot-marker" class="fixed bottom-3 right-3 bg-blue-50 text-blue-700 border border-blue-200 rounded px-2 py-1 text-xs">boot</div>
+
+  <script type="module" src="./diff.js"></script>
+  <script type="module" src="./boot.js"></script>
+</body>
+</html>

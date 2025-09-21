@@ -1,0 +1,15 @@
+export const api = {
+  baseUrl: (typeof location !== 'undefined' && location.origin && location.origin !== 'null')
+    ? (location.origin.includes('http') ? location.origin.replace(/\/$/, '') : 'http://localhost:3000')
+    : 'http://localhost:3000',
+  async getActiveTemplate() {
+    const r = await fetch(`${this.baseUrl}/templates/active`);
+    if (!r.ok) throw new Error('Failed to fetch template');
+    return r.json();
+  },
+  async getBuildingForm(id) {
+    const r = await fetch(`${this.baseUrl}/buildings/${id}/form`);
+    if (!r.ok) throw new Error('Failed to fetch form');
+    return r.json();
+  }
+};

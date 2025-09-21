@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form (Diag 2)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+  <div class="max-w-5xl mx-auto p-6">
+    <h1 class="text-2xl font-bold text-blue-800 mb-4">Diagnostic loader</h1>
+    <div id="log" class="text-xs bg-gray-900 text-green-200 rounded-lg p-3 font-mono whitespace-pre-wrap"></div>
+    <div id="error" class="hidden mt-3 text-sm bg-red-50 text-red-700 border border-red-200 rounded-lg p-3"></div>
+    <hr class="my-6"/>
+    <h2 class="text-lg font-semibold mb-2">Rendered content</h2>
+    <div id="content" class="space-y-4"></div>
+  </div>
+
+  <script type="module">
+    const logEl = document.getElementById('log');
+    const errEl = document.getElementById('error');
+    const outEl = document.getElementById('content');
+    const log = (...a) => { logEl.textContent += a.map(x => typeof x==='string'?x:JSON.stringify(x)).join(' ') + "\n"; };
+    const showErr = (m) => { errEl.textContent = m; errEl.classList.remove('hidden'); };
+
+    const qs = new URLSearchParams(location.search);
+    const level = (qs.get('level') === 'L2') ? 'L2' : 'L1';
+    log('level =', level);
+
+    try {
+      const { api } = await import('./api.js');
+      log('api.js loaded; baseUrl =', api.baseUrl || '(origin)');
+      log('fetching form...');
+      const res = await api.getBuildingForm('b_1');
+      log('API OK. keys =', Object.keys(res||{}).join(','));
+      const { template, data } = res;
+      // Always render a fallback list so page is never blank
+      const ul = document.createElement('ul');
+      ul.className = 'list-disc pl-6 text-gray-700';
+      (template?.sections || []).forEach(s => {
+        const li = document.createElement('li');
+        li.textContent = s.title || s.id;
+        ul.appendChild(li);
+      });
+      outEl.appendChild(ul);
+      log('fallback list rendered (sections=', (template?.sections||[]).length, ')');
+
+      // Try to load the real renderer after fallback
+      try {
+        const mod = await import('./renderer.js');
+        if (typeof mod.renderForm !== 'function') throw new Error('renderForm export missing');
+        // Create a real form container
+        const form = document.createElement('form');
+        form.id = 'building-form';
+        form.className = 'space-y-6 mt-6';
+        outEl.appendChild(form);
+        log('calling renderForm...');
+        mod.renderForm({ template, data: data || {}, level, onChange: ()=>{} });
+        log('renderForm completed.');
+      } catch (e) {
+        showErr('renderer error: ' + e.message);
+        log('renderer error:', e.message);
+      }
+    } catch (e) {
+      showErr('init error: ' + e.message);
+      log('init error:', e.message);
+    }
+  </script>
+</body>
+</html>
