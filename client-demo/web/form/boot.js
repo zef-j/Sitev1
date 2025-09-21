@@ -1,3 +1,30 @@
+window.__ensureHomeLink = window.__ensureHomeLink || function(){
+  try{
+    if (document.getElementById('home-link')) return;
+    const h1 = document.querySelector('h1.text-2xl, header h1, h1');
+    if (!h1) return;
+    const link = document.createElement('a');
+    link.id = 'home-link';
+    link.className = 'mr-3 text-sm text-blue-600 hover:underline';
+    link.href = 'javascript:void(0)';
+    link.textContent = '← Accueil';
+    link.addEventListener('click', (e)=>{
+      e.preventDefault();
+      if (history.length > 1) history.back();
+      else window.location.href = '../portal/index.html';
+    });
+    h1.parentElement?.insertBefore(link, h1);
+  }catch{}
+};
+window.setPageTitle = window.setPageTitle || function(res){
+  try{
+    const f = res?.building?.foundationName || res?.building?.fondation?.name || 'Fondation';
+    const b = res?.building?.name || res?.building?.id || '';
+    const h1 = document.querySelector('h1.text-2xl, header h1, h1');
+    if (h1) h1.textContent = `${f} - ${b}`;
+  }catch{}
+};
+
 // boot.js — defensive loader with inline diagnostics
 const qs = new URLSearchParams(location.search);
 const level = (qs.get('level') === 'L2') ? 'L2' : 'L1';
@@ -13,7 +40,7 @@ function showErr(m){
   box.textContent = m;
   box.classList.remove('hidden');
   diag('ERROR:', m);
-}
+};
 
 try { if (window.AOS) AOS.init({ once: false }); } catch {}
 
@@ -40,14 +67,14 @@ function renderFallbackSections(tpl){
       diag('fallback list rendered.');
     }
   }catch(e){ showErr('fallback render error: '+(e?.message||e)); }
-}
+};
 
 async function fetchFormDirect(){
   const url = 'http://localhost:3000/buildings/b_1/form';
   const r = await fetch(url);
   if (!r.ok) throw new Error('direct fetch failed '+r.status);
   return r.json();
-}
+};
 
 async function main(){
   let api = null;
@@ -175,15 +202,15 @@ renderFallbackSections(res.template);
     const marker = document.getElementById('boot-marker');
     if (marker) marker.remove();
   }
-}
+};
 
 main().catch(e => showErr('boot main crash: '+(e?.message||e)));
 
-function setPageTitle(res){
+window.setPageTitle = window.setPageTitle || function(res){
   try{
     const el = document.getElementById('page-title'); if(!el) return;
     const f = res?.building?.foundationName || res?.building?.fondation?.name || 'Fondation';
     const b = res?.building?.name || res?.building?.id || '';
     el.textContent = `${f} - ${b}`;
   }catch{}
-}
+};

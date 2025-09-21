@@ -1,17 +1,7 @@
 {
   "buildingId": "b_1",
   "templateVersion": "2025.09.20-1711",
-  "dataVersion": 4,
-  "data": {
-    "informations-generales": {
-      "batiment": {
-        "informations-batiment-batiment-protege": "Oui",
-        "informations-batiment-adresse": "ddkmdk",
-        "informations-batiment-annee-de-construction": "2025-09-18",
-        "informations-batiment-proprietaire": "ddddd",
-        "informations-batiment-date-derniere-renovation-importante": "2025-09-16"
-      }
-    }
-  },
+  "dataVersion": 1,
+  "data": {},
   "filesIndex": {}
 }

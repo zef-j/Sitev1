@@ -41,7 +41,7 @@ async function loadFoundation(){
   for(const b of buildings){
     const form = await api.getBuildingForm(b.id);
     const pr = computeProgress({ data: form.data||{}, template: form.template||{}, level: 'L1' });
-    const p = pr?.overall ?? 0;
+    const p = Math.round((pr?.overall ?? pr?.completionAll ?? pr?.L1 ?? 0));
     sum += p; rows.push({ id:b.id, name:b.name||b.id, pct:p });
   }
   totalPct.textContent = `${Math.round(sum/Math.max(1,rows.length))}%`;
