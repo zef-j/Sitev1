@@ -6,6 +6,17 @@ const qs = (k)=> new URLSearchParams(location.search).get(k) || '';
 const foundationUrl = (fid)=> `./foundation.html?id=${encodeURIComponent(fid)}`;
 const buildingFormUrl = (bid)=> `${baseFormUrl}?id=${encodeURIComponent(bid)}&level=L1`;
 
+async function progressForBuilding(id){
+  try{
+    const form = await api.getBuildingForm(id);
+    const pr = computeProgress({ data: form?.data||{}, template: form?.template||{}, level: 'L1' });
+    return Math.round(pr?.overall ?? pr?.L1 ?? 0);
+  }catch(e){
+    console.warn('progress error', id, e);
+    return 0;
+  }
+}
+
 async function loadFoundations(){
   const cont = document.getElementById('list');
   const b = await api.getBuildings();
@@ -17,13 +28,24 @@ async function loadFoundations(){
     map.get(fid).buildings.push(it);
   }
   const items = Array.from(map.values());
-  cont.innerHTML = items.map(f => `<a href="${foundationUrl(f.id)}" class="block rounded-xl border bg-white p-4 hover:shadow">
-    <div class="flex items-center justify-between">
-      <div class="font-medium">${f.name}</div>
-      <div class="text-sm text-gray-600">${f.buildings.length} bâtiments</div>
-    </div>
-  </a>`).join('');
+
+  cont.innerHTML = items.map(f => {
+    const pctId = `pct-${f.id}`;
+    return `<a href="${foundationUrl(f.id)}" class="block rounded-xl border bg-white p-4 hover:shadow">
+      <div class="flex items-center justify-between">
+        <div class="font-medium">${f.name}</div>
+        <div class="text-sm text-gray-600"><span id="${pctId}">0%</span></div>
+      </div>
+    </a>`;
+  }).join('');
   feather.replace();
+
+  for (const f of items){
+    const ps = await Promise.all((f.buildings||[]).map(b => progressForBuilding(b.id)));
+    const avg = ps.length ? Math.round(ps.reduce((a,c)=>a+c,0)/ps.length) : 0;
+    const el = document.getElementById(`pct-${f.id}`);
+    if (el) el.textContent = `${avg}%`;
+  }
 }
 
 async function loadFoundation(){
@@ -37,14 +59,14 @@ async function loadFoundation(){
   const fname = buildings[0]?.foundationName || 'Fondation';
   crumb.textContent = fname; title.textContent = fname;
 
-  let sum=0; const rows=[];
-  for(const b of buildings){
-    const form = await api.getBuildingForm(b.id);
-    const pr = computeProgress({ data: form.data||{}, template: form.template||{}, level: 'L1' });
-    const p = Math.round((pr?.overall ?? pr?.completionAll ?? pr?.L1 ?? 0));
-    sum += p; rows.push({ id:b.id, name:b.name||b.id, pct:p });
-  }
-  totalPct.textContent = `${Math.round(sum/Math.max(1,rows.length))}%`;
+  const rows = await Promise.all(buildings.map(async (b) => {
+    const pct = await progressForBuilding(b.id);
+    return { id: b.id, name: b.name||b.id, pct };
+  }));
+
+  const avg = rows.length ? Math.round(rows.reduce((a,c)=>a+c.pct,0)/rows.length) : 0;
+  totalPct.textContent = `${avg}%`;
+
   cont.innerHTML = rows.map(r => `<a href="${buildingFormUrl(r.id)}" class="block rounded-xl border bg-white p-4 hover:shadow">
     <div class="flex items-center justify-between">
       <div class="font-medium">${r.name}</div>
