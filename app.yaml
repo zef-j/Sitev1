@@ -1,7 +1,7 @@
 kind: wasmer.io/App.v0
 owner: zef-j
 name: CPVAL_SWE
-package: wasmer/static-web-server@2
+package: sha256:cf9f5dd6e205069b6e9e4b963be8a58305d5b728717247c8c07bd9dd22a5af55
 cli_args:
   - "--root"
   - "__root/client-demo/web"   # serve your web folder from the Git checkout
