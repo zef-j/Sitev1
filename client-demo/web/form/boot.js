@@ -69,12 +69,12 @@ function renderFallbackSections(tpl){
   }catch(e){ showErr('fallback render error: '+(e?.message||e)); }
 };
 
-async function fetchFormDirect(){
-  const url = 'http://localhost:3000/buildings/b_1/form';
+async function fetchFormDirect(buildingId){
+  const url = 'http://localhost:3000/buildings/' + encodeURIComponent(buildingId) + '/form';
   const r = await fetch(url);
-  if (!r.ok) throw new Error('direct fetch failed '+r.status);
+  if (!r.ok) throw new Error('direct fetch failed ' + r.status);
   return r.json();
-};
+};;
 
 async function main(){
   let api = null;
@@ -87,7 +87,8 @@ async function main(){
 
   let res = null;
   try {
-    res = api ? await api.getBuildingForm('b_1') : await fetchFormDirect();
+    const buildingId = (new URLSearchParams(location.search)).get('id') || (window.__buildingMeta && window.__buildingMeta.id) || 'b_1';
+    res = api ? await api.getBuildingForm(buildingId) : await fetchFormDirect(buildingId);
     diag('form fetched; keys=', Object.keys(res||{}));
   } catch (e) {
     showErr('form fetch error: '+(e?.message||e));

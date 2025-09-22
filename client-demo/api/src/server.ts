@@ -56,6 +56,41 @@ function initDataRoot() {
 }
 initDataRoot();
 
+// ==== PATCH: foundation resolution helpers =======================
+function slugify(x: string) {
+  return (x || "")
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+function foundationFolderFor(meta: BuildingMeta): string {
+  return (
+    meta?.foundationId ||
+    (meta as any)?.foundationSlug ||
+    (meta?.foundationName ? slugify(meta.foundationName) : "") ||
+    "f_default"
+  );
+}
+function locateExistingFoundationFolder(buildingId: string): string | null {
+  try {
+    const foundationsRoot = path.join(DATA_ROOT, 'orgs', CLIENT_ID, 'foundations');
+    if (!fs.existsSync(foundationsRoot)) return null;
+    const entries = fs.readdirSync(foundationsRoot, { withFileTypes: true });
+    for (const ent of entries) {
+      if (!ent.isDirectory()) continue;
+      const candidate = path.join(foundationsRoot, ent.name, 'buildings', buildingId);
+      if (fs.existsSync(candidate)) return ent.name;
+    }
+  } catch (e) {
+    console.warn('[foundation-scan]', e);
+  }
+  return null;
+}
+// ==== END PATCH ==================================================
+
+
+
 type BuildingMeta = { id: string; name?: string; foundationId?: string; foundationName?: string };
 function getBuildings(): BuildingMeta[] {
   return readJSON(path.join(DATA_ROOT, 'buildings.json'), [] as BuildingMeta[]);
@@ -66,8 +101,12 @@ function getBuildingMeta(id: string): BuildingMeta | null {
   return found || null;
 }
 function getBuildingDir(meta: BuildingMeta) {
-  const foundationId = meta.foundationId || 'f_default';
-  return path.join(DATA_ROOT, 'orgs', CLIENT_ID, 'foundations', foundationId, 'buildings', meta.id);
+  const existing = locateExistingFoundationFolder(meta.id);
+  const foundationFolder = existing || foundationFolderFor(meta);
+  if (!existing && foundationFolder === 'f_default') {
+    console.warn('[WARN] Using f_default for building', meta?.id, '(no foundation info found)');
+  }
+  return path.join(DATA_ROOT, 'orgs', CLIENT_ID, 'foundations', foundationFolder, 'buildings', meta.id);
 }
 function getCurrentJsonPath(meta: BuildingMeta) {
   return path.join(getBuildingDir(meta), 'current.json');
