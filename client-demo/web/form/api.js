@@ -1,5 +1,5 @@
 export const api = {
-  baseUrl: 'https://merchandise-opinion-delivers-acre.trycloudflare.com',
+  baseUrl: 'https://beginning-marshall-accompanying-asia.trycloudflare.com',
 
   async getActiveTemplate() {
     const r = await fetch(`${this.baseUrl}/templates/active`);
