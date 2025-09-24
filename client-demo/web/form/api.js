@@ -57,34 +57,28 @@ export const api = {
   },
 
   async publish(id, data, dataVersion, etag) {
+  const doPost = async (dv) => {
     const r = await fetch(`${this.baseUrl}/buildings/${id}/publish`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'If-Match': etag || (window.__buildingMeta?.etag || '')
+        ...(etag ? { 'If-Match': etag } : {})
       },
-      body: JSON.stringify({ data, dataVersion })
+      body: JSON.stringify({ data, dataVersion: dv, reason: 'ui-publish' })
     });
     if (r.status === 412) {
-      const j = await r.json().catch(()=>({}));
-      const err = new Error('Precondition Failed');
-      // @ts-ignore
-      err.code = 412;
-      // @ts-ignore
-      err.detail = j;
-      throw err;
+      // Server tells us the current DV; retry once with that value
+      const e = await r.json().catch(() => ({}));
+      const nextDV = e?.current?.dataVersion;
+      if (nextDV != null) return doPost(nextDV);
     }
-    if (!r.ok) throw new Error('Publish failed');
-    const newTag = r.headers.get('ETag');
-    const j = await r.json();
-    try {
-      if (window.__buildingMeta) {
-        window.__buildingMeta.dataVersion = j?.dataVersion ?? window.__buildingMeta.dataVersion;
-        window.__buildingMeta.etag = newTag || window.__buildingMeta.etag;
-      }
-    } catch {}
-    return j;
-  },
+    return r;
+  };
+
+  const resp = await doPost(dataVersion);
+  if (!resp.ok) throw new Error('Publish failed');
+  return resp.json();
+},
 
   async listVersions(id) {
     const r = await fetch(`${this.baseUrl}/buildings/${id}/versions`);
