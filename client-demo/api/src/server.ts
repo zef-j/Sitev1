@@ -385,7 +385,7 @@ app.get('/buildings/:id/files/:storedName', (req, res) => {
 });
 
 // --- Static (optional) -----------------------------------------------------
-// app.use('/form', express.static(path.resolve(process.cwd(), '../web/form')));
+app.use('/form', express.static(path.resolve(process.cwd(), '../web/form')));
 
 // --- Start -----------------------------------------------------------------
 app.listen(PORT, () => {
