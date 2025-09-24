@@ -1,0 +1,7 @@
+# runtime data & exports – do not version
+_data/
+_data_copy/
+_export/
+client-demo/api/data/
+client-demo/api/data.bak-*/
+*.tgz
