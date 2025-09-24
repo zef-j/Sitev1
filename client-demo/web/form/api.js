@@ -20,20 +20,33 @@ export const api = {
   },
 
   // NOTE: we use /buildings/:id to also capture the ETag header
-  async getBuildingForm(id) {
-    const r = await fetch(`${this.baseUrl}/buildings/${encodeURIComponent(id)}`);
-    if (!r.ok) throw new Error('Failed to fetch form');
-    const etag = r.headers.get('ETag');
-    const json = await r.json();
-    try {
-      window.__buildingMeta = {
-        id: json?.building?.id || id,
-        dataVersion: json?.dataVersion ?? window.__buildingMeta?.dataVersion,
-        etag: etag || window.__buildingMeta?.etag,
-      };
-    } catch {}
-    return json;
-  },
+async getBuildingForm(id) {
+  const urls = [
+    `${this.baseUrl}/buildings/${encodeURIComponent(id)}/form`, // preferred on your server
+    `${this.baseUrl}/buildings/${encodeURIComponent(id)}`       // fallback
+  ];
+
+  let res = null;
+  for (const url of urls) {
+    const r = await fetch(url);
+    if (r.ok) { res = r; break; }
+  }
+  if (!res) throw new Error('Failed to fetch form');
+
+  const etag = res.headers.get('ETag');
+  const json = await res.json();
+
+  try {
+    window.__buildingMeta = {
+      id: json?.building?.id || id,
+      dataVersion: json?.dataVersion ?? window.__buildingMeta?.dataVersion,
+      etag: etag || window.__buildingMeta?.etag,
+    };
+  } catch {}
+
+  return json;
+},
+
 
   // sinceEtag is optional; if present we’ll ask server “what changed since that ETag?”
   async getReview(id, sinceEtag) {
