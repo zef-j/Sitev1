@@ -393,3 +393,13 @@ document.addEventListener('click', (e) => {
     openVersionsPanel();
   }
 });
+
+// --- Auto-bind Publish button on load ---------------------------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('publish-btn');
+  if (btn && !btn.__bound) {
+    // publishWithConfirm is defined in this module
+    btn.addEventListener('click', publishWithConfirm);
+    btn.__bound = true;
+  }
+});
