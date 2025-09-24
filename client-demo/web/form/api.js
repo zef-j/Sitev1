@@ -14,82 +14,62 @@ export const api = {
   },
 
   async getBuildingForm(id) {
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/form`);
+    const r = await fetch(`${this.baseUrl}/buildings/${id}`);
     if (!r.ok) throw new Error('Failed to fetch form');
-    const etag = r.headers.get('ETag');
-    const json = await r.json();
-    try { window.__buildingMeta = { id: json?.building?.id || id, dataVersion: json?.dataVersion, etag }; } catch {}
-    return json;
+    return r.json();
   },
-
-  async getReview(id, since) {
-    const url = new URL(`${this.baseUrl}/buildings/${id}/review`);
-    if (since) url.searchParams.set('since', String(since));
-    const r = await fetch(url.toString());
-    if (!r.ok) throw new Error('Failed to fetch review');
-    const etag = r.headers.get('ETag');
-    const json = await r.json();
-    try {
-      if (window.__buildingMeta) {
-        window.__buildingMeta.dataVersion = json?.dataVersion ?? window.__buildingMeta.dataVersion;
-        window.__buildingMeta.etag = etag || window.__buildingMeta.etag;
-      }
-    } catch {}
-    return json;
-  },
-
-  async save(id, data, reason) {
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/save`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data, reason })
-    });
-    if (!r.ok) throw new Error('Save failed');
-    const newTag = r.headers.get('ETag');
-    const j = await r.json();
-    try {
-      if (window.__buildingMeta) {
-        window.__buildingMeta.dataVersion = j?.dataVersion ?? window.__buildingMeta.dataVersion;
-        window.__buildingMeta.etag = newTag || window.__buildingMeta.etag;
-      }
-    } catch {}
-    return j;
-  },
-
-  async publish(id, data, dataVersion, etag) {
-  const doPost = async (dv) => {
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/publish`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(etag ? { 'If-Match': etag } : {})
-      },
-      body: JSON.stringify({ data, dataVersion: dv, reason: 'ui-publish' })
-    });
-    if (r.status === 412) {
-      // Server tells us the current DV; retry once with that value
-      const e = await r.json().catch(() => ({}));
-      const nextDV = e?.current?.dataVersion;
-      if (nextDV != null) return doPost(nextDV);
-    }
-    return r;
-  };
-
-  const resp = await doPost(dataVersion);
-  if (!resp.ok) throw new Error('Publish failed');
-  return resp.json();
-},
 
   async listVersions(id) {
     const r = await fetch(`${this.baseUrl}/buildings/${id}/versions`);
-    if (!r.ok) throw new Error('Failed to list versions');
+    if (!r.ok) throw new Error('Failed to fetch versions');
     return r.json();
   },
 
   async getVersion(id, versionId) {
     const r = await fetch(`${this.baseUrl}/buildings/${id}/versions/${versionId}`);
-    if (!r.ok) throw new Error('Failed to get version');
+    if (!r.ok) throw new Error('Failed to fetch version');
     return r.json();
+  },
+
+  async getReview(id, etag) {
+    const qs = etag ? `?since=${encodeURIComponent(etag)}` : '';
+    const r = await fetch(`${this.baseUrl}/buildings/${id}/review${qs}`);
+    if (!r.ok) throw new Error('Failed to fetch review');
+    return r.json();
+  },
+
+  async save(id, data, dataVersion, etag) {
+    const r = await fetch(`${this.baseUrl}/buildings/${id}/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(etag ? { 'If-Match': etag } : {})
+      },
+      body: JSON.stringify({ data, dataVersion })
+    });
+    if (!r.ok) throw new Error('Save failed');
+    return r.json();
+  },
+
+  async publish(id, data, dataVersion, etag) {
+    const post = async (dv) => {
+      const r = await fetch(`${this.baseUrl}/buildings/${id}/publish`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(etag ? { 'If-Match': etag } : {})
+        },
+        body: JSON.stringify({ data, dataVersion: dv, reason: 'ui-publish' })
+      });
+      if (r.status === 412) {
+        const e = await r.json().catch(() => ({}));
+        const nextDV = e?.current?.dataVersion;
+        if (nextDV != null) return post(nextDV); // retry once with server DV
+      }
+      if (!r.ok) throw new Error('Publish failed');
+      return r.json();
+    };
+    return post(dataVersion);
   },
 
   async uploadFile(id, fieldPath, file) {
