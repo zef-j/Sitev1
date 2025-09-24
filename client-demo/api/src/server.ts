@@ -9,10 +9,7 @@ type VersionListItem = { versionId: string; createdAt: string; dataVersion: numb
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
-<<<<<<< HEAD
-=======
 
->>>>>>> prod-sync-20250924-1639
 process.on('unhandledRejection', (e) => console.error('UNHANDLED_REJECTION', e));
 process.on('uncaughtException',  (e) => console.error('UNCAUGHT_EXCEPTION', e));
 
@@ -415,10 +412,7 @@ app.get('/form',   (_req, res) => res.redirect('/form/app.html')); // optionnel
 app.get('/__health', (_req, res) => {
   res.json({ DATA_ROOT, cwd: process.cwd(), time: new Date().toISOString() });
 });
-<<<<<<< HEAD
-=======
 
->>>>>>> prod-sync-20250924-1639
 // Static files (disable directory slash redirect for /portal)
 app.use('/portal', express.static(
   path.resolve(process.cwd(), '../web/portal'),
