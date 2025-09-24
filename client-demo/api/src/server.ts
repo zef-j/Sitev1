@@ -406,15 +406,16 @@ app.get('/',       (_req, res) => res.redirect('/portal/index.html'));
 app.get('/portal', (_req, res) => res.redirect('/portal/index.html'));
 app.get('/form',   (_req, res) => res.redirect('/form/app.html')); // optionnel
 
+app.get('/__health', (_req, res) => {
+  res.json({ DATA_ROOT, cwd: process.cwd(), time: new Date().toISOString() });
+});
 // Static files (disable directory slash redirect for /portal)
 app.use('/portal', express.static(
   path.resolve(process.cwd(), '../web/portal'),
   { redirect: false }
 ));
 app.use('/form',   express.static(path.resolve(process.cwd(), '../web/form')));
-app.get('/__health', (_req, res) => {
-  res.json({ DATA_ROOT, cwd: process.cwd(), time: new Date().toISOString() });
-});
+
 // --- Start -----------------------------------------------------------------
 app.listen(PORT, () => {
   console.log(`API listening on http://localhost:${PORT} (DATA_ROOT=${DATA_ROOT})`);
