@@ -1,0 +1,37 @@
+{
+  "buildingId": "testing",
+  "templateVersion": "2025.09.20-1711",
+  "dataVersion": 6,
+  "data": {
+    "informations-generales": {
+      "batiment": {
+        "informations-batiment-adresse": "TestingSwissElecujjjhjjkk"
+      }
+    },
+    "audit": {
+      "incendie": {
+        "rapport": "Oui",
+        "rapport-file": {
+          "fileId": "mfuwigor",
+          "originalName": "app.yaml",
+          "storedName": "mfuwigor_app.yaml",
+          "size": 358,
+          "mime": "application/x-yaml",
+          "uploadedAt": "2025-09-22T09:05:39.579Z"
+        }
+      }
+    }
+  },
+  "filesIndex": {
+    "audit.incendie.rapport-file": [
+      {
+        "fileId": "mfuwigor",
+        "originalName": "app.yaml",
+        "storedName": "mfuwigor_app.yaml",
+        "size": 358,
+        "mime": "application/x-yaml",
+        "uploadedAt": "2025-09-22T09:05:39.579Z"
+      }
+    ]
+  }
+}

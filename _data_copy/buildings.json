@@ -1,0 +1,191 @@
+[
+  {
+    "id": "foyer-de-vie-anawim",
+    "name": "Foyer de vie Anawim",
+    "foundationId": "association-emmanuell",
+    "foundationName": "Association Emmanuell",
+    "foundationSlug": "association-emmanuell"
+  },
+  {
+    "id": "ateliers",
+    "name": "Ateliers",
+    "foundationId": "fondation-ateliers-du-rhone",
+    "foundationName": "Fondation Ateliers du Rhône",
+    "foundationSlug": "fondation-ateliers-du-rhone"
+  },
+  {
+    "id": "home",
+    "name": "Home",
+    "foundationId": "fondation-caad",
+    "foundationName": "Fondation CAAD",
+    "foundationSlug": "fondation-caad"
+  },
+  {
+    "id": "lieu-d-accueil-d-urgence-bas-valais",
+    "name": "Lieu d'accueil d'urgence Bas-Valais",
+    "foundationId": "fondation-chez-paou",
+    "foundationName": "Fondation Chez Paou",
+    "foundationSlug": "fondation-chez-paou"
+  },
+  {
+    "id": "home-de-ardon",
+    "name": "Home de Ardon",
+    "foundationId": "fondation-domus",
+    "foundationName": "Fondation Domus",
+    "foundationSlug": "fondation-domus"
+  },
+  {
+    "id": "le-rural",
+    "name": "Le Rural",
+    "foundationId": "fondation-domus",
+    "foundationName": "Fondation Domus",
+    "foundationSlug": "fondation-domus"
+  },
+  {
+    "id": "home-de-la-tzoumaz",
+    "name": "Home de la Tzoumaz",
+    "foundationId": "fondation-domus",
+    "foundationName": "Fondation Domus",
+    "foundationSlug": "fondation-domus"
+  },
+  {
+    "id": "lebensraum-portiuncula",
+    "name": "Lebensraum Portiuncula",
+    "foundationId": "fondation-stiftung-emera",
+    "foundationName": "Fondation/Stiftung Emera",
+    "foundationSlug": "fondation-stiftung-emera"
+  },
+  {
+    "id": "home-de-champsec",
+    "name": "Home de Champsec",
+    "foundationId": "fondation-foyers-valais-de-c-ur",
+    "foundationName": "Fondation Foyers Valais de Cœur",
+    "foundationSlug": "fondation-foyers-valais-de-c-ur"
+  },
+  {
+    "id": "ateliers-de-granges",
+    "name": "Ateliers de Granges",
+    "foundationId": "fondation-foyers-ateliers-saint-hubert",
+    "foundationName": "Fondation Foyers-Ateliers Saint-Hubert",
+    "foundationSlug": "fondation-foyers-ateliers-saint-hubert"
+  },
+  {
+    "id": "ateliers-de-sion",
+    "name": "Ateliers de Sion",
+    "foundationId": "fondation-foyers-ateliers-saint-hubert",
+    "foundationName": "Fondation Foyers-Ateliers Saint-Hubert",
+    "foundationSlug": "fondation-foyers-ateliers-saint-hubert"
+  },
+  {
+    "id": "ateliers-de-martigny",
+    "name": "Ateliers de Martigny",
+    "foundationId": "fondation-foyers-ateliers-saint-hubert",
+    "foundationName": "Fondation Foyers-Ateliers Saint-Hubert",
+    "foundationSlug": "fondation-foyers-ateliers-saint-hubert"
+  },
+  {
+    "id": "ateliers-de-monthey",
+    "name": "Ateliers de Monthey",
+    "foundationId": "fondation-foyers-ateliers-saint-hubert",
+    "foundationName": "Fondation Foyers-Ateliers Saint-Hubert",
+    "foundationSlug": "fondation-foyers-ateliers-saint-hubert"
+  },
+  {
+    "id": "la-pommeraie",
+    "name": "La Pommeraie",
+    "foundationId": "fondation-valaisanne-en-faveur-des-perso",
+    "foundationName": "Fondation valaisanne en faveur des personnes handicapées mentales",
+    "foundationSlug": "fondation-valaisanne-en-faveur-des-personnes-handicapees-mentales"
+  },
+  {
+    "id": "la-manufacture",
+    "name": "La Manufacture",
+    "foundationId": "fondation-valaisanne-en-faveur-des-perso",
+    "foundationName": "Fondation valaisanne en faveur des personnes handicapées mentales",
+    "foundationSlug": "fondation-valaisanne-en-faveur-des-personnes-handicapees-mentales"
+  },
+  {
+    "id": "la-pierre-a-voir-heb",
+    "name": "La Pierre-A-Voir (Héb)",
+    "foundationId": "fondation-valaisanne-en-faveur-des-perso",
+    "foundationName": "Fondation valaisanne en faveur des personnes handicapées mentales",
+    "foundationSlug": "fondation-valaisanne-en-faveur-des-personnes-handicapees-mentales"
+  },
+  {
+    "id": "villa-la-taure",
+    "name": "Villa La Taure",
+    "foundationId": "fondation-valaisanne-en-faveur-des-perso",
+    "foundationName": "Fondation valaisanne en faveur des personnes handicapées mentales",
+    "foundationSlug": "fondation-valaisanne-en-faveur-des-personnes-handicapees-mentales"
+  },
+  {
+    "id": "la-meuniere",
+    "name": "La Meunière",
+    "foundationId": "fondation-valaisanne-en-faveur-des-perso",
+    "foundationName": "Fondation valaisanne en faveur des personnes handicapées mentales",
+    "foundationSlug": "fondation-valaisanne-en-faveur-des-personnes-handicapees-mentales"
+  },
+  {
+    "id": "le-tonkin",
+    "name": "Le Tonkin",
+    "foundationId": "fondation-valaisanne-en-faveur-des-perso",
+    "foundationName": "Fondation valaisanne en faveur des personnes handicapées mentales",
+    "foundationSlug": "fondation-valaisanne-en-faveur-des-personnes-handicapees-mentales"
+  },
+  {
+    "id": "les-marmettes-batiment-1000",
+    "name": "Les Marmettes (bâtiment 1000)",
+    "foundationId": "frsa-fondation-romande-souraveugles",
+    "foundationName": "FRSA Fondation Romande SourAveugles",
+    "foundationSlug": "frsa-fondation-romande-souraveugles"
+  },
+  {
+    "id": "werkstatt",
+    "name": "Werkstatt",
+    "foundationId": "stiftung-atelier-manus",
+    "foundationName": "Stiftung Atelier Manus",
+    "foundationSlug": "stiftung-atelier-manus"
+  },
+  {
+    "id": "heim",
+    "name": "Heim",
+    "foundationId": "stiftung-fux-campagna-visp",
+    "foundationName": "Stiftung Fux campagna Visp",
+    "foundationSlug": "stiftung-fux-campagna-visp"
+  },
+  {
+    "id": "hauptgebaude-werkstatt",
+    "name": "Hauptgebäude / Werkstatt",
+    "foundationId": "stiftung-mitmansch-oberwallis",
+    "foundationName": "Stiftung MitMänsch Oberwallis",
+    "foundationSlug": "stiftung-mitmansch-oberwallis"
+  },
+  {
+    "id": "steg",
+    "name": "Steg",
+    "foundationId": "stiftung-mitmansch-oberwallis",
+    "foundationName": "Stiftung MitMänsch Oberwallis",
+    "foundationSlug": "stiftung-mitmansch-oberwallis"
+  },
+  {
+    "id": "glis",
+    "name": "Glis",
+    "foundationId": "stiftung-mitmansch-oberwallis",
+    "foundationName": "Stiftung MitMänsch Oberwallis",
+    "foundationSlug": "stiftung-mitmansch-oberwallis"
+  },
+  {
+    "id": "wohnheim-holowi",
+    "name": "Wohnheim Holowi",
+    "foundationId": "stiftung-mitmansch-oberwallis",
+    "foundationName": "Stiftung MitMänsch Oberwallis",
+    "foundationSlug": "stiftung-mitmansch-oberwallis"
+  },
+  {
+    "id": "testing",
+    "name": "Testing",
+    "foundationId": "swisselectesting",
+    "foundationName": "SwissElecTesting",
+    "foundationSlug": "swisselectesting"
+  }
+]

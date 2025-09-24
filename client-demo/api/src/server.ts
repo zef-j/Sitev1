@@ -4,12 +4,15 @@ import path from 'path';
 import fs from 'fs';
 import multer from 'multer';
 
-type Data = Record<string, any>;
 type VersionListItem = { versionId: string; createdAt: string; dataVersion: number };
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
+
+process.on('unhandledRejection', (e) => console.error('UNHANDLED_REJECTION', e));
+process.on('uncaughtException',  (e) => console.error('UNCAUGHT_EXCEPTION', e));
+
 
 const PORT = process.env.PORT || 3000;
 const DATA_ROOT = process.env.DATA_ROOT ? path.resolve(process.env.DATA_ROOT) : path.resolve(process.cwd(), './data');
@@ -177,7 +180,7 @@ app.post('/auth/login', (_req, res) => {
 });
 
 app.get('/templates/active', (_req, res) => {
-  res.json({ version: getActiveTemplate().version || 'dev', template: getActiveTemplate() });
+  res.json({ version: (getActiveTemplate() as any).version || 'dev', template: getActiveTemplate() });
 });
 
 // --- New: list buildings ---------------------------------------------------
@@ -207,7 +210,7 @@ app.get('/buildings/:id/form', (req, res) => {
   const building = { id: meta.id, name: meta.name || `Bâtiment ${id}`, fondation: { id: meta.foundationId || 'f_default', name: meta.foundationName || 'Default' } };
   res.json({
     building,
-    templateVersion: cur.templateVersion || (getActiveTemplate().version || 'dev'),
+    templateVersion: cur.templateVersion || ((getActiveTemplate() as any).version || 'dev'),
     template: getActiveTemplate(),
     dataVersion: cur.dataVersion || 1,
     data: cur.data || {},
@@ -278,7 +281,7 @@ app.post('/buildings/:id/publish', (req, res) => {
   const reason = body.reason || 'publish';
   const next = {
     buildingId: id,
-    templateVersion: cur.templateVersion || (getActiveTemplate().version || 'dev'),
+    templateVersion: cur.templateVersion || ((getActiveTemplate() as any).version || 'dev'),
     dataVersion: (cur.dataVersion || 1) + 1,
     data,
     filesIndex: cur.filesIndex || {},
@@ -305,7 +308,7 @@ app.get('/buildings/:id/versions', (req, res) => {
     .filter(d => d.isDirectory())
     .map(d => {
       const metaP = path.join(vdir, d.name, 'meta.json');
-      const m = readJSON(metaP, {});
+      const m: any = readJSON(metaP, {});
       return { versionId: d.name, createdAt: m.createdAt || d.name, dataVersion: m.dataVersion || 0 } as VersionListItem;
     })
     .sort((a,b) => a.createdAt < b.createdAt ? 1 : -1);
@@ -316,7 +319,7 @@ app.get('/buildings/:id/versions/:versionId', (req, res) => {
   const id = req.params.id;
   const versionId = req.params.versionId;
   const meta = getBuildingMeta(id) || { id, foundationId: 'f_default' };
-  const snap = readJSON(path.join(getVersionsDir(meta), versionId, 'snapshot.json'), null);
+  const snap: any = readJSON(path.join(getVersionsDir(meta), versionId, 'snapshot.json'), null);
   if (!snap) { res.status(404).json({ error: 'Not found' }); return; }
   res.json(snap);
 });
@@ -328,12 +331,12 @@ app.post('/buildings/:id/restore', (req, res) => {
   const meta = getBuildingMeta(id) || { id, foundationId: 'f_default' };
   ensureCurrent(meta);
   const curPath = getCurrentJsonPath(meta);
-  const cur = readJSON(curPath, {});
-  const snap = readJSON(path.join(getVersionsDir(meta), versionId, 'snapshot.json'), null);
+  const cur: any = readJSON(curPath, {});
+  const snap: any = readJSON(path.join(getVersionsDir(meta), versionId, 'snapshot.json'), null);
   if (!snap) { res.status(404).json({ error: 'snapshot not found' }); return; }
   const restored = {
     buildingId: id,
-    templateVersion: snap.templateVersion || cur.templateVersion || (getActiveTemplate().version || 'dev'),
+    templateVersion: snap.templateVersion || cur.templateVersion || ((getActiveTemplate() as any).version || 'dev'),
     dataVersion: (cur.dataVersion || 1) + 1,
     data: snap.data || {},
     filesIndex: snap.filesIndex || cur.filesIndex || {},
@@ -376,7 +379,7 @@ app.post('/buildings/:id/upload', upload.single('file'), (req, res) => {
   };
   // update filesIndex in current
   const curPath = getCurrentJsonPath(meta);
-  const cur = readJSON(curPath, {});
+  const cur: any = readJSON(curPath, {});
   const fi = cur.filesIndex || {};
   const prev = Array.isArray(fi[fieldPath]) ? fi[fieldPath] : [];
         if (prev.length && prev[0]?.storedName) {
@@ -406,12 +409,17 @@ app.get('/',       (_req, res) => res.redirect('/portal/index.html'));
 app.get('/portal', (_req, res) => res.redirect('/portal/index.html'));
 app.get('/form',   (_req, res) => res.redirect('/form/app.html')); // optionnel
 
+app.get('/__health', (_req, res) => {
+  res.json({ DATA_ROOT, cwd: process.cwd(), time: new Date().toISOString() });
+});
+
 // Static files (disable directory slash redirect for /portal)
 app.use('/portal', express.static(
   path.resolve(process.cwd(), '../web/portal'),
   { redirect: false }
 ));
 app.use('/form',   express.static(path.resolve(process.cwd(), '../web/form')));
+
 
 // --- Start -----------------------------------------------------------------
 app.listen(PORT, () => {

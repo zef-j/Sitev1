@@ -1,0 +1,13 @@
+{
+  "buildingId": "testing",
+  "templateVersion": "2025.09.20-1711",
+  "dataVersion": 2,
+  "data": {
+    "informations-generales": {
+      "batiment": {
+        "informations-batiment-adresse": "ghghgh"
+      }
+    }
+  },
+  "filesIndex": {}
+}
