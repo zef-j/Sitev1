@@ -15,10 +15,27 @@ const PORT = process.env.PORT || 3000;
 const DATA_ROOT = process.env.DATA_ROOT ? path.resolve(process.env.DATA_ROOT) : path.resolve(process.cwd(), './data');
 const CLIENT_ID = process.env.CLIENT_ID || 'main';
 
+type FilesIndex = Record<string, string>;
+type Data = {
+  templateVersion?: string;
+  version?: string;
+  dataVersion?: number;
+  data?: Record<string, unknown>;
+  filesIndex?: FilesIndex;
+  createdAt?: string;
+};
+
+
+
+
 // --- utilities --------------------------------------------------------------
 function ensureDir(p: string) { fs.mkdirSync(p, { recursive: true }); }
-function readJSON<T=any>(p: string, def: T): T {
-  try { return JSON.parse(fs.readFileSync(p, 'utf-8')); } catch { return def; }
+function readJSON<T>(filePath: string, fallback: T): T {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, 'utf8')) as T;
+  } catch {
+    return fallback;
+  }
 }
 function writeJSON(p: string, obj: any) {
   ensureDir(path.dirname(p));
@@ -137,7 +154,7 @@ function getActiveTemplate() {
 function ensureCurrent(meta: BuildingMeta) {
   const curPath = getCurrentJsonPath(meta);
   if (!fs.existsSync(curPath)) {
-    const tpl = getActiveTemplate();
+    const tpl = getActiveTemplate() as { version?: string };
     const init = {
       buildingId: meta.id,
       templateVersion: tpl.version || 'dev',
@@ -183,7 +200,7 @@ app.get('/buildings/:id/form', (req, res) => {
   const id = req.params.id;
   const meta = getBuildingMeta(id) || { id, name: `Bâtiment ${id}`, foundationId: 'f_default', foundationName: 'Default' };
   ensureCurrent(meta);
-  const cur = readJSON(getCurrentJsonPath(meta), {});
+  const cur: Data = readJSON<Data>(getCurrentJsonPath(meta), {} as Data);
   const etag = weakTag(cur.dataVersion || 1);
   res.setHeader('ETag', etag);
   res.setHeader('Access-Control-Expose-Headers', 'ETag');
@@ -202,7 +219,7 @@ app.get('/buildings/:id/review', (req, res) => {
   const id = req.params.id;
   const meta = getBuildingMeta(id) || { id, foundationId: 'f_default' };
   ensureCurrent(meta);
-  const cur = readJSON(getCurrentJsonPath(meta), {});
+  const cur: Data = readJSON<Data>(getCurrentJsonPath(meta), {} as Data);
   const etag = weakTag(cur.dataVersion || 1);
   res.setHeader('ETag', etag);
   res.setHeader('Access-Control-Expose-Headers', 'ETag');
@@ -224,8 +241,8 @@ app.post('/buildings/:id/save', (req, res) => {
   const data = body.data || {};
   const reason = body.reason || 'save';
   const curPath = getCurrentJsonPath(meta);
-  const cur = readJSON(curPath, {});
-  const tpl = getActiveTemplate();
+  const cur: Data = readJSON<Data>(curPath, {} as Data);
+  const tpl = getActiveTemplate() as { version?: string };
   const next = {
     buildingId: id,
     templateVersion: cur.templateVersion || tpl.version || 'dev',
@@ -250,7 +267,7 @@ app.post('/buildings/:id/publish', (req, res) => {
   const meta = getBuildingMeta(id) || { id, foundationId: 'f_default' };
   ensureCurrent(meta);
   const ifMatch = req.header('If-Match');
-  const cur = readJSON(getCurrentJsonPath(meta), {});
+  const cur: Data = readJSON<Data>(getCurrentJsonPath(meta), {} as Data);
   const expected = weakTag(cur.dataVersion || 1);
   if (!ifMatch || ifMatch !== expected) {
     res.status(412).json({ error: 'Precondition Failed', current: { dataVersion: cur.dataVersion || 1 } });
