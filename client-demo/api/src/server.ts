@@ -385,7 +385,16 @@ app.get('/buildings/:id/files/:storedName', (req, res) => {
 });
 
 // --- Static (optional) -----------------------------------------------------
-app.use('/form', express.static(path.resolve(process.cwd(), '../web/form')));
+app.get('/',       (_req, res) => res.redirect('/portal/index.html'));
+app.get('/portal', (_req, res) => res.redirect('/portal/index.html'));
+app.get('/form',   (_req, res) => res.redirect('/form/app.html')); // optionnel
+
+// Static files (disable directory slash redirect for /portal)
+app.use('/portal', express.static(
+  path.resolve(process.cwd(), '../web/portal'),
+  { redirect: false }
+));
+app.use('/form',   express.static(path.resolve(process.cwd(), '../web/form')));
 
 // --- Start -----------------------------------------------------------------
 app.listen(PORT, () => {
