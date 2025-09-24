@@ -1,5 +1,11 @@
+// client-demo/web/form/api.js
+// ES module (loaded by the browser)
+
 export const api = {
+  // same-origin; leave '' so requests go to the current host
   baseUrl: '',
+
+  // ----- READ -----
 
   async getActiveTemplate() {
     const r = await fetch(`${this.baseUrl}/templates/active`);
@@ -13,62 +19,110 @@ export const api = {
     return r.json();
   },
 
+  // NOTE: we use /buildings/:id to also capture the ETag header
   async getBuildingForm(id) {
-    const r = await fetch(`${this.baseUrl}/buildings/${id}`);
+    const r = await fetch(`${this.baseUrl}/buildings/${encodeURIComponent(id)}`);
     if (!r.ok) throw new Error('Failed to fetch form');
-    return r.json();
+    const etag = r.headers.get('ETag');
+    const json = await r.json();
+    try {
+      window.__buildingMeta = {
+        id: json?.building?.id || id,
+        dataVersion: json?.dataVersion ?? window.__buildingMeta?.dataVersion,
+        etag: etag || window.__buildingMeta?.etag,
+      };
+    } catch {}
+    return json;
+  },
+
+  // sinceEtag is optional; if present we’ll ask server “what changed since that ETag?”
+  async getReview(id, sinceEtag) {
+    const qs = sinceEtag ? `?since=${encodeURIComponent(sinceEtag)}` : '';
+    const r = await fetch(`${this.baseUrl}/buildings/${encodeURIComponent(id)}/review${qs}`);
+    if (!r.ok) throw new Error('Failed to fetch review');
+    const etag = r.headers.get('ETag');
+    const json = await r.json();
+    try {
+      if (window.__buildingMeta) {
+        window.__buildingMeta.dataVersion =
+          json?.dataVersion ?? window.__buildingMeta.dataVersion;
+        window.__buildingMeta.etag = etag || window.__buildingMeta.etag;
+      }
+    } catch {}
+    return json;
   },
 
   async listVersions(id) {
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/versions`);
+    const r = await fetch(`${this.baseUrl}/buildings/${encodeURIComponent(id)}/versions`);
     if (!r.ok) throw new Error('Failed to fetch versions');
     return r.json();
   },
 
   async getVersion(id, versionId) {
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/versions/${versionId}`);
+    const r = await fetch(
+      `${this.baseUrl}/buildings/${encodeURIComponent(id)}/versions/${encodeURIComponent(versionId)}`
+    );
     if (!r.ok) throw new Error('Failed to fetch version');
     return r.json();
   },
 
-  async getReview(id, etag) {
-    const qs = etag ? `?since=${encodeURIComponent(etag)}` : '';
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/review${qs}`);
-    if (!r.ok) throw new Error('Failed to fetch review');
-    return r.json();
-  },
+  // ----- WRITE -----
 
-  async save(id, data, dataVersion, etag) {
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/save`, {
+  // Keep original signature used by your UI: (id, data, reason)
+  // Server increases dataVersion and returns new ETag + json
+  async save(id, data, reason) {
+    const r = await fetch(`${this.baseUrl}/buildings/${encodeURIComponent(id)}/save`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(etag ? { 'If-Match': etag } : {})
-      },
-      body: JSON.stringify({ data, dataVersion })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data, reason }),
     });
     if (!r.ok) throw new Error('Save failed');
-    return r.json();
+    const newTag = r.headers.get('ETag');
+    const json = await r.json();
+    try {
+      if (window.__buildingMeta) {
+        window.__buildingMeta.dataVersion =
+          json?.dataVersion ?? window.__buildingMeta.dataVersion;
+        window.__buildingMeta.etag = newTag || window.__buildingMeta.etag;
+      }
+    } catch {}
+    return json;
   },
 
+  // Publish with optimistic locking.
+  // If the server replies 412 (stale dataVersion), retry once with the server’s current DV.
   async publish(id, data, dataVersion, etag) {
     const post = async (dv) => {
-      const r = await fetch(`${this.baseUrl}/buildings/${id}/publish`, {
+      const r = await fetch(`${this.baseUrl}/buildings/${encodeURIComponent(id)}/publish`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...(etag ? { 'If-Match': etag } : {})
+          ...(etag ? { 'If-Match': etag } : {}),
         },
-        body: JSON.stringify({ data, dataVersion: dv, reason: 'ui-publish' })
+        body: JSON.stringify({ data, dataVersion: dv, reason: 'ui-publish' }),
       });
+
       if (r.status === 412) {
+        // Retry once with the server-provided current.dataVersion
         const e = await r.json().catch(() => ({}));
         const nextDV = e?.current?.dataVersion;
-        if (nextDV != null) return post(nextDV); // retry once with server DV
+        if (nextDV != null) return post(nextDV);
       }
+
       if (!r.ok) throw new Error('Publish failed');
-      return r.json();
+
+      const newTag = r.headers.get('ETag');
+      const json = await r.json();
+      try {
+        if (window.__buildingMeta) {
+          window.__buildingMeta.dataVersion =
+            json?.dataVersion ?? window.__buildingMeta.dataVersion;
+          window.__buildingMeta.etag = newTag || window.__buildingMeta.etag;
+        }
+      } catch {}
+      return json;
     };
+
     return post(dataVersion);
   },
 
@@ -76,11 +130,11 @@ export const api = {
     const fd = new FormData();
     fd.append('file', file);
     fd.append('fieldPath', fieldPath);
-    const r = await fetch(`${this.baseUrl}/buildings/${id}/upload`, {
+    const r = await fetch(`${this.baseUrl}/buildings/${encodeURIComponent(id)}/upload`, {
       method: 'POST',
-      body: fd
+      body: fd,
     });
     if (!r.ok) throw new Error('Upload failed');
     return r.json();
-  }
+  },
 };
