@@ -283,8 +283,8 @@ function renderField(field, subsectionData, onValueChange) {
   if (field.multiple) sel.multiple = true;
 
   const opts = Array.isArray(field.options) && field.options.length ? field.options : DEFAULT_SELECT;
-  const ph = document.createElement('option'); ph.value=''; ph.textContent='Sélectionner'; if (!field.multiple) sel.appendChild(ph);
-  for (const o of opts) { const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); }
+  const ph = document.createElement('option'); ph.value=''; ph.textContent = t('ui.select','Sélectionner'); if (!field.multiple) sel.appendChild(ph);
+  for (const o of opts) { const op = document.createElement('option'); op.value = o; op.textContent = t(`options.${field.id}.${o}`, o); sel.appendChild(op); }
 
   // Preselect
   if (field.multiple) {
@@ -312,7 +312,7 @@ function renderField(field, subsectionData, onValueChange) {
 
   const lab = document.createElement('label'); lab.className='inline-flex items-center px-3 py-2 bg-blue-100 border border-blue-300 rounded-md hover:bg-blue-200 text-blue-600 font-medium cursor-pointer';
   lab.setAttribute('for', id);
-  lab.innerHTML = '<i data-feather="upload" class="mr-2"></i>Choisir un fichier';
+  lab.innerHTML = ''; const icon = document.createElement('i'); icon.setAttribute('data-feather','upload'); icon.className='mr-2'; lab.appendChild(icon); const spanText = document.createElement('span'); spanText.setAttribute('data-i18n','ui.chooseFile'); spanText.setAttribute('data-i18n-fallback','Choisir un fichier'); spanText.textContent='Choisir un fichier'; lab.appendChild(spanText);
   const nameSpan = document.createElement('span'); nameSpan.className='ml-3 text-gray-600 text-sm';
   if (Array.isArray(value)) {
     nameSpan.textContent = value.length ? `${value.length} fichier(s)` : '';
@@ -393,7 +393,7 @@ function renderField(field, subsectionData, onValueChange) {
       div.className = subtitleClasses(style);
       if (showText) {
         const txt = String(field.text ?? field.label ?? field.id ?? '').trim();
-        const el = document.createElement(style.as || 'div');
+        const el = document.createElement(style.as || 'div'); try{ el.setAttribute('data-i18n', `subtitle.${section.id}.${sub.id}.${field.id}`); el.setAttribute('data-i18n-fallback', txt); }catch{}
         el.className = (style.as === 'h3' || style.as === 'h4') ? '' : '';
         el.textContent = txt;
         if (style.color && /(^#|rgb|hsl|var\().*/.test(String(style.color))) {

@@ -1,4 +1,4 @@
-import { translatePage, ensureLangSelector, getLang, setLang } from './i18n.js';
+import { translatePage, ensureLangSelector, getLang, setLang, t } from './i18n.js';
 
 window.__ensureHomeLink = window.__ensureHomeLink || function(){
   try{
@@ -158,7 +158,9 @@ renderFallbackSections(res.template);
       const a = document.createElement('a');
       a.href = '#' + slugify(sec.title || sec.id);
       a.className = 'px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap chip';
-      a.textContent = sec.title;
+      a.setAttribute('data-i18n', `section.${sec.id}.title`);
+      a.setAttribute('data-i18n-fallback', sec.title);
+      try{ a.textContent = t(`section.${sec.id}.title`, sec.title); }catch{ a.textContent = sec.title; }
       a.addEventListener('click', (e) => {
         e.preventDefault();
         const el = document.getElementById(slugify(sec.title || sec.id));
