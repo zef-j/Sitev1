@@ -138,3 +138,43 @@ export function ensureLangSelector(container){
 window.__lang = getLang();
 document.documentElement.setAttribute('lang', window.__lang);
 window.addEventListener('langchange', ()=> translatePage(document));
+
+
+/* ---- External JSON loader ---- */
+function i18nBase() {
+  try {
+    // Resolve ../i18n/ relative to this module file
+    return new URL('../i18n/', import.meta.url).href;
+  } catch { return '../i18n/'; }
+}
+
+async function fetchLangFile(lang){
+  const base = i18nBase();
+  const url = new URL(`${lang}.json`, base);
+  try{
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return await r.json();
+  }catch{ return null; }
+}
+
+export async function loadExternalTranslations(lang){
+  const j = await fetchLangFile(lang);
+  if (!j) return;
+  // Support either flat {key:value} or wrapped {lang:{key:value}}
+  const payload = j[lang] && typeof j[lang] === 'object' ? j[lang] : j;
+  dict[lang] = { ...(dict[lang]||{}), ...(payload||{}) };
+}
+
+export async function initI18n(){
+  const lang = getLang();
+  await loadExternalTranslations(lang);
+  window.__lang = lang;
+  document.documentElement.setAttribute('lang', lang);
+  translatePage(document);
+}
+
+window.addEventListener('langchange', async ()=>{
+  await loadExternalTranslations(window.__lang || getLang());
+  translatePage(document);
+});

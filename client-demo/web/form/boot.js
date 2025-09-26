@@ -1,4 +1,4 @@
-import { translatePage, ensureLangSelector, getLang, setLang, t } from './i18n.js';
+import { translatePage, ensureLangSelector, getLang, setLang, t, initI18n } from './i18n.js';
 
 window.__ensureHomeLink = window.__ensureHomeLink || function(){
   try{
@@ -79,7 +79,7 @@ async function fetchFormDirect(buildingId){
 };;
 
 async function main(){
-  try{ ensureLangSelector(document.querySelector('header .flex.items-center.space-x-4')?.parentElement || document.querySelector('header .container .flex')); translatePage(document); }catch{}
+  try{ ensureLangSelector(document.querySelector('header .flex.items-center.space-x-4')?.parentElement || document.querySelector('header .container .flex')); await initI18n(); }catch{}
   let api = null;
   try {
     api = (await import('./api.js')).api;

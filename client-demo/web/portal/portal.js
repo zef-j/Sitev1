@@ -1,4 +1,4 @@
-import { translatePage, ensureLangSelector } from '../form/i18n.js';
+import { translatePage, ensureLangSelector, initI18n } from '../form/i18n.js';
 import { api } from '../form/api.js';
 import { computeProgress } from '../form/progress.js';
 
@@ -18,7 +18,7 @@ async function progressForBuilding(id){
   }
 }
 
-async function loadFoundations(){ try{ ensureLangSelector(document.querySelector('body .flex')||document.body); translatePage(document); }catch{}
+async function loadFoundations(){ try{ ensureLangSelector(document.querySelector('body .flex')||document.body); await initI18n(); }catch{}
   const cont = document.getElementById('list');
   const b = await api.getBuildings();
   const map = new Map();
@@ -49,7 +49,7 @@ async function loadFoundations(){ try{ ensureLangSelector(document.querySelector
   }
 }
 
-async function loadFoundation(){ try{ ensureLangSelector(document.querySelector('body .flex')||document.body); translatePage(document); }catch{}
+async function loadFoundation(){ try{ ensureLangSelector(document.querySelector('body .flex')||document.body); await initI18n(); }catch{}
   const fid = qs('id') || 'f_default';
   const cont = document.getElementById('list');
   const crumb = document.getElementById('crumb-foundation');
