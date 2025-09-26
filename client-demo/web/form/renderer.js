@@ -256,6 +256,7 @@ function renderField(field, subsectionData, onValueChange) {
   const cls = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
   const emit = (v) => {
   if (typeof v === 'function') return onValueChange(v);
+  // For tables, treat object values as partial patches and merge into current
   if ((field.type === 'monthTable' || field.type === 'yearTable') && v && typeof v === 'object' && !Array.isArray(v)) {
     return onValueChange((prev) => ({ ...(prev && typeof prev === 'object' ? prev : {}), ...v }));
   }
@@ -278,11 +279,29 @@ function renderField(field, subsectionData, onValueChange) {
     }
     case 'select': {
   const sel = document.createElement('select'); sel.id=id; sel.name=id; sel.className=cls;
+  if (field.multiple) sel.multiple = true;
+
   const opts = Array.isArray(field.options) && field.options.length ? field.options : DEFAULT_SELECT;
-  const ph = document.createElement('option'); ph.value=''; ph.textContent='Sélectionner'; sel.appendChild(ph);
+  const ph = document.createElement('option'); ph.value=''; ph.textContent='Sélectionner'; if (!field.multiple) sel.appendChild(ph);
   for (const o of opts) { const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); }
-  if (value) sel.value=value;
-  sel.addEventListener('change', () => emit(sel.value || null));
+
+  // Preselect
+  if (field.multiple) {
+    const arr = Array.isArray(value) ? value : (value ? [value] : []);
+    Array.from(sel.options).forEach(op => { if (arr.includes(op.value)) op.selected = true; });
+  } else {
+    if (value) sel.value=value;
+  }
+
+  sel.addEventListener('change', () => {
+    if (field.multiple) {
+      const arr = Array.from(sel.selectedOptions).map(o => o.value).filter(Boolean);
+      emit(arr.length ? arr : null);
+    } else {
+      emit(sel.value || null);
+    }
+  });
+
   wrap.appendChild(sel); break;
 }
     case 'file': {

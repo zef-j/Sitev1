@@ -1,6 +1,6 @@
 /**
- * progress.js — clean version
- * Compute progress for L1 and L2 using only VISIBLE, non-decorative fields.
+ * progress.js — Phase 1
+ * Compute progress for L1 and L2 using only VISIBLE fields.
  */
 import { getAtPath } from './state.js';
 import { isFieldVisible } from './visibility.js';
@@ -17,12 +17,16 @@ export function isCompleteValue(field, value) {
     case 'number':
       return typeof value === 'number' && !Number.isNaN(value);
     case 'select':
+      if (field.multiple) return Array.isArray(value) && value.length > 0;
       return String(value).trim() !== '' && value !== 'Sélectionner';
     case 'file':
+      if (Array.isArray(value)) return value.length > 0;
       return typeof value === 'object' ? !!(value.name || value.url) : String(value).trim() !== '';
     case 'monthTable':
-    case 'yearTable':
-      return !!value && typeof value === 'object' && Object.values(value).some(v => v !== null && v !== undefined && String(v).trim() !== '' && !Number.isNaN(Number(v)));
+case 'yearTable':
+  return !!value && typeof value === 'object' && Object.values(value).some(v => v !== null && v !== undefined && String(v).trim() !== '' && !Number.isNaN(Number(v)));
+    case 'bool':
+      return typeof value === 'boolean';
     default:
       return String(value).trim() !== '';
   }
@@ -33,7 +37,7 @@ function listFields(template) {
   (template.sections || []).forEach(sec => {
     (sec.subsections || []).forEach(sub => {
       (sub.fields || []).forEach(field => {
-        arr.push({ path: `${sec.id}.${sub.id}.${field.id}`, field });
+        arr.push({ path: `${sec.id}.${sub.id}.${field.id}`, sec, sub, field });
       });
     });
   });
@@ -65,5 +69,6 @@ export function computeProgress(template, data, level='L1') {
   const s1 = stats('L1');
   const s2 = stats('L2');
   if (level === 'L1') return { overall: s1.pct, L1: s1.pct, L2: 0 };
+  // For display we keep overall = L1% (as agreed); stacked visual later
   return { overall: s1.pct, L1: s1.pct, L2: s2.pct };
 }
