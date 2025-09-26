@@ -5,6 +5,8 @@
 import { getAtPath } from './state.js';
 import { isFieldVisible } from './visibility.js';
 
+function isDecorative(field){ return field?.type==='subtitle' || field?.containsData===false; }
+
 export function isCompleteValue(field, value) {
   if (value === null || value === undefined) return false;
   switch(field.type) {
@@ -43,7 +45,7 @@ function listFields(template) {
 export function computeProgress(template, data, level='L1') {
   if (!template) return { overall: 0, L1: 0, L2: 0 };
   const fields = listFields(template);
-  const visible = fields.filter(({field}) => isFieldVisible(field, data, level));
+  const visible = fields.filter(({field}) => isFieldVisible(field, data, level) && !isDecorative(field));
 
   function stats(levelMode) {
     const subset = visible.filter(({field}) => {

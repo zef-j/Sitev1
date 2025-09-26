@@ -40,8 +40,14 @@ async function handleFileUpload(ev, fieldPath) {
 
 
 // Allow rapport behavior ONLY in these subsections
-const ALLOWED_RAPPORT = new Set(['incendie','sismique','amiante','maintenance-et-entretient','cecb']);
-
+const ALLOWED_RAPPORT = new Set([
+  'incendie',
+  'amiante',
+  'maintenance-et-entretient',
+  'etude-sismique',         // Étude sismique (id réel du template)
+  'accessibilite-handicap', // Accessibilité (id réel du template)
+  'enveloppe-batiment'      // CECB (cas spécial)
+]);
 // Simple ASCII regexes to avoid encoding issues
 const RX_RAPPORT = /(?:^|[\s\-_])rapport(?:[\s\-_]|$)/i;
 const RX_UPLOAD  = /(upload|televers|fichier)/i;
@@ -219,11 +225,27 @@ function escapeHtml(s) {
   return (s ?? '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+
+function subtitleClasses(style = {}) {
+  const sizeMap = { xs:'text-xs', sm:'text-sm', md:'text-base', lg:'text-lg', xl:'text-xl', '2xl':'text-2xl' };
+  const weightMap = { normal:'font-normal', medium:'font-medium', semibold:'font-semibold', bold:'font-bold' };
+  const alignMap = { left:'text-left', center:'text-center', right:'text-right' };
+  const marginMap = { none:'', xs:'my-1', sm:'my-2', md:'my-3', lg:'my-4', xl:'my-6' };
+  const span = style.span === 1 ? '' : 'md:col-span-2';
+  const size = sizeMap[String(style.size||'sm')] || sizeMap.sm;
+  const weight = weightMap[String(style.weight||'semibold')] || weightMap.semibold;
+  const align = alignMap[String(style.align||'left')] || alignMap.left;
+  const italic = style.italic ? 'italic' : '';
+  const upper = style.uppercase ? 'uppercase tracking-wide' : '';
+  const margin = marginMap[String(style.margin||'sm')] || '';
+  const extra = Array.isArray(style.classList) ? style.classList.join(' ') : (style.className || '');
+  return `${span} ${size} ${weight} ${align} ${italic} ${upper} ${margin} ${extra}`.trim();
+}
 function renderField(field, subsectionData, onValueChange) {
   const wrap = document.createElement('div'); wrap.className = '';
   const id = `${field.id}`;
 
-  if (!['monthTable','yearTable'].includes(field.type)) {
+  if (!['monthTable','yearTable','subtitle'].includes(field.type)) {
     const lbl = document.createElement('label'); lbl.className = 'block text-sm font-medium text-gray-700 mb-1'; lbl.setAttribute('for', id);
     lbl.innerHTML = escapeHtml(field.label || field.id); wrap.appendChild(lbl);
   }
@@ -296,7 +318,42 @@ function renderField(field, subsectionData, onValueChange) {
   wrap.appendChild(container);
   break;
 }
-    case 'monthTable': {
+    
+    case 'subtitle': {
+      // Decorative, no data. Spans 2 columns by default unless style.span === 1
+      const style = field.style || {};
+      const showText = field.showText !== false; // default true
+      const div = document.createElement('div');
+      div.className = subtitleClasses(style);
+      if (showText) {
+        const txt = String(field.text ?? field.label ?? field.id ?? '').trim();
+        const el = document.createElement(style.as || 'div');
+        el.className = (style.as === 'h3' || style.as === 'h4') ? '' : '';
+        el.textContent = txt;
+        if (style.color && /(^#|rgb|hsl|var\().*/.test(String(style.color))) {
+          try { el.style.color = style.color; } catch {}
+        } else if (style.color) {
+          // Tailwind palette aliases
+          const colorMap = {
+            muted:'text-gray-500', gray:'text-gray-600', primary:'text-blue-700',
+            danger:'text-red-700', success:'text-green-700', warning:'text-yellow-700',
+            info:'text-sky-700', blue:'text-blue-700', red:'text-red-700', green:'text-green-700',
+            yellow:'text-yellow-700', sky:'text-sky-700'
+          };
+          div.classList.add(...(colorMap[String(style.color)]||'').split(' ').filter(Boolean));
+        }
+        div.appendChild(el);
+      } else {
+        // Just reserve vertical rhythm
+        div.innerHTML = '&nbsp;';
+      }
+      // Mark non-data so progress/serialization can ignore it if they honor the flag
+      try { div.dataset.containsData = String(field.containsData !== false); } catch {}
+      if (!field.style || field.style.span !== 1) { try { wrap.classList.add('md:col-span-2'); } catch {} }
+      wrap.appendChild(div);
+      break;
+    }
+case 'monthTable': {
       wrap.classList.add('md:col-span-2');
       const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=field.label || ''; wrap.appendChild(title);
       const months=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"]; const current=(value&&typeof value==='object')?value:{};
