@@ -301,7 +301,6 @@ function renderField(field, subsectionData, onValueChange, ctx) {
     try { op.textContent = t('options.'+field.id+'.'+val, rawLabel); } catch { op.textContent = rawLabel; }
     sel.appendChild(op);
   }
-    .${o}`, o); sel.appendChild(op); }
 
   // Preselect
   if (field.multiple) {
