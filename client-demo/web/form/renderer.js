@@ -408,7 +408,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
       const div = document.createElement('div');
       div.className = subtitleClasses(style);
       if (showText) {
-        const txt = (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return String(field.text ?? t(__key, field.label ?? field.id ?? '')).trim(); })();
+        const txt = (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return String(t(__key, field.text ?? field.label ?? field.id ?? '')).trim(); })();
         const el = document.createElement(style.as || 'div'); try{ el.setAttribute('data-i18n', `subtitle.${section.id}.${sub.id}.${field.id}`); el.setAttribute('data-i18n-fallback', txt); }catch{}
         el.className = (style.as === 'h3' || style.as === 'h4') ? '' : '';
         el.textContent = txt;

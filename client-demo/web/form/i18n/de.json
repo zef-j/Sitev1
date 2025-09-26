@@ -248,7 +248,7 @@
   "options.materiau-principal.Mixte": "Gemischt",
   "options.materiau-principal.Autre": "Andere",
   "subtitle.diagnostic-securite.etude-sismique.sism-subtitle-fondations": "Fundamente und Boden",
-  "field.diagnostic-securite.etude-sismique.type-sol.label": "Typ de sol (si connu)",
+  "field.diagnostic-securite.etude-sismique.type-sol.label": "Bodenart (falls bekannt)",
   "options.type-sol.Roche": "Fels",
   "options.type-sol.Grave compact": "Verdichteter Kies",
   "options.type-sol.Argile": "Ton",
