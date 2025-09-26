@@ -79,6 +79,7 @@ async function fetchFormDirect(buildingId){
 };;
 
 async function main(){
+  try{ await initI18n(); }catch{}
   try{ ensureLangSelector(document.querySelector('header .flex.items-center.space-x-4')?.parentElement || document.querySelector('header .container .flex')); await initI18n(); }catch{}
   let api = null;
   try {
