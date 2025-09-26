@@ -178,3 +178,41 @@ window.addEventListener('langchange', async ()=>{
   await loadExternalTranslations(window.__lang || getLang());
   translatePage(document);
 });
+
+
+// --- Robust external JSON loader (multi-path) ---
+function fetchCandidates(lang){
+  const fromImport = (()=>{ try { return new URL('../i18n/', import.meta.url).href; } catch{ return null; } })();
+  const fromDoc = (()=>{
+    try {
+      const here = document.currentScript?.src || (document.baseURI || location.href);
+      return new URL('../i18n/', here).href;
+    } catch { return null; }
+  })();
+  const fromRoot = '/i18n/';
+  const fromWeb = '/client-demo/web/i18n/';
+  const bases = [fromImport, fromDoc, fromRoot, fromWeb].filter(Boolean);
+  return bases.map(b => (b.endsWith('/')?b:b+'/') + lang + '.json');
+}
+
+async function tryFetch(url){
+  try{
+    const r = await fetch(url, { cache: 'no-store' });
+    if (!r.ok) return null;
+    return await r.json();
+  }catch{ return null; }
+}
+
+export async function loadExternalTranslations(lang){
+  const urls = fetchCandidates(lang);
+  for (const u of urls){
+    const j = await tryFetch(u);
+    if (j){
+      const payload = j[lang] && typeof j[lang]==='object' ? j[lang] : j;
+      dict[lang] = { ...(dict[lang]||{}), ...(payload||{}) };
+      try{ console.debug('[i18n] loaded', lang, 'from', u, 'keys=', Object.keys(payload||{}).length); }catch{}
+      return;
+    }
+  }
+  try{ console.warn('[i18n] failed to load', lang, 'from', urls); }catch{}
+}
