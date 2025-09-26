@@ -277,76 +277,13 @@ function renderField(field, subsectionData, onValueChange) {
       inp.addEventListener('input', () => emit(inp.value || null)); wrap.appendChild(inp); break;
     }
     case 'select': {
+  const sel = document.createElement('select'); sel.id=id; sel.name=id; sel.className=cls;
   const opts = Array.isArray(field.options) && field.options.length ? field.options : DEFAULT_SELECT;
-  const useCustomMulti = !!field.multiple;
-
-  // helper to inject minimal CSS once
-  const ensureMultiStyles = () => {
-    if (document.getElementById('ms-dropdown-styles')) return;
-    const css = `
-      .ms-btn { display:flex; align-items:center; justify-content:space-between; width:100%; padding:0.5rem 0.75rem; border:1px solid #d1d5db; border-radius:0.5rem; background:#fff; }
-      .ms-btn:focus { outline: 2px solid #3b82f6; outline-offset: 2px; }
-      .ms-menu { position:absolute; z-index:50; margin-top:0.25rem; width:100%; background:#fff; border:1px solid #e5e7eb; border-radius:0.5rem; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -4px rgba(0,0,0,0.1); max-height: 14rem; overflow:auto; }
-      .ms-item { display:flex; align-items:center; gap:0.5rem; padding:0.5rem 0.75rem; cursor:pointer; }
-      .ms-item:hover { background:#f9fafb; }
-      .ms-check { width:1rem; height:1rem; }
-      .hidden { display:none; }
-    `;
-    const style = document.createElement('style');
-    style.id = 'ms-dropdown-styles';
-    style.textContent = css;
-    document.head.appendChild(style);
-  };
-
-  if (useCustomMulti) {
-    ensureMultiStyles();
-    const rel = document.createElement('div'); rel.className = 'relative';
-    const btn = document.createElement('button'); btn.type='button'; btn.id=id; btn.className='ms-btn';
-    const label = document.createElement('span'); label.className='truncate';
-    const caret = document.createElement('span'); caret.innerHTML='▾';
-    btn.appendChild(label); btn.appendChild(caret);
-
-    const cur = new Set(Array.isArray(value) ? value : (value ? [value] : []));
-    const updateLabel = () => {
-      if (cur.size === 0) label.textContent = 'Sélectionner';
-      else if (cur.size <= 2) label.textContent = Array.from(cur).join(', ');
-      else label.textContent = `${cur.size} sélection(s)`;
-    };
-    updateLabel();
-
-    const menu = document.createElement('div'); menu.className='ms-menu hidden';
-    opts.forEach(opt => {
-      const item = document.createElement('label'); item.className='ms-item';
-      const cb = document.createElement('input'); cb.type='checkbox'; cb.className='ms-check'; cb.value=opt; cb.checked = cur.has(opt);
-      const txt = document.createElement('span'); txt.textContent = opt;
-      cb.addEventListener('change', () => {
-        if (cb.checked) cur.add(opt); else cur.delete(opt);
-        updateLabel();
-        emit(Array.from(cur));
-      });
-      item.appendChild(cb); item.appendChild(txt);
-      menu.appendChild(item);
-    });
-
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menu.classList.toggle('hidden');
-    });
-    document.addEventListener('click', () => menu.classList.add('hidden'));
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') menu.classList.add('hidden'); });
-
-    rel.appendChild(btn); rel.appendChild(menu);
-    wrap.appendChild(rel);
-  } else {
-    // plain single-select (native)
-    const sel = document.createElement('select'); sel.id=id; sel.name=id; sel.className=cls;
-    const ph = document.createElement('option'); ph.value=''; ph.textContent='Sélectionner'; sel.appendChild(ph);
-    for (const o of opts) { const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); }
-    if (value) sel.value=value;
-    sel.addEventListener('change', () => emit(sel.value || null));
-    wrap.appendChild(sel);
-  }
-  break;
+  const ph = document.createElement('option'); ph.value=''; ph.textContent='Sélectionner'; sel.appendChild(ph);
+  for (const o of opts) { const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); }
+  if (value) sel.value=value;
+  sel.addEventListener('change', () => emit(sel.value || null));
+  wrap.appendChild(sel); break;
 }
     case 'file': {
   const container = document.createElement('div'); container.className='flex items-center';
