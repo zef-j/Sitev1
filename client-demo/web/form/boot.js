@@ -90,6 +90,7 @@ async function main(){
     const buildingId = (new URLSearchParams(location.search)).get('id') || (window.__buildingMeta && window.__buildingMeta.id) || 'b_1';
     res = api ? await api.getBuildingForm(buildingId) : await fetchFormDirect(buildingId);
     diag('form fetched; keys=', Object.keys(res||{}));
+  try { if (window.setPageTitle) window.setPageTitle(res); } catch(e) {}
   } catch (e) {
     showErr('form fetch error: '+(e?.message||e));
     return;
