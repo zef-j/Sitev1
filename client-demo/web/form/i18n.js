@@ -79,10 +79,17 @@ export function monthLabels(lang = (window.__lang || getLang())){
 }
 
 /* ---------- External JSON loader (single definition) ---------- */
+
+let __i18nBase = null;
+export function setI18nBase(path){ try{ __i18nBase = path && String(path); }catch{} }
+
 function fetchCandidates(lang){
+
   const fromImport = (()=>{ try { return new URL('../i18n/', import.meta.url).href; } catch { return null; } })();
   const baseDoc = (()=>{ try { return new URL('.', document.baseURI || location.href).href; } catch { return null; } })();
   const bases = [
+    __i18nBase,
+        baseDoc && (baseDoc + 'i18n/'),
     fromImport,                         // ../i18n/ relative to module
     baseDoc && (baseDoc + 'i18n/'),     // ./i18n/ next to the current page
     baseDoc && (baseDoc + '../i18n/'),  // ../i18n/ relative to page (root /i18n/)
