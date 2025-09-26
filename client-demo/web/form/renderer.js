@@ -103,12 +103,19 @@ grid.appendChild(fieldEl);
       });
     });
 
-    secEl.querySelector('.section-header')?.addEventListener('click', () => {
-      const c = secEl.querySelector('.section-content'); if (!c) return;
-      c.style.display = (c.style.display === 'none') ? '' : 'none';
-      if (window.AOS && (AOS.refreshHard || AOS.refresh)) setTimeout(() => (AOS.refreshHard ? AOS.refreshHard() : AOS.refresh()), 30);
-      if (window.feather) window.feather.replace();
-    });
+    try{
+      const hdr = secEl.querySelector('.section-header');
+      if (hdr && hdr.addEventListener) {
+        hdr.addEventListener('click', () => {
+          const c = secEl.querySelector('.section-content'); if (!c) return;
+          c.style.display = (c.style.display === 'none') ? '' : 'none';
+          try{
+            if (window.AOS && (AOS.refreshHard || AOS.refresh)) setTimeout(() => (AOS.refreshHard ? AOS.refreshHard() : AOS.refresh()), 30);
+            if (window.feather) window.feather.replace();
+          }catch{}
+        });
+      }
+    }catch{}
 
     form.appendChild(secEl);
   });
@@ -145,7 +152,7 @@ grid.appendChild(fieldEl);
   }
 
   function isOuiNonSelect(field) {
-    return field?.type === 'select' && ( !field.options || field.options.length === 0 ||
+    return (field && field.type) === 'select' && ( !field.options || field.options.length === 0 ||
       field.options.some(o => ['oui','non','yes','no','true','false'].includes(String(o).toLowerCase())) );
   }
   function findRapportController(sub) {
@@ -270,8 +277,8 @@ function renderField(field, subsectionData, onValueChange, ctx) {
       ta.addEventListener('input', () => emit(ta.value)); wrap.appendChild(ta); break;
     }
     case 'number': {
-      const inp = document.createElement('input'); inp.type='number'; inp.step=field.validation?.step ?? 'any'; inp.id=id; inp.name=id; inp.className=cls;
-      inp.value = (value ?? '') + ''; if (field.validation?.min!==undefined) inp.min=field.validation.min; if (field.validation?.max!==undefined) inp.max=field.validation.max;
+      const inp = document.createElement('input'); inp.type='number'; inp.step=field.(validation && validation.step) ?? 'any'; inp.id=id; inp.name=id; inp.className=cls;
+      inp.value = (value ?? '') + ''; if (field.(validation && validation.min)!==undefined) inp.min=field.validation.min; if (field.(validation && validation.max)!==undefined) inp.max=field.validation.max;
       inp.addEventListener('input', () => emit(inp.value === '' ? null : Number(inp.value))); wrap.appendChild(inp); break;
     }
     case 'date': {
@@ -326,9 +333,9 @@ function renderField(field, subsectionData, onValueChange, ctx) {
   const nameSpan = document.createElement('span'); nameSpan.className='ml-3 text-gray-600 text-sm';
   if (Array.isArray(value)) {
     nameSpan.textContent = value.length ? `${value.length} fichier(s)` : '';
-  } else if (value?.originalName) {
+  } else if ((value && value.originalName)) {
     nameSpan.textContent = value.originalName;
-  } else if (value?.name) {
+  } else if ((value && value.name)) {
     nameSpan.textContent = value.name;
   }
 
@@ -440,7 +447,7 @@ case 'monthTable': {
       thead.appendChild(headRow); table.appendChild(thead);
       const tbody=document.createElement('tbody'); const row=document.createElement('tr');
       const labelCell=document.createElement('td'); labelCell.className='px-2 py-1 text-xs text-gray-600'; labelCell.textContent=field.unit?`${field.unit}`:''; row.appendChild(labelCell);
-      months.forEach(m=>{ const td=document.createElement('td'); td.className='px-2 py-1 text-center w-24'; const inp=document.createElement('input'); inp.type='number'; inp.step=field.validation?.step ?? 'any'; inp.className='w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'; inp.value=current[m] ?? ''; inp.addEventListener('input',()=>{ const next={...current,[m]:inp.value===''?null:Number(inp.value)}; emit(next); }); td.appendChild(inp); row.appendChild(td); });
+      months.forEach(m=>{ const td=document.createElement('td'); td.className='px-2 py-1 text-center w-24'; const inp=document.createElement('input'); inp.type='number'; inp.step=field.(validation && validation.step) ?? 'any'; inp.className='w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'; inp.value=current[m] ?? ''; inp.addEventListener('input',()=>{ const next={...current,[m]:inp.value===''?null:Number(inp.value)}; emit(next); }); td.appendChild(inp); row.appendChild(td); });
       tbody.appendChild(row); table.appendChild(tbody); const scroll=document.createElement('div'); scroll.className='overflow-x-auto rounded-md'; scroll.appendChild(table); wrap.appendChild(scroll); break;
     }
     case 'yearTable': {
@@ -454,7 +461,7 @@ case 'monthTable': {
       thead.appendChild(headRow); table.appendChild(thead);
       const tbody=document.createElement('tbody'); const row=document.createElement('tr');
       const labelCell=document.createElement('td'); labelCell.className='px-2 py-1 text-xs text-gray-600'; labelCell.textContent=field.unit?`${field.unit}`:''; row.appendChild(labelCell);
-      years.forEach(y=>{ const td=document.createElement('td'); td.className='px-2 py-1 text-center w-24'; const inp=document.createElement('input'); inp.type='number'; inp.step=field.validation?.step ?? 'any'; inp.className='w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'; inp.value=current[y] ?? ''; inp.addEventListener('input',()=>{ const next={...current,[y]:inp.value===''?null:Number(inp.value)}; emit(next); }); td.appendChild(inp); row.appendChild(td); });
+      years.forEach(y=>{ const td=document.createElement('td'); td.className='px-2 py-1 text-center w-24'; const inp=document.createElement('input'); inp.type='number'; inp.step=field.(validation && validation.step) ?? 'any'; inp.className='w-24 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500'; inp.value=current[y] ?? ''; inp.addEventListener('input',()=>{ const next={...current,[y]:inp.value===''?null:Number(inp.value)}; emit(next); }); td.appendChild(inp); row.appendChild(td); });
       tbody.appendChild(row); table.appendChild(tbody); const scroll=document.createElement('div'); scroll.className='overflow-x-auto rounded-md'; scroll.appendChild(table); wrap.appendChild(scroll); break;
     }
     default: {
