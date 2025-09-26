@@ -284,7 +284,17 @@ function renderField(field, subsectionData, onValueChange, ctx) {
 
   const opts = Array.isArray(field.options) && field.options.length ? field.options : DEFAULT_SELECT;
   const ph = document.createElement('option'); ph.value=''; ph.textContent = t('ui.select','Sélectionner'); if (!field.multiple) sel.appendChild(ph);
-  for (const o of opts) { const op = document.createElement('option'); op.value = o; op.textContent = t(`options.${field.id}.${o}`, o); sel.appendChild(op); }
+  
+  for (const o of opts) {
+    const op = document.createElement('option');
+    const val = (typeof o === 'object' && o !== null) ? (o.value ?? o.id ?? o.key ?? String(o)) : String(o);
+    const rawLabel = (typeof o === 'object' && o !== null) ? (o.label ?? o.text ?? val) : String(o);
+    op.value = val;
+    // i18n: prefer options.<fieldId>.<value>, fallback to raw label
+    try { op.textContent = t(`options.${field.id}.${val}`, rawLabel); } catch { op.textContent = rawLabel; }
+    sel.appendChild(op);
+  }
+    .${o}`, o); sel.appendChild(op); }
 
   // Preselect
   if (field.multiple) {
@@ -312,7 +322,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
 
   const lab = document.createElement('label'); lab.className='inline-flex items-center px-3 py-2 bg-blue-100 border border-blue-300 rounded-md hover:bg-blue-200 text-blue-600 font-medium cursor-pointer';
   lab.setAttribute('for', id);
-  lab.innerHTML = ''; const icon = document.createElement('i'); icon.setAttribute('data-feather','upload'); icon.className='mr-2'; lab.appendChild(icon); const spanText = document.createElement('span'); spanText.setAttribute('data-i18n','ui.chooseFile'); spanText.setAttribute('data-i18n-fallback','Choisir un fichier'); spanText.textContent='Choisir un fichier'; lab.appendChild(spanText);
+  lab.innerHTML = ''; const icon = document.createElement('i'); icon.setAttribute('data-feather','upload'); icon.className='mr-2'; lab.appendChild(icon); const spanText = document.createElement('span'); spanText.setAttribute('data-i18n','ui.chooseFile'); spanText.setAttribute('data-i18n-fallback','Choisir un fichier'); spanText.textContent=t('ui.chooseFile','Choisir un fichier'); lab.appendChild(spanText);
   const nameSpan = document.createElement('span'); nameSpan.className='ml-3 text-gray-600 text-sm';
   if (Array.isArray(value)) {
     nameSpan.textContent = value.length ? `${value.length} fichier(s)` : '';
