@@ -440,5 +440,8 @@
   "months.sep": "Septembre",
   "months.oct": "Octobre",
   "months.nov": "Novembre",
-  "months.dec": "Décembre"
+  "months.dec": "Décembre",
+  "subtitle.energie.production-photovoltaique.pv-subtitle-production-mensuelle": "Production mensuelle",
+  "table.month": "Mois",
+  "table.year": "Année"
 }

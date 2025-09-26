@@ -441,7 +441,7 @@ case 'monthTable': {
       const months = monthKeys(); const labels = monthLabels(); const current=(value&&typeof value==='object')?value:{};
       const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
-      const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent='Mois'; headRow.appendChild(th0);
+      const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent=t('table.month','Mois'); headRow.appendChild(th0);
       months.forEach(m=>{ const th=document.createElement('th'); th.className='px-2 py-1 text-xs font-medium text-gray-600 text-center w-24'; th.textContent=m[0].toUpperCase()+m.slice(1); headRow.appendChild(th); });
       thead.appendChild(headRow); table.appendChild(thead);
       const tbody=document.createElement('tbody'); const row=document.createElement('tr');
@@ -455,7 +455,7 @@ case 'monthTable': {
       const years=Array.isArray(field.years)&&field.years.length?field.years:(()=>{const y=new Date().getFullYear(); return [y-4,y-3,y-2,y-1,y];})();
       const current=(value&&typeof value==='object')?value:{}; const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
-      const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent='Année'; headRow.appendChild(th0);
+      const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent=t('table.year','Année'); headRow.appendChild(th0);
       years.forEach(y=>{ const th=document.createElement('th'); th.className='px-2 py-1 text-xs font-medium text-gray-600 text-center w-24'; th.textContent=String(y); headRow.appendChild(th); });
       thead.appendChild(headRow); table.appendChild(thead);
       const tbody=document.createElement('tbody'); const row=document.createElement('tr');
@@ -470,3 +470,18 @@ case 'monthTable': {
   }
   return wrap;
 }
+
+// Expose a re-render helper so language changes can rebuild all dynamic labels
+try {
+  window.__rerenderForm = function(){
+    try {
+      const ctx = (typeof getCurrentFormContext === 'function') ? getCurrentFormContext() : (__formCtx || {});
+      if (!ctx || !ctx.template) return;
+      // Re-render with the current state so inputs don't get lost
+      renderForm({ template: ctx.template, data: ctx.data, level: ctx.level, onChange: ()=>{} });
+      if (window.feather) window.feather.replace();
+    } catch (e) {
+      console && console.warn && console.warn('rerender failed', e);
+    }
+  };
+} catch(e) {}

@@ -222,3 +222,12 @@ window.setPageTitle = window.setPageTitle || function(res){
     el.textContent = `${f} - ${b}`;
   }catch{}
 };
+
+
+// Re-render dynamic UI on language change so everything updates without a full refresh
+try {
+  window.addEventListener('langchange', () => {
+    try { window.__rerenderForm && window.__rerenderForm(); } catch {}
+    try { translatePage(document); } catch {}
+  });
+} catch {}
