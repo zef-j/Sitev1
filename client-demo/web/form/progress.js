@@ -17,12 +17,14 @@ export function isCompleteValue(field, value) {
     case 'number':
       return typeof value === 'number' && !Number.isNaN(value);
     case 'select':
+      if (field.multiple) return Array.isArray(value) && value.length > 0;
       return String(value).trim() !== '' && value !== 'Sélectionner';
     case 'file':
+      if (Array.isArray(value)) return value.length > 0;
       return typeof value === 'object' ? !!(value.name || value.url) : String(value).trim() !== '';
     case 'monthTable':
-    case 'yearTable':
-      return !!value && typeof value === 'object' && Object.values(value).some(v => v !== null && v !== undefined && v !== '' && !Number.isNaN(Number(v)));
+case 'yearTable':
+  return !!value && typeof value === 'object' && Object.values(value).some(v => v !== null && v !== undefined && String(v).trim() !== '' && !Number.isNaN(Number(v)));
     case 'bool':
       return typeof value === 'boolean';
     default:

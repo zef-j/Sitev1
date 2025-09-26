@@ -89,8 +89,10 @@ export function renderForm({ template, data, level='L1', onChange=()=>{} }) {
       (sub.fields || []).forEach((field) => {
         const fieldPath = `${section.id}.${sub.id}.${field.id}`;
         const fieldEl = renderField(field, getAtPath(state, `${section.id}.${sub.id}`), (value) => {
-          setAtPath(state, fieldPath, value);
-          updateVisibilityForSubsection(secEl, section, sub, state);
+          const _curVal = getAtPath(state, fieldPath);
+const _nextVal = (typeof value === 'function') ? value(_curVal) : value;
+setAtPath(state, fieldPath, _nextVal);
+updateVisibilityForSubsection(secEl, section, sub, state);
           scheduleProgress();
           onChange(clone(state));
         });
@@ -252,7 +254,14 @@ function renderField(field, subsectionData, onValueChange) {
 
   const value = subsectionData ? subsectionData[field.id] : undefined;
   const cls = 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
-  const emit = (v) => onValueChange(v);
+  const emit = (v) => {
+  if (typeof v === 'function') return onValueChange(v);
+  // For tables, treat object values as partial patches and merge into current
+  if ((field.type === 'monthTable' || field.type === 'yearTable') && v && typeof v === 'object' && !Array.isArray(v)) {
+    return onValueChange((prev) => ({ ...(prev && typeof prev === 'object' ? prev : {}), ...v }));
+  }
+  return onValueChange(v);
+};
 
   switch(field.type) {
     case 'textarea': {
@@ -269,47 +278,103 @@ function renderField(field, subsectionData, onValueChange) {
       inp.addEventListener('input', () => emit(inp.value || null)); wrap.appendChild(inp); break;
     }
     case 'select': {
-      const sel = document.createElement('select'); sel.id=id; sel.name=id; sel.className=cls;
-      const opts = Array.isArray(field.options) && field.options.length ? field.options : DEFAULT_SELECT;
-      const ph = document.createElement('option'); ph.value=''; ph.textContent='Sélectionner'; sel.appendChild(ph);
-      for (const o of opts) { const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); }
-      if (value) sel.value=value;
-      sel.addEventListener('change', () => emit(sel.value || null)); wrap.appendChild(sel); break;
+  const sel = document.createElement('select'); sel.id=id; sel.name=id; sel.className=cls;
+  if (field.multiple) sel.multiple = true;
+
+  const opts = Array.isArray(field.options) && field.options.length ? field.options : DEFAULT_SELECT;
+  const ph = document.createElement('option'); ph.value=''; ph.textContent='Sélectionner'; if (!field.multiple) sel.appendChild(ph);
+  for (const o of opts) { const op = document.createElement('option'); op.value=o; op.textContent=o; sel.appendChild(op); }
+
+  // Preselect
+  if (field.multiple) {
+    const arr = Array.isArray(value) ? value : (value ? [value] : []);
+    Array.from(sel.options).forEach(op => { if (arr.includes(op.value)) op.selected = true; });
+  } else {
+    if (value) sel.value=value;
+  }
+
+  sel.addEventListener('change', () => {
+    if (field.multiple) {
+      const arr = Array.from(sel.selectedOptions).map(o => o.value).filter(Boolean);
+      emit(arr.length ? arr : null);
+    } else {
+      emit(sel.value || null);
     }
+  });
+
+  wrap.appendChild(sel); break;
+}
     case 'file': {
   const container = document.createElement('div'); container.className='flex items-center';
   const real = document.createElement('input'); real.type='file'; real.id=id; real.name=id; real.className='hidden';
-  const lab = document.createElement('label'); lab.className='inline-flex items-center px-4 py-2 rounded-lg border border-blue-300 hover:bg-blue-200 text-blue-600 font-medium cursor-pointer';
+  if (field.multiple) real.multiple = true;
+
+  const lab = document.createElement('label'); lab.className='inline-flex items-center px-3 py-2 bg-blue-100 border border-blue-300 rounded-md hover:bg-blue-200 text-blue-600 font-medium cursor-pointer';
   lab.setAttribute('for', id);
   lab.innerHTML = '<i data-feather="upload" class="mr-2"></i>Choisir un fichier';
   const nameSpan = document.createElement('span'); nameSpan.className='ml-3 text-gray-600 text-sm';
-  if (value?.originalName) nameSpan.textContent = value.originalName; else if (value?.name) nameSpan.textContent = value.name;
+  if (Array.isArray(value)) {
+    nameSpan.textContent = value.length ? `${value.length} fichier(s)` : '';
+  } else if (value?.originalName) {
+    nameSpan.textContent = value.originalName;
+  } else if (value?.name) {
+    nameSpan.textContent = value.name;
+  }
 
   const resolvePath = () => {
     const holder = real.closest('[data-fieldpath],[data-field-path]');
-        if (!holder) return '';
-        return holder.getAttribute('data-fieldpath') || holder.getAttribute('data-field-path') || '';
+    if (!holder) return '';
+    return holder.getAttribute('data-fieldpath') || holder.getAttribute('data-field-path') || '';
   };
 
-  real.addEventListener('change', () => {
-    const f = real.files && real.files[0];
-    if (!f) { nameSpan.textContent=''; emit(null); return; }
+  real.addEventListener('change', async () => {
+    const files = Array.from(real.files || []);
     const bId = (window.__buildingMeta && window.__buildingMeta.id) || 'b_1';
     const fieldPath = resolvePath();
-    if (!fieldPath) { console.warn('fieldPath missing on file input wrapper'); nameSpan.textContent=f.name; emit({ name: f.name, size: f.size, mime: f.type || '', url: null }); real.value=''; return; }
-    api.uploadFile(bId, fieldPath, f)
-      .then((res) => {
-        const meta = (res && res.file) ? res.file : { name: f.name, size: f.size, mime: f.type || '', url: null };
-        nameSpan.textContent = meta.originalName || meta.name || f.name;
-        emit(meta);
-      })
-      .catch((err) => {
-        console.warn('upload failed', err);
+
+    if (!files.length) { nameSpan.textContent=''; emit(field.multiple ? [] : null); return; }
+    if (!fieldPath) {
+      console.warn('fieldPath missing on file input');
+      if (field.multiple) {
+        const metas = files.map(f => ({ name: f.name, size: f.size, mime: f.type || '', url: null }));
+        nameSpan.textContent = `${metas.length} fichier(s)`;
+        emit((prev) => {
+          const base = Array.isArray(prev) ? prev : (prev ? [prev] : []);
+          return [...base, ...metas];
+        });
+      } else {
+        const f = files[0];
         nameSpan.textContent = f.name;
         emit({ name: f.name, size: f.size, mime: f.type || '', url: null });
+      }
+      real.value=''; return;
+    }
+
+    const metas = [];
+    for (const f of files) {
+      try {
+        const res = await api.uploadFile(bId, fieldPath, f);
+        metas.push((res && res.file) ? res.file : { name: f.name, size: f.size, mime: f.type || '', url: null });
+      } catch (err) {
+        console.warn('upload failed', err);
+        metas.push({ name: f.name, size: f.size, mime: f.type || '', url: null });
         alert('Échec du téléversement.');
-      })
-      .finally(() => { real.value=''; });
+      }
+    }
+
+    if (field.multiple) {
+      nameSpan.textContent = `${metas.length} fichier(s)`;
+      emit((prev) => {
+        const base = Array.isArray(prev) ? prev : (prev ? [prev] : []);
+        return [...base, ...metas];
+      });
+    } else {
+      const meta = metas[0];
+      nameSpan.textContent = meta.originalName || meta.name;
+      emit(meta);
+    }
+
+    real.value='';
   });
 
   container.appendChild(lab);
