@@ -96,7 +96,7 @@ setAtPath(state, fieldPath, _nextVal);
 updateVisibilityForSubsection(secEl, section, sub, state);
           scheduleProgress();
           onChange(clone(state));
-        });
+        }, { sectionId: section.id, subId: sub.id });
         fieldEl.dataset.fieldPath = fieldPath;
         try { fieldEl.setAttribute('data-fieldpath', fieldPath); } catch {}
 grid.appendChild(fieldEl);

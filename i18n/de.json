@@ -1,7 +1,7 @@
 {
   "section.plans-batiment.title": "Gebäudepläne",
   "subsection.plans-batiment.plans.title": "Pläne",
-  "field.plans-batiment.plans.upload-plans.label": "Veuillez importer les plans du bâtiment disponibles (merci de scanner tous les documents papiers).",
+  "field.plans-batiment.plans.upload-plans.label": "Bitte laden Sie die verfügbaren Gebäudepläne hoch (bitte alle Papierdokumente scannen).",
   "section.informations-generales.title": "Allgemeine Gebäudedaten",
   "subsection.informations-generales.batiment.title": "Gebäude",
   "field.informations-generales.batiment.informations-batiment-zone-protegee.label": "Gebäude in einem Schutzgebiet",

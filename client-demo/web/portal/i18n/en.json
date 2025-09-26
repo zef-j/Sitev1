@@ -1,7 +1,7 @@
 {
   "section.plans-batiment.title": "Building plans",
   "subsection.plans-batiment.plans.title": "Plans",
-  "field.plans-batiment.plans.upload-plans.label": "Veuillez importer les plans du bâtiment disponibles (merci de scanner tous les documents papiers).",
+  "field.plans-batiment.plans.upload-plans.label": "Please upload any available building plans (please scan all paper documents).",
   "section.informations-generales.title": "General building information",
   "subsection.informations-generales.batiment.title": "Building",
   "field.informations-generales.batiment.informations-batiment-zone-protegee.label": "Building located in a protected area",
