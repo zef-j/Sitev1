@@ -257,7 +257,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
 
   if (!['monthTable','yearTable','subtitle'].includes(field.type)) {
     const lbl = document.createElement('label'); lbl.className = 'block text-sm font-medium text-gray-700 mb-1'; lbl.setAttribute('for', id);
-    lbl.innerHTML = (() => { var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id; return escapeHtml(t(__key, field.label || field.id)); })(); wrap.appendChild(lbl);
+    lbl.innerHTML = (() => { var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return escapeHtml(t(__key, field.label || field.id)); })(); wrap.appendChild(lbl);
   }
 
   const value = subsectionData ? subsectionData[field.id] : undefined;
