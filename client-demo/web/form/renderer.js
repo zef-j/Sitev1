@@ -9,6 +9,7 @@ export function getCurrentFormContext(){ return __formCtx; }
 import { isFieldVisible } from './visibility.js';
 import { getAtPath, setAtPath, clone } from './state.js';
 import { computeProgress } from './progress.js';
+import { monthKeys, monthLabels, t } from './i18n.js';
 import { api } from './api.js';
 
 // File upload handler (no visual change)
@@ -421,7 +422,7 @@ function renderField(field, subsectionData, onValueChange) {
 case 'monthTable': {
       wrap.classList.add('md:col-span-2');
       const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=field.label || ''; wrap.appendChild(title);
-      const months=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"]; const current=(value&&typeof value==='object')?value:{};
+      const months = monthKeys(); const labels = monthLabels(); const current=(value&&typeof value==='object')?value:{};
       const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
       const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent='Mois'; headRow.appendChild(th0);

@@ -1,3 +1,4 @@
+import { translatePage, ensureLangSelector } from '../form/i18n.js';
 import { api } from '../form/api.js';
 import { computeProgress } from '../form/progress.js';
 
@@ -17,7 +18,7 @@ async function progressForBuilding(id){
   }
 }
 
-async function loadFoundations(){
+async function loadFoundations(){ try{ ensureLangSelector(document.querySelector('body .flex')||document.body); translatePage(document); }catch{}
   const cont = document.getElementById('list');
   const b = await api.getBuildings();
   const map = new Map();
@@ -38,7 +39,7 @@ async function loadFoundations(){
       </div>
     </a>`;
   }).join('');
-  feather.replace();
+  feather.replace(); try{ translatePage(document); }catch{}
 
   for (const f of items){
     const ps = await Promise.all((f.buildings||[]).map(b => progressForBuilding(b.id)));
@@ -48,7 +49,7 @@ async function loadFoundations(){
   }
 }
 
-async function loadFoundation(){
+async function loadFoundation(){ try{ ensureLangSelector(document.querySelector('body .flex')||document.body); translatePage(document); }catch{}
   const fid = qs('id') || 'f_default';
   const cont = document.getElementById('list');
   const crumb = document.getElementById('crumb-foundation');
@@ -73,7 +74,7 @@ async function loadFoundation(){
       <div class="text-sm text-gray-600">${r.pct}%</div>
     </div>
   </a>`).join('');
-  feather.replace();
+  feather.replace(); try{ translatePage(document); }catch{}
 }
 
 if (location.pathname.endsWith('index.html')) loadFoundations(); else loadFoundation();

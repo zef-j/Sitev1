@@ -1,3 +1,5 @@
+import { translatePage, ensureLangSelector, getLang, setLang } from './i18n.js';
+
 window.__ensureHomeLink = window.__ensureHomeLink || function(){
   try{
     if (document.getElementById('home-link')) return;
@@ -77,6 +79,7 @@ async function fetchFormDirect(buildingId){
 };;
 
 async function main(){
+  try{ ensureLangSelector(document.querySelector('header .flex.items-center.space-x-4')?.parentElement || document.querySelector('header .container .flex')); translatePage(document); }catch{}
   let api = null;
   try {
     api = (await import('./api.js')).api;
@@ -202,7 +205,7 @@ renderFallbackSections(res.template);
     showErr('renderForm error: ' + (e?.message||e));
   } finally {
     const marker = document.getElementById('boot-marker');
-    if (marker) marker.remove();
+    if (marker) marker.remove(); try{ translatePage(document); }catch{}
   }
 };
 
