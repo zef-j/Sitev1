@@ -1,0 +1,2454 @@
+{
+  "version": "2025.09.2-1711",
+  "i18n": {
+    "default": "fr"
+  },
+  "sections": [
+    {
+      "id": "plans-batiment",
+      "title": "Plans du bâtiment",
+      "icon": "file-text",
+      "subsections": [
+        {
+          "id": "plans",
+          "title": "Plans",
+          "fields": [
+            {
+              "id": "upload-plans",
+              "label": "Veuillez importer les plans du bâtiment disponibles (merci de scanner tous les documents papiers).",
+              "type": "file",
+              "level": "L1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "informations-generales",
+      "title": "Informations générales du bâtiment",
+      "icon": "folder",
+      "subsections": [
+        {
+          "id": "batiment",
+          "title": "Bâtiment",
+          "icon": "layers",
+          "fields": [
+            {
+              "id": "informations-batiment-zone-protegee",
+              "label": "Bâtiment construit sur une zone protégée",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-adresse",
+              "label": "Adresse",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-annee-construction",
+              "label": "Année de construction",
+              "type": "date",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-proprietaire",
+              "label": "Propriétaire",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-egid",
+              "label": "N° EGID",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-denomination",
+              "label": "Dénomination du bâtiment",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-etages-hors-sol",
+              "label": "Nombre d’étage(s) Hors-Sol",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-etages-sous-sol",
+              "label": "Nombre d’étage(s) Sous-Sol",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-sre",
+              "label": "SRE : Surface de Référence Energétique [m²]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-snp",
+              "label": "SNP : Surface Nette de Plancher totale [m²]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-places-parc",
+              "label": "Nombre de places de parc",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-places-parc-recharge",
+              "label": "Nombre de places de parc équipées recharge",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-valeur-assurance",
+              "label": "Valeur d’assurance [CHF]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-derniere-renovation-date",
+              "label": "Date de la dernière rénovation importante",
+              "type": "date",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-derniere-renovation-nature",
+              "label": "Nature de la dernière rénovation importante",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-remarques",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "energie",
+      "title": "Énergie",
+      "icon": "zap",
+      "subsections": [
+        {
+          "id": "consommation-electrique",
+          "title": "Relevés de la consommation électrique",
+          "icon": "activity",
+          "fields": [
+            {
+              "id": "consommation-electrique-kwh",
+              "label": "Consommation électrique [kWh/années]",
+              "type": "yearTable",
+              "years": [
+                2020,
+                2021,
+                2022,
+                2023,
+                2024
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "prix-consommation-electrique",
+              "label": "Prix consommation électrique [CHF/années]",
+              "type": "yearTable",
+              "years": [
+                2020,
+                2021,
+                2022,
+                2023,
+                2024
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "objectif-federal-electrique",
+              "label": "Objectif fédéral consommation électrique [kWh/années]",
+              "type": "yearTable",
+              "years": [
+                2020,
+                2025,
+                2030,
+                2035,
+                2040,
+                2045,
+                2050
+              ],
+              "level": "L2"
+            },
+            {
+              "id": "remarques-consommation-electrique",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        },
+        {
+          "id": "consommation-thermique",
+          "title": "Relevés de la consommation thermique",
+          "icon": "thermometer",
+          "fields": [
+            {
+              "id": "consommation-thermique-kwh",
+              "label": "Consommation thermique [kWh/années]",
+              "type": "yearTable",
+              "years": [
+                2020,
+                2021,
+                2022,
+                2023,
+                2024
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "prix-consommation-thermique",
+              "label": "Prix consommation thermique [CHF/années]",
+              "type": "yearTable",
+              "years": [
+                2020,
+                2021,
+                2022,
+                2023,
+                2024
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "objectif-federal-thermique",
+              "label": "Objectif fédéral consommation thermique [kWh/années]",
+              "type": "yearTable",
+              "years": [
+                2020,
+                2025,
+                2030,
+                2035,
+                2040,
+                2045,
+                2050
+              ],
+              "level": "L2"
+            },
+            {
+              "id": "remarques-consommation-thermique",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        },
+        {
+          "id": "production-photovoltaique",
+          "title": "Production photovoltaïque",
+          "icon": "sun",
+          "fields": [
+            {
+              "id": "pv-subtitle-installation",
+              "type": "subtitle",
+              "text": "Installation photovoltaïque",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "puissance-instal-kWc",
+              "label": "Puissance crête installée [kWc]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "potentiel-production-annuel",
+              "label": "Potentiel de production annuel [kWh]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "estimation-budgetaire",
+              "label": "Estimation budgétaire [CHF]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "taux-autoconsommation",
+              "label": "Taux d'autoconsommation [%]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "gain-annuel",
+              "label": "Gain moyen annuel [CHF]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "roi",
+              "label": "Retour sur investissement [CHF]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "remarques-photovoltaique",
+              "label": "Remarques",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
+              "id": "pv-subtitle-prod-mensuelle",
+              "type": "subtitle",
+              "text": "Production mensuelle",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "production-mensuelle",
+              "label": "Production mensuelle [kWh]",
+              "type": "monthTable",
+              "unit": "kWh",
+              "level": "L1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analyse-thermique",
+      "title": "Analyse thermique de l’ouvrage",
+      "icon": "thermometer-snowflake",
+      "subsections": [
+        {
+          "id": "enveloppe-batiment",
+          "title": "Enveloppe du bâtiment",
+          "fields": [
+            {
+              "id": "env-subtitle-rapports",
+              "type": "subtitle",
+              "text": "Rapports",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "rapport-cecb",
+              "label": "Existe-t-il un rapport CECB/CECB+ ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "rapport-cecb-file",
+              "label": "Upload rapport CECB/CECB+",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.enveloppe-batiment.rapport-cecb",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "rapport-energetique",
+              "label": "Existe-t-il d'autres rapports énergétiques (audit PEIK etc.) ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "rapport-energetique-file",
+              "label": "Upload autres rapports énergétiques",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.enveloppe-batiment.rapport-energetique",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "env-subtitle-toiture",
+              "type": "subtitle",
+              "text": "Toiture",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "toiture-date",
+              "label": "Date de la dernière réfection toiture",
+              "type": "date",
+              "level": "L1"
+            },
+            {
+              "id": "toiture-materiaux",
+              "label": "Type de matériaux toiture",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "toiture-isolation-type",
+              "label": "Isolation toiture : type de matériaux",
+              "type": "select",
+              "options": [
+                "Isolants minéraux",
+                "Isolants synthétiques",
+                "Isolants biosourcés",
+                "Autres"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "toiture-isolation-epaisseur",
+              "label": "Isolation toiture : épaisseur (cm)",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "env-subtitle-murs-ext",
+              "type": "subtitle",
+              "text": "Murs extérieurs",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "murs-ext-materiaux",
+              "label": "Matériau principal murs extérieurs",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "murs-ext-isolation-type",
+              "label": "Isolation murs extérieurs : type de matériaux",
+              "type": "select",
+              "options": [
+                "Isolants minéraux",
+                "Isolants synthétiques",
+                "Isolants biosourcés",
+                "Autres",
+                "Pas d’isolation"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "murs-ext-isolation-epaisseur",
+              "label": "Isolation murs extérieurs : épaisseur (cm)",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "env-subtitle-fenetres",
+              "type": "subtitle",
+              "text": "Fenêtres",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "fenetres-annee",
+              "label": "Année de pose des fenêtres",
+              "type": "date",
+              "level": "L1"
+            },
+            {
+              "id": "fenetres-vitrage",
+              "label": "Type de vitrage",
+              "type": "select",
+              "options": [
+                "Simple",
+                "Double",
+                "Triple"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "fenetres-joints",
+              "label": "État des joints (note 0–10)",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "fenetres-menuiseries",
+              "label": "Type de menuiseries",
+              "type": "select",
+              "options": [
+                "Bois",
+                "Alu",
+                "PVC",
+                "Bois+alu",
+                "Bois+PVC",
+                "Autres"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "env-subtitle-murs-int",
+              "type": "subtitle",
+              "text": "Murs intérieurs",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "murs-int-materiaux",
+              "label": "Matériau principal murs intérieurs",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "murs-int-isolation-type",
+              "label": "Isolation murs intérieurs : type de matériaux",
+              "type": "select",
+              "options": [
+                "Isolants minéraux",
+                "Isolants synthétiques",
+                "Isolants biosourcés",
+                "Autres",
+                "Pas d’isolation"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "murs-int-isolation-epaisseur",
+              "label": "Isolation murs intérieurs : épaisseur (cm)",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "env-subtitle-planchers",
+              "type": "subtitle",
+              "text": "Planchers",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "plancher-type",
+              "label": "Type de plancher",
+              "type": "select",
+              "options": [
+                "Chauffant",
+                "Sur terrain",
+                "Sur local non chauffé",
+                "Autre"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "plancher-isolation",
+              "label": "Isolation sous le plancher",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "env-subtitle-remarques",
+              "type": "subtitle",
+              "text": "Remarques et compléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "remarques-enveloppe",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        },
+        {
+          "id": "systemes-techniques",
+          "title": "Systèmes techniques et confort généré",
+          "fields": [
+            {
+              "id": "sys-subtitle-chauffage",
+              "type": "subtitle",
+              "text": "Chauffage",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "chauffage-schema",
+              "label": "Existe-t-il un schéma de l'installation de production/distribution de chaleur ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-schema-file",
+              "label": "Upload schéma installation (si disponible)",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.systemes-techniques.chauffage-schema",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "chauffage-type-systeme",
+              "label": "Type de système de chauffage",
+              "type": "select",
+              "options": [
+                "Chaudière gaz",
+                "Chaudière mazout",
+                "PAC air-eau",
+                "PAC géothermique",
+                "Chauffage à distance",
+                "Autre"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-puissance",
+              "label": "Puissance de l’installation [kW]",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-etat",
+              "label": "État général de l’installation chauffage",
+              "type": "select",
+              "options": [
+                "Bon",
+                "Moyen",
+                "Dégradé",
+                "NSP"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-annee-installation",
+              "label": "Année d’installation chauffage",
+              "type": "date",
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-rendement",
+              "label": "Rendement ou label énergétique",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-emetteurs",
+              "label": "Type d’émetteurs",
+              "type": "select",
+              "options": [
+                "Radiateurs",
+                "Plancher chauffant",
+                "Convecteurs",
+                "Autres"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-regulation",
+              "label": "Régulation",
+              "type": "select",
+              "options": [
+                "Sonde extérieure",
+                "Thermostats pièce",
+                "Vannes thermostatiques",
+                "Aucune"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-ecs",
+              "type": "subtitle",
+              "text": "ECS",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "ecs-type",
+              "label": "Production d’eau chaude sanitaire (ECS) - type producteur",
+              "type": "select",
+              "options": [
+                "Boiler électrique",
+                "Solaire thermique",
+                "Chaudière gaz",
+                "Chaudière mazout",
+                "PAC air-eau",
+                "PAC géothermique",
+                "Chauffage à distance",
+                "Autre",
+                "NSP"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "ecs-integree",
+              "label": "Production d’eau chaude sanitaire intégrée au chauffage ou séparée ?",
+              "type": "select",
+              "options": [
+                "Intégrée",
+                "Séparée"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-ventilation",
+              "type": "subtitle",
+              "text": "Ventilation",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "ventilation-type",
+              "label": "Type de ventilation",
+              "type": "select",
+              "options": [
+                "Naturel",
+                "Simple flux",
+                "Double flux",
+                "Récupération de chaleur",
+                "Aucun",
+                "NSP"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "ventilation-debit",
+              "label": "Ventilation - débit [m³/h]",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "ventilation-annee",
+              "label": "Année d’installation ventilation",
+              "type": "date",
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-refroidissement",
+              "type": "subtitle",
+              "text": "Refroidissement",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "refroidissement-present",
+              "label": "Refroidissement présent ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "refroidissement-type",
+              "label": "Refroidissement : type",
+              "type": "select",
+              "options": [
+                "PAC",
+                "Free cooling",
+                "Récupération d'énergie",
+                "Climatiseur (split)"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-eclairage",
+              "type": "subtitle",
+              "text": "Éclairage",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "eclairage-type",
+              "label": "Éclairage : type",
+              "type": "select",
+              "options": [
+                "LED",
+                "Fluorescent",
+                "Halogène",
+                "Autres"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-confort",
+              "type": "subtitle",
+              "text": "Confort",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "comfort-hiver",
+              "label": "Températures intérieures en hiver",
+              "type": "select",
+              "options": [
+                "Confort",
+                "Surchauffe",
+                "Froid"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-hiver-valeur",
+              "label": "Température intérieure en hiver [°C]",
+              "type": "number",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.systemes-techniques.comfort-hiver",
+                      "Valeur °C"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "comfort-ete",
+              "label": "Températures intérieures en été",
+              "type": "select",
+              "options": [
+                "Confort",
+                "Surchauffe",
+                "Froid"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-ete-valeur",
+              "label": "Température intérieure en été [°C]",
+              "type": "number",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.systemes-techniques.comfort-ete",
+                      "Valeur °C"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "comfort-humidite",
+              "label": "Présence d’humidité",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-moisissures",
+              "label": "Présence de moisissures",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-etancheite",
+              "label": "Problèmes d’étanchéité",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-bruit",
+              "label": "Bruit lié aux installations techniques",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-remarques",
+              "type": "subtitle",
+              "text": "Remarques et compléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "remarques-techniques",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        },
+        {
+          "id": "maintenance-entretien",
+          "title": "Maintenance et entretien",
+          "fields": [
+            {
+              "id": "mnt-subtitle-rapport",
+              "type": "subtitle",
+              "text": "Rapport de maintenance",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "maintenance-rapport",
+              "label": "Rapport de maintenance",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "maintenance-rapport-file",
+              "label": "Upload rapport de maintenance",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.maintenance-entretien.maintenance-rapport",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "mnt-subtitle-journaux",
+              "type": "subtitle",
+              "text": "Journaux d’entretien",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "journal-entretien-chauffage",
+              "label": "Journal d’entretien chauffage disponible ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "journal-entretien-ventilation",
+              "label": "Journal d’entretien ventilation disponible ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "journal-entretien-electricite",
+              "label": "Journal d’entretien électricité disponible ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "journal-entretien-ascenseurs",
+              "label": "Journal d’entretien ascenseurs disponible ?",
+              "type": "date",
+              "level": "L1"
+            },
+            {
+              "id": "journal-entretien-plomberie",
+              "label": "Journal d’entretien plomberie disponible ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "mnt-subtitle-autres",
+              "type": "subtitle",
+              "text": "Autres éléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "autres-doc-maintenance",
+              "label": "Autres documents de maintenance à partager",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "equipements-defaillants",
+              "label": "Équipements sujets à défaillance nécessitant un suivi",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "mnt-subtitle-remarques",
+              "type": "subtitle",
+              "text": "Remarques et compléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "remarques-maintenance",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "diagnostic-securite",
+      "title": "Diagnostic sécurité de l'ouvrage",
+      "icon": "alert-triangle",
+      "subsections": [
+        {
+          "id": "etude-sismique",
+          "title": "Étude sismique",
+          "fields": [
+            {
+              "id": "sism-subtitle-rapport",
+              "type": "subtitle",
+              "text": "Rapport",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "rapport-sismique",
+              "label": "Existe-t-il un rapport lié à l'état sismique du lieu ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "rapport-sismique-file",
+              "label": "Upload du rapport",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sism-subtitle-structure",
+              "type": "subtitle",
+              "text": "Structure porteuse",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "materiau-principal",
+              "label": "Matériau principal porteur",
+              "type": "select",
+              "options": [
+                "Béton armé",
+                "Béton non armé",
+                "Maçonnerie",
+                "Bois",
+                "Acier",
+                "Mixte",
+                "Autre"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sism-subtitle-fondations",
+              "type": "subtitle",
+              "text": "Fondations et sol",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "type-sol",
+              "label": "Type de sol (si connu)",
+              "type": "select",
+              "options": [
+                "Roche",
+                "Grave compact",
+                "Argile",
+                "Remblai",
+                "Inconnu"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "pathologies",
+              "label": "Pathologies visibles / Fissures structurelles observées",
+              "type": "select",
+              "options": [
+                "Aucune",
+                "Fissures légères",
+                "Fissures importantes",
+                "Tassements"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sism-subtitle-elements",
+              "type": "subtitle",
+              "text": "Éléments non-structuraux",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "equipements-lourds",
+              "label": "Équipements lourds non ancrés (citernes, gaines, HVAC)",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sism-subtitle-autres",
+              "type": "subtitle",
+              "text": "Autres informations",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "zone-sismicite",
+              "label": "Zone de sismicité cantonale",
+              "type": "select",
+              "options": [
+                "Faible",
+                "Modérée",
+                "Forte"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "travaux-structuraux-annee",
+              "label": "Année des derniers travaux structuraux",
+              "type": "date",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "nature-modifs",
+              "label": "Nature des modifications des derniers travaux structuraux",
+              "type": "select",
+              "options": [
+                "Agrandissement",
+                "Surélévation",
+                "Transformation",
+                "Aucun"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "travaux-renforcement",
+              "label": "Nature des travaux de renforcement structurel effectués",
+              "type": "select",
+              "options": [
+                "Fondations",
+                "Murs porteurs",
+                "Toiture",
+                "Aucun"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sism-subtitle-remarques",
+              "type": "subtitle",
+              "text": "Remarques et compléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "remarques-sismiques",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.etude-sismique.rapport-sismique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "amiante",
+          "title": "Diagnostic amiante",
+          "fields": [
+            {
+              "id": "ami-subtitle-rapport",
+              "type": "subtitle",
+              "text": "Rapport",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "rapport-amiante",
+              "label": "Existe-t-il un rapport lié à l'amiante suspectée dans le bâtiment ou votre construction date t'elle d'après 1990 ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "rapport-amiante-file",
+              "label": "Upload du rapport",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ami-subtitle-interieur",
+              "type": "subtitle",
+              "text": "Matériaux intérieurs",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "presence-amiante-interieur",
+              "label": "Présence de matériaux amiantés à l’intérieur ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "elements-concernes-interieur",
+              "label": "Principaux éléments intérieurs concernés (si connus)",
+              "type": "select",
+              "options": [
+                "Cloisons",
+                "Plafonds",
+                "Sols",
+                "Autres"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ami-subtitle-exterieur",
+              "type": "subtitle",
+              "text": "Matériaux extérieurs",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "presence-amiante-exterieur",
+              "label": "Présence de matériaux amiantés à l’extérieur ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "elements-concernes-exterieur",
+              "label": "Principaux éléments extérieurs concernés (si connus)",
+              "type": "select",
+              "options": [
+                "Toiture",
+                "Façades",
+                "Conduites",
+                "Autres"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ami-subtitle-etat-interv",
+              "type": "subtitle",
+              "text": "État et interventions",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "etat-materiaux",
+              "label": "État général des matériaux amiantés",
+              "type": "select",
+              "options": [
+                "Bon (intact)",
+                "Moyen (usure légère)",
+                "Dégradé (cassant, fissuré)"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "risque-exposition",
+              "label": "Risque d’exposition",
+              "type": "select",
+              "options": [
+                "Faible",
+                "Moyen",
+                "Élevé"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "travaux-prevoir",
+              "label": "Travaux à prévoir",
+              "type": "select",
+              "options": [
+                "Aucun",
+                "Encapsulation",
+                "Retrait partiel",
+                "Retrait complet"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "horizon-intervention",
+              "label": "Horizon d’intervention",
+              "type": "select",
+              "options": [
+                "Court terme (< 1 an)",
+                "Moyen terme (1–5 ans)",
+                "Long terme (> 5 ans)"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ami-subtitle-remarques",
+              "type": "subtitle",
+              "text": "Remarques et compléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "remarques-amiante",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.amiante.rapport-amiante",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "incendie",
+          "title": "Sécurité incendie et chemin de fuite",
+          "fields": [
+            {
+              "id": "inc-subtitle-rapport",
+              "type": "subtitle",
+              "text": "Rapport",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "rapport-incendie",
+              "label": "Existe-t-il un rapport lié à la sécurité incendie ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "rapport-incendie-file",
+              "label": "Upload du rapport",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "inc-subtitle-equipements",
+              "type": "subtitle",
+              "text": "Équipements & protections",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "detection-alarme",
+              "label": "Équipement de détection et alarme incendie",
+              "type": "select",
+              "options": [
+                "Suffisant",
+                "Insuffisant",
+                "Inexistant",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "portes-coupe-feu",
+              "label": "Portes coupe-feu installées et fonctionnelles",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Partiellement",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "desenfumage",
+              "label": "Présence d’un système de désenfumage",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "equipements-incendie",
+              "label": "Équipements de lutte contre l’incendie",
+              "type": "select",
+              "options": [
+                "Extincteurs portatifs",
+                "Dévidoirs à tuyaux",
+                "Sprinklers automatiques",
+                "Aucun",
+                "Autres"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "protections-specifiques",
+              "label": "Protections spécifiques des locaux à risques (chaufferie, parking)",
+              "type": "select",
+              "options": [
+                "Suffisant",
+                "Insuffisant",
+                "Inexistant",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "inc-subtitle-evacuation",
+              "type": "subtitle",
+              "text": "Chemins de fuite & issues",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "chemins-fuite",
+              "label": "État des chemins de fuite",
+              "type": "select",
+              "options": [
+                "Suffisant",
+                "Insuffisant",
+                "Inexistant",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "escaliers-secours",
+              "label": "Escaliers de secours accessibles et dégagés",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "signalisation-eclairage",
+              "label": "Signalisation & éclairage de sécurité des issues",
+              "type": "select",
+              "options": [
+                "Suffisant",
+                "Insuffisant",
+                "Inexistant",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "inc-subtitle-remarques",
+              "type": "subtitle",
+              "text": "Remarques et compléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "remarques-incendie",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.incendie.rapport-incendie",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "accessibilite-handicap",
+          "title": "Accessibilité pour les personnes en situation de handicap",
+          "fields": [
+            {
+              "id": "acc-subtitle-rapport",
+              "type": "subtitle",
+              "text": "Rapport",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "rapport-accessibilite",
+              "label": "Existe-t-il un rapport lié au respect des normes Handicapés ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "rapport-accessibilite-file",
+              "label": "Upload du rapport",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "acc-subtitle-acces",
+              "type": "subtitle",
+              "text": "Accès & cheminements",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "acces-exterieur",
+              "label": "Accès extérieur et stationnement adaptés ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "cheminements-interieurs",
+              "label": "Cheminements intérieurs (pentes, rampes, ressauts) ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "acc-subtitle-equipements",
+              "type": "subtitle",
+              "text": "Équipements & circulations",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "portes-couloirs",
+              "label": "Portes et couloirs suffisamment larges ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "zones-manoeuvre",
+              "label": "Zones de manœuvre (espaces de retournement Ø1.50 m) ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "ascenseur",
+              "label": "Ascenseur accessible ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "sanitaires",
+              "label": "Sanitaires accessibles ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "acc-subtitle-signaletique",
+              "type": "subtitle",
+              "text": "Signalétique & sécurité",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "signaletique-contrastes",
+              "label": "Signalétique et contrastes visuels/tactiles adaptés ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "escaliers-securises",
+              "label": "Escaliers sécurisés (mains courantes, nez de marche) ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "issues-evacuation",
+              "label": "Issues et évacuation accessibles ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non",
+                "NSP"
+              ],
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "diagnostic-securite.accessibilite-handicap.rapport-accessibilite",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
