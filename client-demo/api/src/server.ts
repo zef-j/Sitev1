@@ -148,8 +148,32 @@ function logEvent(meta: BuildingMeta, evt: string, dataVersion: number, extra: a
 
 // Load active template
 function getActiveTemplate() {
-  const p = path.join(DATA_ROOT, 'templates', 'active.json');
-  const tpl = readJSON(p, {});
+  // Prefer project-root active.json (next to template.example.json), then project-root template files,
+  // finally fall back to DATA_ROOT/templates/active.json for backward compatibility.
+  const rootCandidates = [
+    // active.json at project root (the preferred, git-versioned file)
+    path.resolve(process.cwd(), '../active.json'),
+    path.resolve(process.cwd(), '../../active.json'),
+    path.resolve(process.cwd(), '../../../active.json'),
+    // template.example.json (dot) at project root
+    path.resolve(process.cwd(), '../template.example.json'),
+    path.resolve(process.cwd(), '../../template.example.json'),
+    path.resolve(process.cwd(), '../../../template.example.json'),
+    // template_example.json (underscore) at project root (if you use this naming)
+    path.resolve(process.cwd(), '../template_example.json'),
+    path.resolve(process.cwd(), '../../template_example.json'),
+    path.resolve(process.cwd(), '../../../template_example.json'),
+  ];
+  for (const p of rootCandidates) {
+    if (fs.existsSync(p)) {
+      return readJSON(p, {});
+    }
+  }
+  // Legacy fallback: DATA_ROOT/templates/active.json
+  const legacy = path.join(DATA_ROOT, 'templates', 'active.json');
+  return readJSON(legacy, { version: 'dev', sections: [] });
+}
+);
   return tpl;
 }
 

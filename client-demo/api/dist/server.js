@@ -124,8 +124,28 @@ function logEvent(meta, evt, dataVersion, extra = {}) {
 }
 // Load active template
 function getActiveTemplate() {
-    const p = path.join(DATA_ROOT, 'templates', 'active.json');
-    const tpl = readJSON(p, {});
+    // Prefer project-root active.json (next to template.example.json), then project-root template files,
+    // finally fall back to DATA_ROOT/templates/active.json for backward compatibility.
+    const rootCandidates = [
+        path.resolve(process.cwd(), '../active.json'),
+        path.resolve(process.cwd(), '../../active.json'),
+        path.resolve(process.cwd(), '../../../active.json'),
+        path.resolve(process.cwd(), '../template.example.json'),
+        path.resolve(process.cwd(), '../../template.example.json'),
+        path.resolve(process.cwd(), '../../../template.example.json'),
+        path.resolve(process.cwd(), '../template_example.json'),
+        path.resolve(process.cwd(), '../../template_example.json'),
+        path.resolve(process.cwd(), '../../../template_example.json'),
+    ];
+    for (const p of rootCandidates) {
+        if (fs.existsSync(p)) {
+            return readJSON(p, {});
+        }
+    }
+    const legacy = path.join(DATA_ROOT, 'templates', 'active.json');
+    return readJSON(legacy, { version: 'dev', sections: [] });
+}
+);
     return tpl;
 }
 // Ensure current.json exists for building
