@@ -12,21 +12,6 @@ import { computeProgress } from './progress.js';
 import { monthKeys, monthLabels, t } from './i18n.js';
 import { api } from './api.js';
 
-
-// --- Legacy value coercion (for template type changes) ---------------------
-function coerceNumberInputValue(v) {
-  if (v === null || v === undefined) return '';
-  if (typeof v === 'number' && isFinite(v)) return String(v);
-  if (typeof v === 'string') {
-    // Accept: "YYYY-MM-DD" or "YYYY"
-    const mYear = v.match(/^(\d{4})(?:-\d{2}-\d{2})?$/);
-    if (mYear) return mYear[1];
-    // Extract first number (e.g., "1 200 m3/h" -> "1200")
-    const mNum = v.replace(/\s+/g,'').match(/-?\d+(?:\.\d+)?/);
-    if (mNum) return mNum[0];
-  }
-  return '';
-}
 // File upload handler (no visual change)
 async function handleFileUpload(ev, fieldPath) {
   const input = ev.target;
@@ -227,16 +212,12 @@ grid.appendChild(fieldEl);
       if (rapportCtrl) {
         if (choice === 'oui') {
           const designated = uploadField && field.id === uploadField.id;
-          const alsoShow = (field.style && field.style.showWhenRapportOui === true) || /-notes$/.test(String(field.id||''));
-          visible = (field.id === rapportCtrl.id) || (designated && !uploadShown) || alsoShow;
+          visible = (field.id === rapportCtrl.id) || (designated && !uploadShown);
           if (designated && !uploadShown) uploadShown = true;
         } else if (choice === 'non') {
           const isFile = field.type === 'file';
           const isOtherRapport = looksRapportButNotController(field, rapportCtrl);
-          // Allow flagged fields even when Non (e.g., extra uploads or notes)
-          const alsoShow = (field.style && (field.style.showWhenRapportOui === true || field.style.showWhenRapportNon === true))
-                           || /-notes$/.test(String(field.id||''));
-          visible = (field.id === rapportCtrl.id) || (!isFile && !isOtherRapport) || alsoShow;
+          visible = (field.id === rapportCtrl.id) || (!isFile && !isOtherRapport);
         } else {
           visible = field.id === rapportCtrl.id;
         }
@@ -350,7 +331,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
   lab.innerHTML = ''; const icon = document.createElement('i'); icon.setAttribute('data-feather','upload'); icon.className='mr-2'; lab.appendChild(icon); const spanText = document.createElement('span'); spanText.setAttribute('data-i18n','ui.chooseFile'); spanText.setAttribute('data-i18n-fallback','Choisir un fichier'); spanText.textContent=t('ui.chooseFile','Choisir un fichier'); lab.appendChild(spanText);
   const nameSpan = document.createElement('span'); nameSpan.className='ml-3 text-gray-600 text-sm';
   if (Array.isArray(value)) {
-    nameSpan.textContent = value.length ? `${value.length} fichier(s)` : '';
+    nameSpan.textContent = value.length ? `${value.length} ${t('ui.files','fichier(s)')}` : '';
   } else if ((value && value.originalName)) {
     nameSpan.textContent = value.originalName;
   } else if ((value && value.name)) {
@@ -373,7 +354,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
       console.warn('fieldPath missing on file input');
       if (field.multiple) {
         const metas = files.map(f => ({ name: f.name, size: f.size, mime: f.type || '', url: null }));
-        nameSpan.textContent = `${metas.length} fichier(s)`;
+        nameSpan.textContent = `${metas.length} ${t('ui.files','fichier(s)')}`;
         emit((prev) => {
           const base = Array.isArray(prev) ? prev : (prev ? [prev] : []);
           return [...base, ...metas];
@@ -399,7 +380,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
     }
 
     if (field.multiple) {
-      nameSpan.textContent = `${metas.length} fichier(s)`;
+      nameSpan.textContent = `${metas.length} ${t('ui.files','fichier(s)')}`;
       emit((prev) => {
         const base = Array.isArray(prev) ? prev : (prev ? [prev] : []);
         return [...base, ...metas];
@@ -427,7 +408,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
       const div = document.createElement('div');
       div.className = subtitleClasses(style);
       if (showText) {
-        const txt = (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id; return String(t(__key, field.text ?? field.label ?? field.id ?? '')).trim(); })();
+        const txt = (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var kField='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; var v=t(kField,''); if(v){ try{div.setAttribute('data-i18n',kField); div.setAttribute('data-i18n-fallback', field.text ?? field.label ?? field.id ?? ''); }catch{} return v; } var kSub='subtitle.'+__sec+'.'+__sub+'.'+field.id; try{ div.setAttribute('data-i18n',kSub); div.setAttribute('data-i18n-fallback', field.text ?? field.label ?? field.id ?? ''); }catch{} return t(kSub, field.text ?? field.label ?? field.id ?? ''); })();
         const el = document.createElement(style.as || 'div'); try{ el.setAttribute('data-i18n', `subtitle.${section.id}.${sub.id}.${field.id}`); el.setAttribute('data-i18n-fallback', txt); }catch{}
         el.className = (style.as === 'h3' || style.as === 'h4') ? '' : '';
         el.textContent = txt;
@@ -456,12 +437,12 @@ function renderField(field, subsectionData, onValueChange, ctx) {
     }
 case 'monthTable': {
       wrap.classList.add('md:col-span-2');
-      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id;return t(__key, field.label || '');})(); wrap.appendChild(title);
+      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.setAttribute('data-i18n', (function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; return 'field.'+__sec+'.'+__sub+'.'+field.id+'.label';})()); title.setAttribute('data-i18n-fallback', field.label || ''); title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return t(__key, field.label || '');})(); wrap.appendChild(title);
       const months = monthKeys(); const labels = monthLabels(); const current=(value&&typeof value==='object')?value:{};
       const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
-      const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent=t('table.month','Mois'); headRow.appendChild(th0);
-      months.forEach(m=>{ const th=document.createElement('th'); th.className='px-2 py-1 text-xs font-medium text-gray-600 text-center w-24'; th.textContent=m[0].toUpperCase()+m.slice(1); headRow.appendChild(th); });
+      const th0=document.createElement('th'); th0.className='px-2 py-2 text-left font-medium text-gray-700 w-24'; th0.setAttribute('data-i18n','table.month'); th0.setAttribute('data-i18n-fallback','Mois'); th0.textContent=t('table.month','Mois'); headRow.appendChild(th0);
+      months.forEach((m, idx) => { const th=document.createElement('th'); th.className='px-2 py-2 text-left font-medium text-gray-700 w-20'; th.textContent = labels[idx] || m; headRow.appendChild(th); });
       thead.appendChild(headRow); table.appendChild(thead);
       const tbody=document.createElement('tbody'); const row=document.createElement('tr');
       const labelCell=document.createElement('td'); labelCell.className='px-2 py-1 text-xs text-gray-600'; labelCell.textContent=field.unit?`${field.unit}`:''; row.appendChild(labelCell);
@@ -470,7 +451,7 @@ case 'monthTable': {
     }
     case 'yearTable': {
       wrap.classList.add('md:col-span-2');
-      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id;return t(__key, field.label || '');})(); wrap.appendChild(title);
+      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.setAttribute('data-i18n', (function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; return 'field.'+__sec+'.'+__sub+'.'+field.id+'.label';})()); title.setAttribute('data-i18n-fallback', field.label || ''); title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return t(__key, field.label || '');})(); wrap.appendChild(title);
       const years=Array.isArray(field.years)&&field.years.length?field.years:(()=>{const y=new Date().getFullYear(); return [y-4,y-3,y-2,y-1,y];})();
       const current=(value&&typeof value==='object')?value:{}; const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
