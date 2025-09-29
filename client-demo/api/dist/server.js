@@ -17,6 +17,46 @@ function readJSON(filePath, fallback) {
     try {
         return JSON.parse(fs.readFileSync(filePath, 'utf8'));
     }
+
+// --- sanitize: keep only data fields that exist in the template ----------------
+function __sanitizeDataAgainstTemplate(tpl, data) {
+    try {
+        if (!tpl || !tpl.sections || typeof data !== 'object' || data === null) return data || {};
+        const out = {};
+        for (const section of (tpl.sections || [])) {
+            const sid = section.id;
+            if (!sid) continue;
+            const sIn = data[sid];
+            if (sIn == null) continue;
+            const sOut = {};
+            for (const sub of (section.subsections || [])) {
+                const subId = sub.id;
+                if (!subId) continue;
+                const subIn = (sIn || {})[subId];
+                if (subIn == null) continue;
+                const subOut = {};
+                for (const field of (sub.fields || [])) {
+                    const fid = field.id;
+                    if (!fid) continue;
+                    const v = (subIn || {})[fid];
+                    if (v === undefined) continue;
+                    // Tables: keep object (months/years), otherwise keep primitive/array/object as-is
+                    if (field.type === 'monthTable' || field.type === 'yearTable') {
+                        if (v && typeof v === 'object') subOut[fid] = v;
+                    } else {
+                        subOut[fid] = v;
+                    }
+                }
+                if (Object.keys(subOut).length) sOut[subId] = subOut;
+            }
+            if (Object.keys(sOut).length) out[sid] = sOut;
+        }
+        return out;
+    } catch (e) {
+        try { console.warn('sanitize failed', e && e.message); } catch {}
+        return data || {};
+    }
+}
     catch {
         return fallback;
     }
@@ -183,9 +223,7 @@ app.get('/buildings/:id/form', (req, res) => {
     res.json({
         building,
         templateVersion: cur.templateVersion || (getActiveTemplate().version || 'dev'),
-        template: getActiveTemplate(),
-        dataVersion: cur.dataVersion || 1,
-        data: cur.data || {},
+        template: getActiveTemplate(), dataVersion: cur.dataVersion || 1, data: __sanitizeDataAgainstTemplate(getActiveTemplate(), cur.data || {}),
     });
 });
 // --- Review (for ETag & committed snapshot) --------------------------------
@@ -201,8 +239,7 @@ app.get('/buildings/:id/review', (req, res) => {
         since: Number(req.query.since || cur.dataVersion || 1),
         dataVersion: cur.dataVersion || 1,
         added: [], removed: [], changed: [], // diff is handled client-side
-        committed: cur.data || {},
-        current: cur.data || {},
+        committed: __sanitizeDataAgainstTemplate(getActiveTemplate(), cur.data || {}), current: __sanitizeDataAgainstTemplate(getActiveTemplate(), cur.data || {}),
     });
 });
 // --- Save (every save bumps version + snapshot) ----------------------------
