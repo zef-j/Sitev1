@@ -115,9 +115,9 @@ export async function loadExternalTranslations(lang){
     const j = await tryFetch(u);
     if (j){
       const payload = j[lang] && typeof j[lang] === 'object' ? j[lang] : j;
-      dict[lang] = { ...(dict[lang]||{}), ...(payload||{}) };
+      dict[lang] = { ...(payload||{}), ...(dict[lang]||{}) };
       try{ console.debug('[i18n] loaded', lang, 'from', u, 'keys=', Object.keys(payload||{}).length); }catch{}
-      return;
+      continue;
     }
   }
   try{ console.warn('[i18n] failed to load', lang, 'from', urls); }catch{}
