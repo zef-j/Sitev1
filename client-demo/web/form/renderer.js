@@ -12,6 +12,21 @@ import { computeProgress } from './progress.js';
 import { monthKeys, monthLabels, t } from './i18n.js';
 import { api } from './api.js';
 
+
+// --- Legacy value coercion (for template type changes) ---------------------
+function coerceNumberInputValue(v) {
+  if (v === null || v === undefined) return '';
+  if (typeof v === 'number' && isFinite(v)) return String(v);
+  if (typeof v === 'string') {
+    // Accept: "YYYY-MM-DD" or "YYYY"
+    const mYear = v.match(/^(\d{4})(?:-\d{2}-\d{2})?$/);
+    if (mYear) return mYear[1];
+    // Extract first number (e.g., "1 200 m3/h" -> "1200")
+    const mNum = v.replace(/\s+/g,'').match(/-?\d+(?:\.\d+)?/);
+    if (mNum) return mNum[0];
+  }
+  return '';
+}
 // File upload handler (no visual change)
 async function handleFileUpload(ev, fieldPath) {
   const input = ev.target;
@@ -441,12 +456,12 @@ function renderField(field, subsectionData, onValueChange, ctx) {
     }
 case 'monthTable': {
       wrap.classList.add('md:col-span-2');
-      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label';return t(__key, field.label || '');})(); try{ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __k2='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; title.setAttribute('data-i18n', __k2); title.setAttribute('data-i18n-fallback', field.label || ''); }catch{} wrap.appendChild(title);
+      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id;return t(__key, field.label || '');})(); wrap.appendChild(title);
       const months = monthKeys(); const labels = monthLabels(); const current=(value&&typeof value==='object')?value:{};
       const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
       const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent=t('table.month','Mois'); headRow.appendChild(th0);
-      months.forEach((m,i)=>{ const th=document.createElement('th'); th.className='px-2 py-1 text-xs font-medium text-gray-600 text-center w-24'; th.textContent=(labels && labels[i]) ? labels[i] : (m[0].toUpperCase()+m.slice(1)); headRow.appendChild(th); });
+      months.forEach(m=>{ const th=document.createElement('th'); th.className='px-2 py-1 text-xs font-medium text-gray-600 text-center w-24'; th.textContent=m[0].toUpperCase()+m.slice(1); headRow.appendChild(th); });
       thead.appendChild(headRow); table.appendChild(thead);
       const tbody=document.createElement('tbody'); const row=document.createElement('tr');
       const labelCell=document.createElement('td'); labelCell.className='px-2 py-1 text-xs text-gray-600'; labelCell.textContent=field.unit?`${field.unit}`:''; row.appendChild(labelCell);
@@ -455,7 +470,7 @@ case 'monthTable': {
     }
     case 'yearTable': {
       wrap.classList.add('md:col-span-2');
-      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label';return t(__key, field.label || '');})(); try{ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __k2='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; title.setAttribute('data-i18n', __k2); title.setAttribute('data-i18n-fallback', field.label || ''); }catch{} wrap.appendChild(title);
+      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id;return t(__key, field.label || '');})(); wrap.appendChild(title);
       const years=Array.isArray(field.years)&&field.years.length?field.years:(()=>{const y=new Date().getFullYear(); return [y-4,y-3,y-2,y-1,y];})();
       const current=(value&&typeof value==='object')?value:{}; const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
