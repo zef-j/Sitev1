@@ -124,30 +124,31 @@ function logEvent(meta, evt, dataVersion, extra = {}) {
 }
 // Load active template
 function getActiveTemplate() {
-    // Prefer project-root active.json (next to template.example.json), then project-root template files,
-    // finally fall back to DATA_ROOT/templates/active.json for backward compatibility.
-    const rootCandidates = [
-        path.resolve(process.cwd(), '../active.json'),
-        path.resolve(process.cwd(), '../../active.json'),
-        path.resolve(process.cwd(), '../../../active.json'),
-        path.resolve(process.cwd(), '../template.example.json'),
-        path.resolve(process.cwd(), '../../template.example.json'),
-        path.resolve(process.cwd(), '../../../template.example.json'),
-        path.resolve(process.cwd(), '../template_example.json'),
-        path.resolve(process.cwd(), '../../template_example.json'),
-        path.resolve(process.cwd(), '../../../template_example.json'),
-    ];
-    for (const p of rootCandidates) {
-        if (fs.existsSync(p)) {
-            return readJSON(p, {});
-        }
+    // Look for a Git-versioned template at or above the project root, then fall back to DATA_ROOT.
+    function findUpwards(startDir, fileNames) {
+        try {
+            let dir = startDir;
+            for (let i = 0; i < 6; i++) {
+                for (const fname of fileNames) {
+                    const candidate = path.join(dir, fname);
+                    if (fs.existsSync(candidate)) return candidate;
+                }
+                const parent = path.dirname(dir);
+                if (parent === dir) break;
+                dir = parent;
+            }
+        } catch (_e) { }
+        return null;
+    }
+    const rootFile = findUpwards(process.cwd(), ['active.json', 'template.example.json', 'template_example.json'])
+        || findUpwards(__dirname, ['active.json', 'template.example.json', 'template_example.json']);
+    if (rootFile) {
+        return readJSON(rootFile, {});
     }
     const legacy = path.join(DATA_ROOT, 'templates', 'active.json');
     return readJSON(legacy, { version: 'dev', sections: [] });
 }
-);
-    return tpl;
-}
+
 // Ensure current.json exists for building
 function ensureCurrent(meta) {
     const curPath = getCurrentJsonPath(meta);
