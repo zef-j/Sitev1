@@ -148,36 +148,10 @@ function logEvent(meta: BuildingMeta, evt: string, dataVersion: number, extra: a
 
 // Load active template
 function getActiveTemplate() {
-  // Look for a Git-versioned template at or above the project root, then fall back to DATA_ROOT.
-  function findUpwards(startDir: string, fileNames: string[]): string | null {
-    try {
-      let dir = startDir;
-      for (let i = 0; i < 6; i++) { // search up to 6 parent levels
-        for (const fname of fileNames) {
-          const candidate = path.join(dir, fname);
-          if (fs.existsSync(candidate)) return candidate;
-        }
-        const parent = path.dirname(dir);
-        if (parent === dir) break;
-        dir = parent;
-      }
-    } catch (_e) {}
-    return null;
-  }
-
-  const rootFile =
-    findUpwards(process.cwd(), ['active.json', 'template.example.json', 'template_example.json']) ||
-    findUpwards(__dirname, ['active.json', 'template.example.json', 'template_example.json']);
-
-  if (rootFile) {
-    return readJSON(rootFile, {});
-  }
-
-  // Legacy fallback: DATA_ROOT/templates/active.json
-  const legacy = path.join(DATA_ROOT, 'templates', 'active.json');
-  return readJSON(legacy, { version: 'dev', sections: [] });
+  const p = path.join(DATA_ROOT, 'templates', 'active.json');
+  const tpl = readJSON(p, {});
+  return tpl;
 }
-
 
 // Ensure current.json exists for building
 function ensureCurrent(meta: BuildingMeta) {
