@@ -15,7 +15,7 @@
           "fields": [
             {
               "id": "upload-plans",
-              "label": "Veuillez importer les plans du bâtiment disponibles (merci de scanner tous les documents papiers).",
+              "label": "Veuillez importer les plans du bâtiment disponibles (merci de scanner tous les documents papiers). À partir de 2 documents, créer un fichier ZIP.",
               "type": "file",
               "level": "L1"
             }
@@ -35,7 +35,7 @@
           "fields": [
             {
               "id": "informations-batiment-zone-protegee",
-              "label": "Bâtiment construit sur une zone protégée",
+              "label": "Bâtiment protégé",
               "type": "select",
               "options": [
                 "Oui",
@@ -53,8 +53,9 @@
             {
               "id": "informations-batiment-annee-construction",
               "label": "Année de construction",
-              "type": "date",
-              "level": "L1"
+              "type": "number",
+              "level": "L1",
+              "validation": { "min": 1900, "max": 2100, "step": 1}
             },
             {
               "id": "informations-batiment-proprietaire",
@@ -106,7 +107,7 @@
             },
             {
               "id": "informations-batiment-places-parc-recharge",
-              "label": "Nombre de places de parc équipées recharge",
+              "label": "Nombre de places de parc équipées recharge électrique",
               "type": "number",
               "level": "L1"
             },
@@ -119,7 +120,8 @@
             {
               "id": "informations-batiment-derniere-renovation-date",
               "label": "Date de la dernière rénovation importante",
-              "type": "date",
+              "type": "number",
+              "validation": { "min": 1900, "max": 2100, "step": 1 },
               "level": "L1"
             },
             {
@@ -194,6 +196,12 @@
               "label": "Remarques et compléments",
               "type": "textarea",
               "level": "L1"
+            },
+            {
+              "id": "upload-releves-consommation-electrique",
+              "label": "Veuillez importer vos relevés de consommation électrique. À partir de 2 documents, créer un fichier ZIP.",
+              "type": "file",
+              "level": "L1"
             }
           ]
         },
@@ -247,6 +255,12 @@
               "id": "remarques-consommation-thermique",
               "label": "Remarques et compléments",
               "type": "textarea",
+              "level": "L1"
+            },
+            {
+              "id": "upload-releves-consommation-thermique",
+              "label": "Veuillez importer vos relevés de consommation thermique. À partir de 2 documents, créer un fichier ZIP.",
+              "type": "file",
               "level": "L1"
             }
           ]
@@ -330,6 +344,12 @@
               "type": "monthTable",
               "unit": "kWh",
               "level": "L1"
+            },
+            {
+              "id": "upload-production-pv",
+              "label": "Veuillez importer vos justificatifs de production photovoltaïque. À partir de 2 documents, créer un fichier ZIP.",
+              "type": "file",
+              "level": "L1"
             }
           ]
         }
@@ -344,71 +364,86 @@
           "id": "enveloppe-batiment",
           "title": "Enveloppe du bâtiment",
           "fields": [
-            {
-              "id": "env-subtitle-rapports",
-              "type": "subtitle",
-              "text": "Rapports",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "rapport-cecb",
-              "label": "Existe-t-il un rapport CECB/CECB+ ?",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "rapport-cecb-file",
-              "label": "Upload rapport CECB/CECB+",
-              "type": "file",
-              "level": "L1",
-              "visibilityRules": {
-                "allOf": [
+    {
+      "id": "env-subtitle-rapports",
+      "type": "subtitle",
+      "text": "Rapports",
+      "containsData": false,
+      "style": {
+        "size": "lg",
+        "weight": "bold",
+        "color": "blue",
+        "margin": "sm",
+        "span": 2
+      }
+    },
+    {
+      "id": "rapport-cecb",
+      "label": "Existe-t-il un rapport CECB/CECB+ ?",
+      "type": "select",
+      "options": [
+        "Oui",
+        "Non"
+      ],
+      "level": "L1"
+    },
+    {
+      "id": "rapport-cecb-file",
+      "label": "Upload rapport CECB/CECB+",
+      "type": "file",
+      "level": "L1",
+      "visibilityRules": {
+        "allOf": [
+          {
+            "eq": [
+              "analyse-thermique.enveloppe-batiment.rapport-cecb",
+              "Oui"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "rapport-energetique",
+      "label": "Existe-t-il d'autres rapports énergétiques (audit PEIK etc.) ?",
+      "type": "select",
+      "options": [
+        "Oui",
+        "Non"
+      ],
+      "level": "L1",
+      "style": { "showWhenRapportOui": true, "showWhenRapportNon": true },
+
+      "visibilityRules": {
+        "allOf": [
                   {
-                    "eq": [
-                      "analyse-thermique.enveloppe-batiment.rapport-cecb",
-                      "Oui"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "rapport-energetique",
-              "label": "Existe-t-il d'autres rapports énergétiques (audit PEIK etc.) ?",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "rapport-energetique-file",
-              "label": "Upload autres rapports énergétiques",
-              "type": "file",
-              "level": "L1",
-              "visibilityRules": {
-                "allOf": [
-                  {
-                    "eq": [
-                      "analyse-thermique.enveloppe-batiment.rapport-energetique",
-                      "Oui"
-                    ]
-                  }
-                ]
-              }
-            },
+            "eq": [
+              "analyse-thermique.enveloppe-batiment.rapport-energetique",
+              "Non"
+            ]
+          }
+      ]
+    }
+    },
+    {
+      "id": "rapport-energetique-file",
+      "label": "Upload autres rapports énergétiques",
+      "type": "file",
+      "level": "L1",
+      "style": { "showWhenRapportOui": true, "showWhenRapportNon": true },
+      "visibilityRules": {
+        "allOf": [
+          {
+            "eq": [
+              "analyse-thermique.enveloppe-batiment.rapport-energetique",
+              "Non"
+            ]
+          }
+        ]
+      }
+    },
+
+
             {
               "id": "env-subtitle-toiture",
               "type": "subtitle",
@@ -425,7 +460,7 @@
             {
               "id": "toiture-date",
               "label": "Date de la dernière réfection toiture",
-              "type": "date",
+              "type": "number",
               "level": "L1"
             },
             {
@@ -506,7 +541,7 @@
             {
               "id": "fenetres-annee",
               "label": "Année de pose des fenêtres",
-              "type": "date",
+              "type": "number",
               "level": "L1"
             },
             {
@@ -629,389 +664,284 @@
             {
               "id": "remarques-enveloppe",
               "label": "Remarques et compléments",
+              "style": { "showWhenRapportOui": true },
               "type": "textarea",
               "level": "L1"
             }
           ]
         },
-        {
-          "id": "systemes-techniques",
-          "title": "Systèmes techniques et confort généré",
-          "fields": [
-            {
-              "id": "sys-subtitle-chauffage",
-              "type": "subtitle",
-              "text": "Chauffage",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "chauffage-schema",
-              "label": "Existe-t-il un schéma de l'installation de production/distribution de chaleur ?",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "chauffage-schema-file",
-              "label": "Upload schéma installation (si disponible)",
-              "type": "file",
-              "level": "L1",
-              "visibilityRules": {
-                "allOf": [
-                  {
-                    "eq": [
-                      "analyse-thermique.systemes-techniques.chauffage-schema",
-                      "Oui"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "chauffage-type-systeme",
-              "label": "Type de système de chauffage",
-              "type": "select",
-              "options": [
-                "Chaudière gaz",
-                "Chaudière mazout",
-                "PAC air-eau",
-                "PAC géothermique",
-                "Chauffage à distance",
-                "Autre"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "chauffage-puissance",
-              "label": "Puissance de l’installation [kW]",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "chauffage-etat",
-              "label": "État général de l’installation chauffage",
-              "type": "select",
-              "options": [
-                "Bon",
-                "Moyen",
-                "Dégradé",
-                "NSP"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "chauffage-annee-installation",
-              "label": "Année d’installation chauffage",
-              "type": "date",
-              "level": "L1"
-            },
-            {
-              "id": "chauffage-rendement",
-              "label": "Rendement ou label énergétique",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "chauffage-emetteurs",
-              "label": "Type d’émetteurs",
-              "type": "select",
-              "options": [
-                "Radiateurs",
-                "Plancher chauffant",
-                "Convecteurs",
-                "Autres"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "chauffage-regulation",
-              "label": "Régulation",
-              "type": "select",
-              "options": [
-                "Sonde extérieure",
-                "Thermostats pièce",
-                "Vannes thermostatiques",
-                "Aucune"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "sys-subtitle-ecs",
-              "type": "subtitle",
-              "text": "ECS",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "ecs-type",
-              "label": "Production d’eau chaude sanitaire (ECS) - type producteur",
-              "type": "select",
-              "options": [
-                "Boiler électrique",
-                "Solaire thermique",
-                "Chaudière gaz",
-                "Chaudière mazout",
-                "PAC air-eau",
-                "PAC géothermique",
-                "Chauffage à distance",
-                "Autre",
-                "NSP"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "ecs-integree",
-              "label": "Production d’eau chaude sanitaire intégrée au chauffage ou séparée ?",
-              "type": "select",
-              "options": [
-                "Intégrée",
-                "Séparée"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "sys-subtitle-ventilation",
-              "type": "subtitle",
-              "text": "Ventilation",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "ventilation-type",
-              "label": "Type de ventilation",
-              "type": "select",
-              "options": [
-                "Naturel",
-                "Simple flux",
-                "Double flux",
-                "Récupération de chaleur",
-                "Aucun",
-                "NSP"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "ventilation-debit",
-              "label": "Ventilation - débit [m³/h]",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "ventilation-annee",
-              "label": "Année d’installation ventilation",
-              "type": "date",
-              "level": "L1"
-            },
-            {
-              "id": "sys-subtitle-refroidissement",
-              "type": "subtitle",
-              "text": "Refroidissement",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "refroidissement-present",
-              "label": "Refroidissement présent ?",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "refroidissement-type",
-              "label": "Refroidissement : type",
-              "type": "select",
-              "options": [
-                "PAC",
-                "Free cooling",
-                "Récupération d'énergie",
-                "Climatiseur (split)"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "sys-subtitle-eclairage",
-              "type": "subtitle",
-              "text": "Éclairage",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "eclairage-type",
-              "label": "Éclairage : type",
-              "type": "select",
-              "options": [
-                "LED",
-                "Fluorescent",
-                "Halogène",
-                "Autres"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "sys-subtitle-confort",
-              "type": "subtitle",
-              "text": "Confort",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "comfort-hiver",
-              "label": "Températures intérieures en hiver",
-              "type": "select",
-              "options": [
-                "Confort",
-                "Surchauffe",
-                "Froid"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "comfort-hiver-valeur",
-              "label": "Température intérieure en hiver [°C]",
-              "type": "number",
-              "level": "L1",
-              "visibilityRules": {
-                "allOf": [
-                  {
-                    "eq": [
-                      "analyse-thermique.systemes-techniques.comfort-hiver",
-                      "Valeur °C"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "comfort-ete",
-              "label": "Températures intérieures en été",
-              "type": "select",
-              "options": [
-                "Confort",
-                "Surchauffe",
-                "Froid"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "comfort-ete-valeur",
-              "label": "Température intérieure en été [°C]",
-              "type": "number",
-              "level": "L1",
-              "visibilityRules": {
-                "allOf": [
-                  {
-                    "eq": [
-                      "analyse-thermique.systemes-techniques.comfort-ete",
-                      "Valeur °C"
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              "id": "comfort-humidite",
-              "label": "Présence d’humidité",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "comfort-moisissures",
-              "label": "Présence de moisissures",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "comfort-etancheite",
-              "label": "Problèmes d’étanchéité",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "comfort-bruit",
-              "label": "Bruit lié aux installations techniques",
-              "type": "select",
-              "options": [
-                "Oui",
-                "Non"
-              ],
-              "level": "L1"
-            },
-            {
-              "id": "sys-subtitle-remarques",
-              "type": "subtitle",
-              "text": "Remarques et compléments",
-              "containsData": false,
-              "style": {
-                "size": "lg",
-                "weight": "bold",
-                "color": "blue",
-                "margin": "sm",
-                "span": 2
-              }
-            },
-            {
-              "id": "remarques-techniques",
-              "label": "Remarques et compléments",
-              "type": "textarea",
-              "level": "L1"
-            }
-          ]
-        },
+{
+  "id": "systemes-techniques",
+  "title": "Systèmes techniques",
+  "fields": [
+    {
+      "id": "sys-subtitle-chauffage",
+      "type": "subtitle",
+      "text": "Chauffage",
+      "containsData": false,
+      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
+    },
+    {
+      "id": "chauffage-schema",
+      "label": "Existe-t-il un schéma de l'installation de production/distribution de chaleur ?",
+      "type": "select",
+      "options": ["Oui", "Non"],
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-schema-file",
+      "label": "Upload schéma installation (si disponible)",
+      "type": "file",
+      "level": "L1",
+      "visibilityRules": {
+        "allOf": [
+          { "eq": ["analyse-thermique.systemes-techniques.chauffage-schema", "Oui"] }
+        ]
+      }
+    },
+    {
+      "id": "chauffage-type-systeme",
+      "label": "Type de système de chauffage",
+      "type": "select",
+      "options": ["Chaudière gaz", "Chaudière mazout", "PAC air-eau", "PAC géothermique", "Chauffage à distance", "Autre"],
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-puissance",
+      "label": "Puissance de l’installation [kW]",
+      "type": "text",
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-etat",
+      "label": "État général de l’installation chauffage",
+      "type": "select",
+      "options": ["Bon", "Moyen", "Dégradé", "NSP"],
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-annee-installation",
+      "label": "Année d’installation chauffage",
+      "type": "number",
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-rendement",
+      "label": "Rendement ou label énergétique",
+      "type": "text",
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-emetteurs",
+      "label": "Type d’émetteurs",
+      "type": "select",
+      "options": ["Radiateurs", "Plancher chauffant", "Convecteurs", "Autres"],
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-regulation",
+      "label": "Régulation",
+      "type": "select",
+      "options": ["Sonde extérieure", "Thermostats pièce", "Vannes thermostatiques", "Aucune"],
+      "level": "L1"
+    },
+    {
+      "id": "chauffage-notes",
+      "label": "Remarques et compléments",
+      "type": "textarea",
+      "level": "L1"
+    },
+
+    {
+      "id": "sys-subtitle-ecs",
+      "type": "subtitle",
+      "text": "ECS",
+      "containsData": false,
+      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
+    },
+    {
+      "id": "ecs-type",
+      "label": "Production d’eau chaude sanitaire (ECS) - type producteur",
+      "type": "select",
+      "options": ["Boiler électrique", "Solaire thermique", "Chaudière gaz", "Chaudière mazout", "PAC air-eau", "PAC géothermique", "Chauffage à distance", "Autre", "NSP"],
+      "level": "L1"
+    },
+    {
+      "id": "ecs-integree",
+      "label": "Production d’eau chaude sanitaire intégrée au chauffage ou séparée ?",
+      "type": "select",
+      "options": ["Intégrée", "Séparée"],
+      "level": "L1"
+    },
+    {
+      "id": "ecs-notes",
+      "label": "Remarques et compléments",
+      "type": "textarea",
+      "level": "L1"
+    },
+
+    {
+      "id": "sys-subtitle-ventilation",
+      "type": "subtitle",
+      "text": "Ventilation",
+      "containsData": false,
+      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
+    },
+    {
+      "id": "ventilation-type",
+      "label": "Type de ventilation",
+      "type": "select",
+      "options": ["Naturel", "Simple flux", "Double flux", "Récupération de chaleur", "Aucun", "NSP"],
+      "level": "L1"
+    },
+    {
+      "id": "ventilation-debit",
+      "label": "Ventilation - débit [m³/h]",
+      "type": "number",
+      "level": "L1"
+    },
+    {
+      "id": "ventilation-annee",
+      "label": "Année d’installation ventilation",
+      "type": "number",
+      "level": "L1"
+    },
+    {
+      "id": "ventilation-notes",
+      "label": "Remarques et compléments",
+      "type": "textarea",
+      "level": "L1"
+    },
+
+    {
+      "id": "sys-subtitle-refroidissement",
+      "type": "subtitle",
+      "text": "Raffraîchissement",
+      "containsData": false,
+      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
+    },
+    {
+      "id": "refroidissement-present",
+      "label": "Refroidissement présent ?",
+      "type": "select",
+      "options": ["Oui", "Non"],
+      "level": "L1"
+    },
+    {
+      "id": "refroidissement-type",
+      "label": "Refroidissement : type",
+      "type": "select",
+      "options": ["PAC", "Free cooling", "Récupération d'énergie", "Climatiseur (split)"],
+      "level": "L1"
+    },
+    {
+      "id": "refroidissement-notes",
+      "label": "Remarques et compléments",
+      "type": "textarea",
+      "level": "L1"
+    },
+
+    {
+      "id": "sys-subtitle-eclairage",
+      "type": "subtitle",
+      "text": "Éclairage",
+      "containsData": false,
+      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
+    },
+    {
+      "id": "eclairage-type",
+      "label": "Éclairage : type",
+      "type": "select",
+      "options": ["LED", "Fluorescent", "Halogène", "Autres"],
+      "level": "L1"
+    },
+    {
+      "id": "eclairage-notes",
+      "label": "Remarques et compléments",
+      "type": "textarea",
+      "level": "L1"
+    },
+
+    {
+      "id": "sys-subtitle-confort",
+      "type": "subtitle",
+      "text": "Confort",
+      "containsData": false,
+      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
+    },
+    {
+      "id": "comfort-hiver",
+      "label": "Températures intérieures en hiver",
+      "type": "select",
+      "options": ["Confort", "Surchauffe", "Froid"],
+      "level": "L1"
+    },
+    {
+      "id": "comfort-hiver-valeur",
+      "label": "Température intérieure en hiver [°C]",
+      "type": "number",
+      "level": "L1",
+      "visibilityRules": {
+        "allOf": [
+          { "eq": ["analyse-thermique.systemes-techniques.comfort-hiver", "Valeur °C"] }
+        ]
+      }
+    },
+    {
+      "id": "comfort-ete",
+      "label": "Températures intérieures en été",
+      "type": "select",
+      "options": ["Confort", "Surchauffe", "Froid"],
+      "level": "L1"
+    },
+    {
+      "id": "comfort-ete-valeur",
+      "label": "Température intérieure en été [°C]",
+      "type": "number",
+      "level": "L1",
+      "visibilityRules": {
+        "allOf": [
+          { "eq": ["analyse-thermique.systemes-techniques.comfort-ete", "Valeur °C"] }
+        ]
+      }
+    },
+    {
+      "id": "comfort-humidite",
+      "label": "Présence d’humidité",
+      "type": "select",
+      "options": ["Oui", "Non"],
+      "level": "L1"
+    },
+    {
+      "id": "comfort-moisissures",
+      "label": "Présence de moisissures",
+      "type": "select",
+      "options": ["Oui", "Non"],
+      "level": "L1"
+    },
+    {
+      "id": "comfort-etancheite",
+      "label": "Problèmes d’étanchéité",
+      "type": "select",
+      "options": ["Oui", "Non"],
+      "level": "L1"
+    },
+    {
+      "id": "comfort-bruit",
+      "label": "Bruit lié aux installations techniques",
+      "type": "select",
+      "options": ["Oui", "Non"],
+      "level": "L1"
+    },
+    {
+      "id": "comfort-notes",
+      "label": "Remarques et compléments",
+      "type": "textarea",
+      "level": "L1"
+    }
+  ]
+},
+
         {
           "id": "maintenance-entretien",
           "title": "Maintenance et entretien",
@@ -1101,7 +1031,11 @@
             {
               "id": "journal-entretien-ascenseurs",
               "label": "Journal d’entretien ascenseurs disponible ?",
-              "type": "date",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
               "level": "L1"
             },
             {
@@ -1113,6 +1047,13 @@
                 "Non"
               ],
               "level": "L1"
+            },
+            {
+              "id": "journaux-entretien-zip",
+              "label": "Upload des journaux d’entretien (ZIP)",
+              "type": "file",
+              "level": "L1",
+              "accept": ".zip"
             },
             {
               "id": "mnt-subtitle-autres",
@@ -1212,8 +1153,9 @@
                     ]
                   }
                 ]
-              }
-            },
+                }
+              },
+
             {
               "id": "sism-subtitle-structure",
               "type": "subtitle",
@@ -1420,7 +1362,7 @@
             {
               "id": "travaux-structuraux-annee",
               "label": "Année des derniers travaux structuraux",
-              "type": "date",
+              "type": "number",
               "level": "L1",
               "visibilityRules": {
                 "allOf": [
@@ -1505,6 +1447,7 @@
               "label": "Remarques et compléments",
               "type": "textarea",
               "level": "L1",
+              "style": { "showWhenRapportOui": true },
               "visibilityRules": {
                 "allOf": [
                   {
@@ -1829,6 +1772,7 @@
               "label": "Remarques et compléments",
               "type": "textarea",
               "level": "L1",
+              "style": { "showWhenRapportOui": true },
               "visibilityRules": {
                 "allOf": [
                   {
@@ -2132,6 +2076,7 @@
               "label": "Remarques et compléments",
               "type": "textarea",
               "level": "L1",
+              "style": { "showWhenRapportOui": true },
               "visibilityRules": {
                 "allOf": [
                   {
