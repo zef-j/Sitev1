@@ -444,25 +444,112 @@
   "subtitle.energie.production-photovoltaique.pv-subtitle-production-mensuelle": "Monatliche Produktion",
   "table.month": "Monat",
   "table.year": "Jahr",
-  "months": {
-    "jan": "Jan",
-    "feb": "Feb",
-    "mar": "Mär",
-    "apr": "Apr",
-    "may": "Mai",
-    "jun": "Jun",
-    "jul": "Jul",
-    "aug": "Aug",
-    "sep": "Sep",
-    "oct": "Okt",
-    "nov": "Nov",
-    "dec": "Dez"
+  "field": {
+    "energie": {
+      "consommation-electrique": {
+        "upload-releves-consommation-electrique": {
+          "label": "Bitte laden Sie Ihre Stromverbrauchsbelege hoch. Ab 2 Dokumenten bitte eine ZIP-Datei erstellen."
+        },
+        "remarques-consommation-electrique": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      },
+      "consommation-thermique": {
+        "upload-releves-consommation-thermique": {
+          "label": "Bitte laden Sie Ihre Wärmeverbrauchsbelege hoch. Ab 2 Dokumenten bitte eine ZIP-Datei erstellen."
+        },
+        "remarques-consommation-thermique": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      },
+      "production-photovoltaique": {
+        "upload-production-pv": {
+          "label": "Bitte laden Sie Ihre Nachweise zur Photovoltaikproduktion hoch. Ab 2 Dokumenten bitte eine ZIP-Datei erstellen."
+        },
+        "roi": {
+          "label": "Kapitalrendite [CHF]"
+        }
+      }
+    },
+    "analyse-thermique": {
+      "maintenance-entretien": {
+        "journaux-entretien-zip": {
+          "label": "Wartungsprotokolle hochladen (ZIP)"
+        },
+        "mnt-subtitle-remarques": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "remarques-maintenance": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      },
+      "enveloppe-batiment": {
+        "env-subtitle-remarques": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "remarques-enveloppe": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      },
+      "systemes-techniques": {
+        "chauffage-notes": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "ecs-notes": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "ventilation-notes": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "refroidissement-notes": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "eclairage-notes": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "comfort-notes": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      }
+    },
+    "informations-generales": {
+      "batiment": {
+        "informations-batiment-remarques": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      }
+    },
+    "diagnostic-securite": {
+      "etude-sismique": {
+        "sism-subtitle-remarques": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "remarques-sismiques": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      },
+      "amiante": {
+        "ami-subtitle-remarques": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "remarques-amiante": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      },
+      "incendie": {
+        "inc-subtitle-remarques": {
+          "label": "Bemerkungen und Ergänzungen"
+        },
+        "remarques-incendie": {
+          "label": "Bemerkungen und Ergänzungen"
+        }
+      }
+    }
+  },
+  "ui": {
+    "files": "Datei(en)"
   },
   "table": {
     "month": "Monat"
-  },
-  "ui": {
-    "chooseFile": "Datei wählen",
-    "files": "Datei(en)"
   }
 }

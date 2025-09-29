@@ -257,7 +257,13 @@ function renderField(field, subsectionData, onValueChange, ctx) {
 
   if (!['monthTable','yearTable','subtitle'].includes(field.type)) {
     const lbl = document.createElement('label'); lbl.className = 'block text-sm font-medium text-gray-700 mb-1'; lbl.setAttribute('for', id);
-    lbl.innerHTML = (() => { var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return escapeHtml(t(__key, field.label || field.id)); })(); wrap.appendChild(lbl);
+    (function(){
+      var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||'';
+      var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label';
+      try{ lbl.setAttribute('data-i18n', __key); lbl.setAttribute('data-i18n-fallback', field.label || field.id); }catch{}
+      lbl.innerHTML = t(__key, field.label || field.id);
+    })();
+    wrap.appendChild(lbl);
   }
 
   const value = subsectionData ? subsectionData[field.id] : undefined;
@@ -408,7 +414,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
       const div = document.createElement('div');
       div.className = subtitleClasses(style);
       if (showText) {
-        const txt = (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var kField='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; var v=t(kField,''); if(v){ try{div.setAttribute('data-i18n',kField); div.setAttribute('data-i18n-fallback', field.text ?? field.label ?? field.id ?? ''); }catch{} return v; } var kSub='subtitle.'+__sec+'.'+__sub+'.'+field.id; try{ div.setAttribute('data-i18n',kSub); div.setAttribute('data-i18n-fallback', field.text ?? field.label ?? field.id ?? ''); }catch{} return t(kSub, field.text ?? field.label ?? field.id ?? ''); })();
+        const txt = (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id; return String(t(__key, field.text ?? field.label ?? field.id ?? '')).trim(); })();
         const el = document.createElement(style.as || 'div'); try{ el.setAttribute('data-i18n', `subtitle.${section.id}.${sub.id}.${field.id}`); el.setAttribute('data-i18n-fallback', txt); }catch{}
         el.className = (style.as === 'h3' || style.as === 'h4') ? '' : '';
         el.textContent = txt;
@@ -437,11 +443,15 @@ function renderField(field, subsectionData, onValueChange, ctx) {
     }
 case 'monthTable': {
       wrap.classList.add('md:col-span-2');
-      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.setAttribute('data-i18n', (function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; return 'field.'+__sec+'.'+__sub+'.'+field.id+'.label';})()); title.setAttribute('data-i18n-fallback', field.label || ''); title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return t(__key, field.label || '');})(); wrap.appendChild(title);
+      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; 
+      var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label';
+      try { title.setAttribute('data-i18n', __key); title.setAttribute('data-i18n-fallback', field.label || ''); } catch {}
+      title.textContent = t(__key, field.label || '');
+    })(); wrap.appendChild(title);
       const months = monthKeys(); const labels = monthLabels(); const current=(value&&typeof value==='object')?value:{};
       const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
-      const th0=document.createElement('th'); th0.className='px-2 py-2 text-left font-medium text-gray-700 w-24'; th0.setAttribute('data-i18n','table.month'); th0.setAttribute('data-i18n-fallback','Mois'); th0.textContent=t('table.month','Mois'); headRow.appendChild(th0);
+      const th0=document.createElement('th'); th0.className='px-2 py-1 text-xs font-medium text-gray-600 text-left'; th0.textContent=t('table.month','Mois'); headRow.appendChild(th0);
       months.forEach((m, idx) => { const th=document.createElement('th'); th.className='px-2 py-2 text-left font-medium text-gray-700 w-20'; th.textContent = labels[idx] || m; headRow.appendChild(th); });
       thead.appendChild(headRow); table.appendChild(thead);
       const tbody=document.createElement('tbody'); const row=document.createElement('tr');
@@ -451,7 +461,11 @@ case 'monthTable': {
     }
     case 'yearTable': {
       wrap.classList.add('md:col-span-2');
-      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.setAttribute('data-i18n', (function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; return 'field.'+__sec+'.'+__sub+'.'+field.id+'.label';})()); title.setAttribute('data-i18n-fallback', field.label || ''); title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||''; var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; return t(__key, field.label || '');})(); wrap.appendChild(title);
+      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; (function(){ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; 
+      var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label';
+      try { title.setAttribute('data-i18n', __key); title.setAttribute('data-i18n-fallback', field.label || ''); } catch {}
+      title.textContent = t(__key, field.label || '');
+    })(); wrap.appendChild(title);
       const years=Array.isArray(field.years)&&field.years.length?field.years:(()=>{const y=new Date().getFullYear(); return [y-4,y-3,y-2,y-1,y];})();
       const current=(value&&typeof value==='object')?value:{}; const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');

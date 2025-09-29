@@ -441,25 +441,112 @@
   "months.oct": "Octobre",
   "months.nov": "Novembre",
   "months.dec": "Décembre",
-  "months": {
-    "jan": "Janv.",
-    "feb": "Févr.",
-    "mar": "Mars",
-    "apr": "Avr.",
-    "may": "Mai",
-    "jun": "Juin",
-    "jul": "Juil.",
-    "aug": "Août",
-    "sep": "Sept.",
-    "oct": "Oct.",
-    "nov": "Nov.",
-    "dec": "Déc."
+  "field": {
+    "energie": {
+      "consommation-electrique": {
+        "upload-releves-consommation-electrique": {
+          "label": "Veuillez importer vos relevés de consommation électrique. À partir de 2 documents, créer un fichier ZIP."
+        },
+        "remarques-consommation-electrique": {
+          "label": "Remarques et compléments"
+        }
+      },
+      "consommation-thermique": {
+        "upload-releves-consommation-thermique": {
+          "label": "Veuillez importer vos relevés de consommation thermique. À partir de 2 documents, créer un fichier ZIP."
+        },
+        "remarques-consommation-thermique": {
+          "label": "Remarques et compléments"
+        }
+      },
+      "production-photovoltaique": {
+        "upload-production-pv": {
+          "label": "Veuillez importer vos justificatifs de production photovoltaïque. À partir de 2 documents, créer un fichier ZIP."
+        },
+        "roi": {
+          "label": "Retour sur investissement [CHF]"
+        }
+      }
+    },
+    "analyse-thermique": {
+      "maintenance-entretien": {
+        "journaux-entretien-zip": {
+          "label": "Upload des journaux d’entretien (ZIP)"
+        },
+        "mnt-subtitle-remarques": {
+          "label": "Remarques et compléments"
+        },
+        "remarques-maintenance": {
+          "label": "Remarques et compléments"
+        }
+      },
+      "enveloppe-batiment": {
+        "env-subtitle-remarques": {
+          "label": "Remarques et compléments"
+        },
+        "remarques-enveloppe": {
+          "label": "Remarques et compléments"
+        }
+      },
+      "systemes-techniques": {
+        "chauffage-notes": {
+          "label": "Remarques et compléments"
+        },
+        "ecs-notes": {
+          "label": "Remarques et compléments"
+        },
+        "ventilation-notes": {
+          "label": "Remarques et compléments"
+        },
+        "refroidissement-notes": {
+          "label": "Remarques et compléments"
+        },
+        "eclairage-notes": {
+          "label": "Remarques et compléments"
+        },
+        "comfort-notes": {
+          "label": "Remarques et compléments"
+        }
+      }
+    },
+    "informations-generales": {
+      "batiment": {
+        "informations-batiment-remarques": {
+          "label": "Remarques et compléments"
+        }
+      }
+    },
+    "diagnostic-securite": {
+      "etude-sismique": {
+        "sism-subtitle-remarques": {
+          "label": "Remarques et compléments"
+        },
+        "remarques-sismiques": {
+          "label": "Remarques et compléments"
+        }
+      },
+      "amiante": {
+        "ami-subtitle-remarques": {
+          "label": "Remarques et compléments"
+        },
+        "remarques-amiante": {
+          "label": "Remarques et compléments"
+        }
+      },
+      "incendie": {
+        "inc-subtitle-remarques": {
+          "label": "Remarques et compléments"
+        },
+        "remarques-incendie": {
+          "label": "Remarques et compléments"
+        }
+      }
+    }
+  },
+  "ui": {
+    "files": "fichier(s)"
   },
   "table": {
     "month": "Mois"
-  },
-  "ui": {
-    "chooseFile": "Choisir un fichier",
-    "files": "fichier(s)"
   }
 }

@@ -444,25 +444,112 @@
   "subtitle.energie.production-photovoltaique.pv-subtitle-production-mensuelle": "Monthly production",
   "table.month": "Month",
   "table.year": "Year",
-  "months": {
-    "jan": "Jan",
-    "feb": "Feb",
-    "mar": "Mar",
-    "apr": "Apr",
-    "may": "May",
-    "jun": "Jun",
-    "jul": "Jul",
-    "aug": "Aug",
-    "sep": "Sep",
-    "oct": "Oct",
-    "nov": "Nov",
-    "dec": "Dec"
+  "field": {
+    "energie": {
+      "consommation-electrique": {
+        "upload-releves-consommation-electrique": {
+          "label": "Please upload your electricity consumption statements. If you have 2+ documents, create a ZIP file."
+        },
+        "remarques-consommation-electrique": {
+          "label": "Remarks and additional information"
+        }
+      },
+      "consommation-thermique": {
+        "upload-releves-consommation-thermique": {
+          "label": "Please upload your thermal consumption statements. If you have 2+ documents, create a ZIP file."
+        },
+        "remarques-consommation-thermique": {
+          "label": "Remarks and additional information"
+        }
+      },
+      "production-photovoltaique": {
+        "upload-production-pv": {
+          "label": "Please upload your photovoltaic production documents. If you have 2+ documents, create a ZIP file."
+        },
+        "roi": {
+          "label": "Return on investment [CHF]"
+        }
+      }
+    },
+    "analyse-thermique": {
+      "maintenance-entretien": {
+        "journaux-entretien-zip": {
+          "label": "Upload maintenance logs (ZIP)"
+        },
+        "mnt-subtitle-remarques": {
+          "label": "Remarks and additional information"
+        },
+        "remarques-maintenance": {
+          "label": "Remarks and additional information"
+        }
+      },
+      "enveloppe-batiment": {
+        "env-subtitle-remarques": {
+          "label": "Remarks and additional information"
+        },
+        "remarques-enveloppe": {
+          "label": "Remarks and additional information"
+        }
+      },
+      "systemes-techniques": {
+        "chauffage-notes": {
+          "label": "Remarks and additional information"
+        },
+        "ecs-notes": {
+          "label": "Remarks and additional information"
+        },
+        "ventilation-notes": {
+          "label": "Remarks and additional information"
+        },
+        "refroidissement-notes": {
+          "label": "Remarks and additional information"
+        },
+        "eclairage-notes": {
+          "label": "Remarks and additional information"
+        },
+        "comfort-notes": {
+          "label": "Remarks and additional information"
+        }
+      }
+    },
+    "informations-generales": {
+      "batiment": {
+        "informations-batiment-remarques": {
+          "label": "Remarks and additional information"
+        }
+      }
+    },
+    "diagnostic-securite": {
+      "etude-sismique": {
+        "sism-subtitle-remarques": {
+          "label": "Remarks and additional information"
+        },
+        "remarques-sismiques": {
+          "label": "Remarks and additional information"
+        }
+      },
+      "amiante": {
+        "ami-subtitle-remarques": {
+          "label": "Remarks and additional information"
+        },
+        "remarques-amiante": {
+          "label": "Remarks and additional information"
+        }
+      },
+      "incendie": {
+        "inc-subtitle-remarques": {
+          "label": "Remarks and additional information"
+        },
+        "remarques-incendie": {
+          "label": "Remarks and additional information"
+        }
+      }
+    }
+  },
+  "ui": {
+    "files": "file(s)"
   },
   "table": {
     "month": "Month"
-  },
-  "ui": {
-    "chooseFile": "Choose file",
-    "files": "file(s)"
   }
 }
