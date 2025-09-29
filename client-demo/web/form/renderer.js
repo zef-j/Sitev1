@@ -441,7 +441,7 @@ function renderField(field, subsectionData, onValueChange, ctx) {
     }
 case 'monthTable': {
       wrap.classList.add('md:col-span-2');
-      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id;return t(__key, field.label || '');})(); wrap.appendChild(title);
+      const title = document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label';return t(__key, field.label || '');})(); try{ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __k2='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; title.setAttribute('data-i18n', __k2); title.setAttribute('data-i18n-fallback', field.label || ''); }catch{} wrap.appendChild(title);
       const months = monthKeys(); const labels = monthLabels(); const current=(value&&typeof value==='object')?value:{};
       const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
@@ -455,7 +455,7 @@ case 'monthTable': {
     }
     case 'yearTable': {
       wrap.classList.add('md:col-span-2');
-      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='subtitle.'+__sec+'.'+__sub+'.'+field.id;return t(__key, field.label || '');})(); wrap.appendChild(title);
+      const title=document.createElement('div'); title.className='text-sm font-medium text-gray-800 mb-2'; title.textContent=(function(){var __sec=(ctx&&ctx.sectionId)||'';var __sub=(ctx&&ctx.subId)||'';var __key='field.'+__sec+'.'+__sub+'.'+field.id+'.label';return t(__key, field.label || '');})(); try{ var __sec=(ctx&&ctx.sectionId)||''; var __sub=(ctx&&ctx.subId)||''; var __k2='field.'+__sec+'.'+__sub+'.'+field.id+'.label'; title.setAttribute('data-i18n', __k2); title.setAttribute('data-i18n-fallback', field.label || ''); }catch{} wrap.appendChild(title);
       const years=Array.isArray(field.years)&&field.years.length?field.years:(()=>{const y=new Date().getFullYear(); return [y-4,y-3,y-2,y-1,y];})();
       const current=(value&&typeof value==='object')?value:{}; const table=document.createElement('table'); table.className='min-w-full table-fixed text-sm border border-gray-200 rounded-md';
       const thead=document.createElement('thead'); thead.className='bg-gray-50'; const headRow=document.createElement('tr');
