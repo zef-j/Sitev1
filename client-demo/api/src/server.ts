@@ -44,6 +44,45 @@ function writeJSON(p: string, obj: any) {
   ensureDir(path.dirname(p));
   fs.writeFileSync(p, JSON.stringify(obj, null, 2), 'utf-8');
 }
+
+// --- sanitize: keep only data fields that exist in the active template ---------
+function sanitizeDataAgainstTemplate(tpl: any, data: any): any {
+  try {
+    if (!tpl || !tpl.sections || typeof data !== 'object' || data === null) return data || {};
+    const out: any = {};
+    for (const section of (tpl.sections || [])) {
+      const sid = (section && section.id) || null;
+      if (!sid) continue;
+      const sIn = (data as any)[sid];
+      if (sIn == null) continue;
+      const sOut: any = {};
+      for (const sub of (section.subsections || [])) {
+        const subId = (sub && sub.id) || null;
+        if (!subId) continue;
+        const subIn = (sIn || {})[subId];
+        if (subIn == null) continue;
+        const subOut: any = {};
+        for (const field of (sub.fields || [])) {
+          const fid = (field && field.id) || null;
+          if (!fid) continue;
+          const v = (subIn || {})[fid];
+          if (v === undefined) continue;
+          if (field.type === 'monthTable' || field.type === 'yearTable') {
+            if (v && typeof v === 'object') subOut[fid] = v;
+          } else {
+            subOut[fid] = v;
+          }
+        }
+        if (Object.keys(subOut).length) sOut[subId] = subOut;
+      }
+      if (Object.keys(sOut).length) out[sid] = sOut;
+    }
+    return out;
+  } catch (e) {
+    try { console.warn('sanitize failed', (e as Error)?.message); } catch {}
+    return data || {};
+  }
+}
 function weakTag(v: number): string { return `W/"${v}"`; }
 function nowIso() { return new Date().toISOString(); }
 function shortId() { return Math.random().toString(36).slice(2, 8); }
@@ -213,7 +252,7 @@ app.get('/buildings/:id/form', (req, res) => {
     templateVersion: cur.templateVersion || ((getActiveTemplate() as any).version || 'dev'),
     template: getActiveTemplate(),
     dataVersion: cur.dataVersion || 1,
-    data: cur.data || {},
+    data: sanitizeDataAgainstTemplate(getActiveTemplate(), cur.data || {}),
   });
 });
 
