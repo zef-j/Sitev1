@@ -114,7 +114,7 @@
   "field.analyse-thermique.enveloppe-batiment.plancher-isolation.label": "Dämmung unter dem Boden",
   "field.analyse-thermique.enveloppe-batiment.plancher-type.label": "Bodenart",
   "field.analyse-thermique.enveloppe-batiment.rapport-cecb-file.label": "GEAK/GEAK+ Bericht hochladen",
-  "field.analyse-thermique.enveloppe-batiment.rapport-cecb.label": "Gibt es einen CECB/CECB+-Bericht?",
+  "field.analyse-thermique.enveloppe-batiment.rapport-cecb.label": "Gibt es einen GEAK-/GEAK-Plus-Bericht?",
   "field.analyse-thermique.enveloppe-batiment.rapport-energetique-file.label": "Weitere Energieberichte hochladen",
   "field.analyse-thermique.enveloppe-batiment.rapport-energetique.label": "Gibt es weitere Energieberichte (PEIK-Audit usw.)?",
   "field.analyse-thermique.enveloppe-batiment.remarques-enveloppe.label": "Bemerkungen und Ergänzungen",

@@ -49,7 +49,7 @@
   "section.analyse-thermique.title": "Thermische Analyse des Gebäudes",
   "subsection.analyse-thermique.enveloppe-batiment.title": "Gebäudehülle",
   "subtitle.analyse-thermique.enveloppe-batiment.env-subtitle-rapports": "Berichte",
-  "field.analyse-thermique.enveloppe-batiment.rapport-cecb.label": "Gibt es einen CECB/CECB+-Bericht?",
+  "field.analyse-thermique.enveloppe-batiment.rapport-cecb.label": "Gibt es einen GEAK-/GEAK-Plus-Bericht?",
   "options.rapport-cecb.Oui": "Ja",
   "options.rapport-cecb.Non": "Nein",
   "field.analyse-thermique.enveloppe-batiment.rapport-cecb-file.label": "Upload rapport CECB/CECB+",
