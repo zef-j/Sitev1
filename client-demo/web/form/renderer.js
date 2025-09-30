@@ -175,68 +175,72 @@ grid.appendChild(fieldEl);
   }
   function show(el, yes) { el.style.display = yes ? '' : 'none'; }
 
-  function updateVisibilityForSubsection(secEl, section, sub, state) {
-    const ctx = getCurrentFormContext(secEl, section, sub, state);
-    const { rapportCtrl, choice, fields } = ctx;
-   
-    // reset visibility flags
-    for (const f of fields) f.visible = false;
-   
+
+
+
+
+
+  function updateVisibilityForSubsection(secEl, section, sub, stateObj) {
+    const allow = ALLOWED_RAPPORT.has(String(sub.id||'').toLowerCase());
+    const fieldEls = secEl.querySelectorAll(`[data-field-path^="${section.id}.${sub.id}."]`);
+
+    if (!allow) {
+      // Template-driven only
+      fieldEls.forEach((el) => {
+        const path = el.dataset.fieldPath;
+        const fieldId = path.split('.').pop();
+        const field = (sub.fields || []).find(f => f.id === fieldId);
+        if (!field) return;
+        const visible = isFieldVisible(field, stateObj, level);
+        show(el, !!visible);
+      });
+      if (window.AOS && (AOS.refreshHard || AOS.refresh)) setTimeout(() => (AOS.refreshHard ? AOS.refreshHard() : AOS.refresh()), 30);
+      if (window.feather) window.feather.replace();
+      return;
+    }
+
+    // Rapport-aware logic (only allowed subsections)
+    const rapportCtrl = findRapportController(sub);
+    const uploadField = findRapportUpload(sub);
+    const rv = rapportCtrl ? getAtPath(stateObj, `${section.id}.${sub.id}.${rapportCtrl.id}`) : null;
+    const choice = normOuiNon(rv);
     let uploadShown = false;
-    if (rapportCtrl) {
-      for (const field of fields) {
-        let visible = false;
-   
+
+    fieldEls.forEach((el) => {
+      const path = el.dataset.fieldPath;
+      const fieldId = path.split('.').pop();
+      const field = (sub.fields || []).find(f => f.id === fieldId);
+      if (!field) return;
+
+      let visible = isFieldVisible(field, stateObj, level);
+
+      if (rapportCtrl) {
         if (choice === 'oui') {
-          const uploadField = findRapportUpload(fields, rapportCtrl);
           const designated = uploadField && field.id === uploadField.id;
-   
-          // ✨ Nouveau: on peut aussi forcer l’affichage via style.* ou si c'est un champ *-notes
-          const alsoShow =
-            (field.style && field.style.showWhenRapportOui === true) ||
-            /-notes$/.test(String(field.id || ''));
-   
-          visible =
-            (field.id === rapportCtrl.id) ||
-            (designated && !uploadShown) ||
-            alsoShow;
-   
+          const alsoShow = (field.style && field.style.showWhenRapportOui === true) || /-notes$/.test(String(field.id||''));
+          visible = (field.id === rapportCtrl.id) || (designated && !uploadShown) || alsoShow;
           if (designated && !uploadShown) uploadShown = true;
-   
         } else if (choice === 'non') {
           const isFile = field.type === 'file';
           const isOtherRapport = looksRapportButNotController(field, rapportCtrl);
-   
-          // ✨ Nouveau: permettre l’affichage si flagué même quand "non"
-          const alsoShow =
-            (field.style && (field.style.showWhenRapportOui === true || field.style.showWhenRapportNon === true)) ||
-            /-notes$/.test(String(field.id || ''));
-   
-          visible =
-            (field.id === rapportCtrl.id) ||
-            (!isFile && !isOtherRapport) ||
-            alsoShow;
-   
+          // Allow flagged fields even when Non (e.g., extra uploads or notes)
+          const alsoShow = (field.style && (field.style.showWhenRapportOui === true || field.style.showWhenRapportNon === true))
+                           || /-notes$/.test(String(field.id||''));
+          visible = (field.id === rapportCtrl.id) || (!isFile && !isOtherRapport) || alsoShow;
         } else {
           visible = field.id === rapportCtrl.id;
         }
-   
-        field.visible = !!visible;
       }
-    }
-   
-    // Applique les flags de visibilité au DOM
-    for (const field of fields) {
-      const sel = `[data-field-path="${field.path}"]`;
-      const el = secEl.querySelector(sel);
-      if (!el) continue;
-      if (field.visible) {
-        el.classList.remove('hidden');
-      } else {
-        el.classList.add('hidden');
-      }
-    }
+
+      show(el, !!visible);
+    });
+
+    if (window.AOS && (AOS.refreshHard || AOS.refresh)) setTimeout(() => (AOS.refreshHard ? AOS.refreshHard() : AOS.refresh()), 30);
+    if (window.feather) window.feather.replace();
   }
+
+  
+
 
 
 
