@@ -1,4 +1,4 @@
-// ESM adminRouter.js (fixed & simplified)
+// ESM adminRouter.js — clean, with default export
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -50,7 +50,7 @@ export default function createAdminRouter() {
     } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
   });
 
-  router.get('/registry/backups', async (req,res) => {
+  router.get('/registry/backups', async (_req,res) => {
     try { res.json({ backups: await listBackups() }); }
     catch (e) { res.status(500).json({ error: String(e.message || e) }); }
   });
@@ -110,8 +110,8 @@ export default function createAdminRouter() {
 
       let bid = buildingId || slugify(buildingName);
       if (!bid.startsWith(fid)) bid = `${fid}-${bid}`;
-      let base = bid; let i = 2;
-      while (reg.some(x => x.id === bid)) { bid = `${base}-${i++}`; }
+      let base = bid, i = 2;
+      while (reg.some(x => x.id === bid)) bid = `${base}-${i++}`;
 
       reg.push({ id: bid, name: buildingName.trim(), foundationId: fid, foundationName: fname });
       validateRegistry(reg);
@@ -134,8 +134,8 @@ export default function createAdminRouter() {
       const fname = foundationName;
       let bid = buildingId || slugify(initialBuildingName);
       if (!bid.startsWith(fid)) bid = `${fid}-${bid}`;
-      let base = bid; let i = 2;
-      while (reg.some(x => x.id === bid)) { bid = `${base}-${i++}`; }
+      let base = bid, i = 2;
+      while (reg.some(x => x.id === bid)) bid = `${base}-${i++}`;
 
       reg.push({ id: bid, name: initialBuildingName.trim(), foundationId: fid, foundationName: fname });
       validateRegistry(reg);
