@@ -1,4 +1,4 @@
-// ESM version of adminRouter.js
+// ESM adminRouter.js (fixed & simplified)
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -98,22 +98,21 @@ export default function createAdminRouter() {
     try {
       await audit('add-building', { foundationId, foundationName, buildingName, buildingId }, req);
       const reg = await readJson(REGISTRY_FILE);
+
       let fid = foundationId, fname = foundationName;
       const existingF = fid ? reg.find(x => x.foundationId === fid) : null;
       if (!existingF) {
-        if (!fid && fname) fid = (await import('./adminFs.js')).slugify(fname);
+        if (!fid && fname) fid = slugify(fname);
         if (!fid || !fname) return res.status(400).json({ error: 'new foundation requires foundationId or foundationName' });
       } else {
         fname = existingF.foundationName;
       }
-      let bid = buildingId || (await import('./adminFs.js')).then(m=>m.slugify(buildingName)).catch(()=>buildingName);
-      if (typeof bid !== 'string') {
-        const { slugify } = await import('./adminFs.js');
-        bid = slugify(buildingName);
-      }
+
+      let bid = buildingId || slugify(buildingName);
       if (!bid.startsWith(fid)) bid = `${fid}-${bid}`;
       let base = bid; let i = 2;
       while (reg.some(x => x.id === bid)) { bid = `${base}-${i++}`; }
+
       reg.push({ id: bid, name: buildingName.trim(), foundationId: fid, foundationName: fname });
       validateRegistry(reg);
       await backupRegistry('add-building');
@@ -126,12 +125,25 @@ export default function createAdminRouter() {
   router.post('/add-foundation', async (req,res) => {
     const { foundationName, foundationId, initialBuildingName, buildingId } = req.body || {};
     if (!foundationName || !initialBuildingName) return res.status(400).json({ error: 'foundationName and initialBuildingName required' });
-    req.body.foundationId = foundationId || (await import('./adminFs.js')).then(m=>m.slugify(foundationName)).catch(()=>foundationName);
-    req.body.buildingName = initialBuildingName;
-    req.body.foundationName = foundationName;
-    // manually call the handler
-    const r = await fetch('http://localhost', { method:'POST' }); // placeholder to satisfy TS; not used
-    return router.handle({ ...req, url: '/add-building', method: 'POST' }, res);
+    const release = await acquireLock('registry');
+    try {
+      await audit('add-foundation', { foundationName, foundationId, initialBuildingName, buildingId }, req);
+      const reg = await readJson(REGISTRY_FILE);
+
+      const fid = foundationId || slugify(foundationName);
+      const fname = foundationName;
+      let bid = buildingId || slugify(initialBuildingName);
+      if (!bid.startsWith(fid)) bid = `${fid}-${bid}`;
+      let base = bid; let i = 2;
+      while (reg.some(x => x.id === bid)) { bid = `${base}-${i++}`; }
+
+      reg.push({ id: bid, name: initialBuildingName.trim(), foundationId: fid, foundationName: fname });
+      validateRegistry(reg);
+      await backupRegistry('add-foundation');
+      await writeJsonAtomic(REGISTRY_FILE, reg);
+      res.json({ ok: true, foundationId: fid, id: bid });
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
   });
 
   router.post('/delete-building', async (req,res) => {
