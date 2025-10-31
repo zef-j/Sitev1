@@ -1,36 +1,24 @@
-/**
- * Express router for Admin Editor API
- * Mount as: app.use('/admin/api', require('./adminRouter')());
- */
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
-const {
-  REGISTRY_FILE, SECRET_FILE
-} = require('./adminConfig');
-const {
+// ESM version of adminRouter.js
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import { REGISTRY_FILE, SECRET_FILE, BACKUP_DIR } from './adminConfig.js';
+import {
   ensureDirs, acquireLock, readJson, writeJsonAtomic,
   backupRegistry, listBackups, validateRegistry, slugify, audit,
-  findDataDirsForBuilding, archiveAndMaybeDeleteData, nowIsoSafe
-} = require('./adminFs');
+  findDataDirsForBuilding, archiveAndMaybeDeleteData
+} from './adminFs.js';
 
 function readSecret() {
-  try {
-    return fs.readFileSync(SECRET_FILE, 'utf8').trim();
-  } catch {
-    return null;
-  }
+  try { return fs.readFileSync(SECRET_FILE, 'utf8').trim(); }
+  catch { return null; }
 }
 
 function requireAdmin(req, res, next) {
   const want = readSecret();
-  if (!want) {
-    return res.status(503).json({ error: 'Admin secret not set. Create file: ' + SECRET_FILE });
-  }
+  if (!want) return res.status(503).json({ error: 'Admin secret not set. Create file: ' + SECRET_FILE });
   const got = (req.headers['x-admin-secret'] || req.query.key || '').toString().trim();
-  if (!got || got !== want) {
-    return res.status(403).json({ error: 'Forbidden' });
-  }
+  if (!got || got !== want) return res.status(403).json({ error: 'Forbidden' });
   res.setHeader('Cache-Control', 'no-store');
   next();
 }
@@ -43,13 +31,12 @@ function groupTree(reg) {
     }
     map.get(it.foundationId).buildings.push({ id: it.id, name: it.name });
   }
-  // Sort for nicer UI
   const list = Array.from(map.values()).sort((a,b)=> a.foundationName.localeCompare(b.foundationName,'de'));
   for (const f of list) f.buildings.sort((a,b)=> a.name.localeCompare(b.name,'de'));
   return list;
 }
 
-module.exports = function createAdminRouter() {
+export default function createAdminRouter() {
   ensureDirs();
   const router = express.Router();
   router.use(express.json({ limit: '1mb' }));
@@ -60,18 +47,12 @@ module.exports = function createAdminRouter() {
       const reg = await readJson(REGISTRY_FILE);
       const tree = groupTree(reg);
       res.json({ foundations: tree, counts: { foundations: tree.length, buildings: reg.length }});
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    }
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
   });
 
   router.get('/registry/backups', async (req,res) => {
-    try {
-      const list = await listBackups();
-      res.json({ backups: list });
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    }
+    try { res.json({ backups: await listBackups() }); }
+    catch (e) { res.status(500).json({ error: String(e.message || e) }); }
   });
 
   router.post('/rename-foundation', async (req,res) => {
@@ -82,17 +63,14 @@ module.exports = function createAdminRouter() {
       await audit('rename-foundation', { foundationId, newName }, req);
       const reg = await readJson(REGISTRY_FILE);
       let changed = 0;
-      for (const it of reg) {
-        if (it.foundationId === foundationId) { it.foundationName = newName.trim(); changed++; }
-      }
+      for (const it of reg) if (it.foundationId === foundationId) { it.foundationName = newName.trim(); changed++; }
       if (!changed) return res.status(404).json({ error: 'foundation not found' });
       validateRegistry(reg);
       await backupRegistry('rename-foundation');
       await writeJsonAtomic(REGISTRY_FILE, reg);
       res.json({ ok: true, changed });
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    } finally { await release(); }
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
   });
 
   router.post('/rename-building', async (req,res) => {
@@ -109,9 +87,8 @@ module.exports = function createAdminRouter() {
       await backupRegistry('rename-building');
       await writeJsonAtomic(REGISTRY_FILE, reg);
       res.json({ ok: true });
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    } finally { await release(); }
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
   });
 
   router.post('/add-building', async (req,res) => {
@@ -122,14 +99,18 @@ module.exports = function createAdminRouter() {
       await audit('add-building', { foundationId, foundationName, buildingName, buildingId }, req);
       const reg = await readJson(REGISTRY_FILE);
       let fid = foundationId, fname = foundationName;
-      const existingF = reg.find(x => x.foundationId === fid);
+      const existingF = fid ? reg.find(x => x.foundationId === fid) : null;
       if (!existingF) {
-        if (!fid && fname) fid = slugify(fname);
+        if (!fid && fname) fid = (await import('./adminFs.js')).slugify(fname);
         if (!fid || !fname) return res.status(400).json({ error: 'new foundation requires foundationId or foundationName' });
       } else {
         fname = existingF.foundationName;
       }
-      let bid = buildingId || slugify(buildingName);
+      let bid = buildingId || (await import('./adminFs.js')).then(m=>m.slugify(buildingName)).catch(()=>buildingName);
+      if (typeof bid !== 'string') {
+        const { slugify } = await import('./adminFs.js');
+        bid = slugify(buildingName);
+      }
       if (!bid.startsWith(fid)) bid = `${fid}-${bid}`;
       let base = bid; let i = 2;
       while (reg.some(x => x.id === bid)) { bid = `${base}-${i++}`; }
@@ -138,17 +119,18 @@ module.exports = function createAdminRouter() {
       await backupRegistry('add-building');
       await writeJsonAtomic(REGISTRY_FILE, reg);
       res.json({ ok: true, id: bid });
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    } finally { await release(); }
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
   });
 
   router.post('/add-foundation', async (req,res) => {
     const { foundationName, foundationId, initialBuildingName, buildingId } = req.body || {};
     if (!foundationName || !initialBuildingName) return res.status(400).json({ error: 'foundationName and initialBuildingName required' });
-    req.body.foundationId = foundationId || slugify(foundationName);
+    req.body.foundationId = foundationId || (await import('./adminFs.js')).then(m=>m.slugify(foundationName)).catch(()=>foundationName);
     req.body.buildingName = initialBuildingName;
     req.body.foundationName = foundationName;
+    // manually call the handler
+    const r = await fetch('http://localhost', { method:'POST' }); // placeholder to satisfy TS; not used
     return router.handle({ ...req, url: '/add-building', method: 'POST' }, res);
   });
 
@@ -166,16 +148,12 @@ module.exports = function createAdminRouter() {
       if (next.length === before) return res.status(404).json({ error: 'building not found' });
       validateRegistry(next);
       await backupRegistry('delete-building');
-      if (paths.length && eraseData) {
-        await archiveAndMaybeDeleteData(paths, `delete-building-${foundationId}-${id}`, true);
-      } else if (paths.length) {
-        await archiveAndMaybeDeleteData(paths, `delete-building-${foundationId}-${id}`, false);
-      }
+      if (paths.length && eraseData) await archiveAndMaybeDeleteData(paths, `delete-building-${foundationId}-${id}`, true);
+      else if (paths.length)        await archiveAndMaybeDeleteData(paths, `delete-building-${foundationId}-${id}`, false);
       await writeJsonAtomic(REGISTRY_FILE, next);
       res.json({ ok: true, removed: before - next.length, dataDirsFound: paths.length, dataErased: !!eraseData });
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    } finally { await release(); }
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
   });
 
   router.post('/delete-foundation', async (req,res) => {
@@ -196,16 +174,12 @@ module.exports = function createAdminRouter() {
       if (next.length === reg.length) return res.status(404).json({ error: 'foundation not found' });
       validateRegistry(next);
       await backupRegistry('delete-foundation');
-      if (allPaths.length && eraseData) {
-        await archiveAndMaybeDeleteData(allPaths, `delete-foundation-${foundationId}`, true);
-      } else if (allPaths.length) {
-        await archiveAndMaybeDeleteData(allPaths, `delete-foundation-${foundationId}`, false);
-      }
+      if (allPaths.length && eraseData) await archiveAndMaybeDeleteData(allPaths, `delete-foundation-${foundationId}`, true);
+      else if (allPaths.length)        await archiveAndMaybeDeleteData(allPaths, `delete-foundation-${foundationId}`, false);
       await writeJsonAtomic(REGISTRY_FILE, next);
       res.json({ ok: true, removed: reg.length - next.length, dataDirsFound: allPaths.length, dataErased: !!eraseData });
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    } finally { await release(); }
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
   });
 
   router.post('/restore', async (req,res) => {
@@ -214,16 +188,15 @@ module.exports = function createAdminRouter() {
     const release = await acquireLock('registry');
     try {
       await audit('restore', { backupId }, req);
-      const src = path.join(require('./adminConfig').BACKUP_DIR, backupId);
+      const src = path.join(BACKUP_DIR, backupId);
       if (!fs.existsSync(src)) return res.status(404).json({ error: 'backup not found' });
       const reg = await readJson(src);
       validateRegistry(reg);
       await writeJsonAtomic(REGISTRY_FILE, reg);
       res.json({ ok: true });
-    } catch (e) {
-      res.status(500).json({ error: String(e.message || e) });
-    } finally { await release(); }
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
   });
 
   return router;
-};
+}
