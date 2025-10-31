@@ -8,11 +8,11 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.set('etag', false);
 app.use((req, res, next) => {
-  res.setHeader('Cache-Control','no-store, no-cache, must-revalidate, proxy-revalidate');
-  res.setHeader('Pragma','no-cache');
-  res.setHeader('Expires','0');
-  res.setHeader('Surrogate-Control','no-store');
-  next();
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+    next();
 });
 process.on('unhandledRejection', (e) => console.error('UNHANDLED_REJECTION', e));
 process.on('uncaughtException', (e) => console.error('UNCAUGHT_EXCEPTION', e));
