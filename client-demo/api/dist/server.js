@@ -3,6 +3,8 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import multer from 'multer';
+
+import adminRouter from '../adminRouter.js';
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -397,6 +399,9 @@ app.get('/__health', (_req, res) => {
     res.json({ DATA_ROOT, cwd: process.cwd(), time: new Date().toISOString() });
 });
 // Static files (disable directory slash redirect for /portal)
+app.use('/admin', express.static(path.resolve(process.cwd(), '../admin-ui'), { redirect: false }));
+app.use('/admin/api', adminRouter());
+
 app.use('/portal', express.static(path.resolve(process.cwd(), '../web/portal'), { redirect: false }));
 app.use('/form', express.static(path.resolve(process.cwd(), '../web/form')));
 // --- Start -----------------------------------------------------------------
