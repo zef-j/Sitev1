@@ -5,7 +5,8 @@ import fs from 'fs';
 import multer from 'multer';
 
 import adminRouter from '../adminRouter.js';
-import { createZipBuffer } from './zipper.js';
+import { buildExcelBuffer } from './excelExport.js';
+import { createZipBuffer } from './zipUtil.js';
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
@@ -405,49 +406,50 @@ app.use('/admin/api', adminRouter());
 
 app.use('/portal', express.static(path.resolve(process.cwd(), '../web/portal'), { redirect: false }));
 app.use('/form', express.static(path.resolve(process.cwd(), '../web/form')));
-app.use('/i18n', express.static(path.resolve(process.cwd(), '../web/form/i18n')));
 
+// --- Download current.json + files (+ Excel) as ZIP -----------------------
+app.get('/buildings/:id/download', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const meta = getBuildingMeta(id) || { id, name: `Bâtiment ${id}`, foundationId: 'f_default', foundationName: 'Default' };
+    ensureCurrent(meta);
+    const curPath = getCurrentJsonPath(meta);
+    const curBuf = fs.readFileSync(curPath);
+    const filesDir = getFilesDir(meta);
 
-// Download current.json + files as a ZIP
-app.get('/buildings/:id/download', (req, res) => {
-    try {
-        const id = req.params.id;
-        const meta = getBuildingMeta(id) || { id, name: `Building ${id}`, foundationId: 'f_default', foundationName: 'Default' };
-        ensureCurrent(meta);
-        const curPath = getCurrentJsonPath(meta);
-        const filesDir = getFilesDir(meta);
-        const entries = [];
-        if (fs.existsSync(curPath)) {
-            const data = fs.readFileSync(curPath);
-            entries.push({ name: 'rawData/current.json', data, mtime: fs.statSync(curPath).mtime });
-        }
-        function walk(dir, base) {
-            if (!fs.existsSync(dir)) return;
-            const list = fs.readdirSync(dir, { withFileTypes: true });
-            for (const ent of list) {
-                if (ent.name === '.DS_Store') continue;
-                const p = path.join(dir, ent.name);
-                const rel = base ? base + '/' + ent.name : ent.name;
-                if (ent.isDirectory()) walk(p, rel);
-                else entries.push({ name: 'files/' + rel, data: fs.readFileSync(p), mtime: fs.statSync(p).mtime });
-            }
-        }
-        walk(filesDir, '');
+    const safe = (t) => (t || '').toString().normalize('NFKD').replace(/[^\w\s.-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-+|-+$/g,'').slice(0,80) || 'item';
+    const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
+    const zipBase = `${safe(meta.foundationName)}-${safe(meta.name || id)}-${ts}`;
+    const entries = [];
+    entries.push({ name: `rawData/current.json`, data: curBuf });
 
-        function safeName(x){ return (x||'').replace(/[\/:*?"<>|]+/g,'_').trim(); }
-        const now = new Date();
-        const pad = (n)=> String(n).padStart(2,'0');
-        const stamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}-${pad(now.getMinutes())}`;
-        const fname = `${safeName(meta.foundationName)}-${safeName(meta.name)}-${stamp}.zip`;
-
-        const zipBuf = createZipBuffer(entries);
-        res.setHeader('Content-Type', 'application/zip');
-        res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(fname)}`);
-        res.end(zipBuf);
-    } catch (e) {
-        console.error('download error', e);
-        res.status(500).json({ error: String(e?.message || e) });
+    if (fs.existsSync(filesDir)) {
+      for (const fn of fs.readdirSync(filesDir)) {
+        const p = path.join(filesDir, fn);
+        if (fs.statSync(p).isFile()) entries.push({ name: `files/${fn}`, data: fs.readFileSync(p) });
+      }
     }
+
+    // Excel (if template exists)
+    const tplPath = path.join(DATA_ROOT, 'templates', 'active.json');
+    if (fs.existsSync(tplPath)) {
+      try {
+        const tpl = fs.readFileSync(tplPath, 'utf8');
+        const excelBuf = await buildExcelBuffer(tpl, curBuf.toString('utf8'));
+        entries.push({ name: `excel/${safe(meta.foundationName)}_${safe(meta.name || id)}.xlsx`, data: excelBuf });
+      } catch (e) {
+        console.error('excel build failed', e);
+      }
+    }
+
+    const zipBuf = await createZipBuffer(entries);
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${zipBase}.zip"`);
+    res.send(zipBuf);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: String(e.message || e) });
+  }
 });
 // --- Start -----------------------------------------------------------------
 app.listen(PORT, () => {
