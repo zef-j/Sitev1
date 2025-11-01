@@ -22,21 +22,19 @@ const dict = {
     'ui.select':'Sélectionner','ui.chooseFile':'Choisir un fichier','ui.backHome':'← Accueil',
     'months.jan':'Janvier','months.feb':'Février','months.mar':'Mars','months.apr':'Avril','months.may':'Mai','months.jun':'Juin','months.jul':'Juillet','months.aug':'Août','months.sep':'Septembre','months.oct':'Octobre','months.nov':'Novembre','months.dec':'Décembre',
   },
-    'ui.download':'Télécharger',
   de: {
     'ui.progress':'Fortschritt','ui.review':'Review','ui.publish':'Veröffentlichen','ui.save':'Speichern',
     'ui.foundations':'Stiftungen','ui.foundation':'Stiftung','ui.completedTotal':'Insgesamt abgeschlossen:',
     'ui.select':'Auswählen','ui.chooseFile':'Datei wählen','ui.backHome':'← Startseite',
     'months.jan':'Januar','months.feb':'Februar','months.mar':'März','months.apr':'April','months.may':'Mai','months.jun':'Juni','months.jul':'Juli','months.aug':'August','months.sep':'September','months.oct':'Oktober','months.nov':'November','months.dec':'Dezember',
   },
-    'ui.download':'Herunterladen',
   en: {
     'ui.progress':'Progress','ui.review':'Review','ui.publish':'Publish','ui.save':'Save',
     'ui.foundations':'Foundations','ui.foundation':'Foundation','ui.completedTotal':'Total completed:',
     'ui.select':'Select','ui.chooseFile':'Choose file','ui.backHome':'← Home',
     'months.jan':'January','months.feb':'February','months.mar':'March','months.apr':'April','months.may':'May','months.jun':'June','months.jul':'July','months.aug':'August','months.sep':'September','months.oct':'October','months.nov':'November','months.dec':'December',
-  },
-    'ui.download':'Download',};
+  }
+};
 
 export function t(key, fallback=''){
   const lang = window.__lang || getLang();
@@ -90,15 +88,14 @@ function fetchCandidates(lang){
   const fromImport = (()=>{ try { return new URL('../i18n/', import.meta.url).href; } catch { return null; } })();
   const baseDoc = (()=>{ try { return new URL('.', document.baseURI || location.href).href; } catch { return null; } })();
   const bases = [
+    '/client-demo/web/i18n/',           // prefer web-root i18n (served by static)
+    '/form/i18n/',                      // explicit form path
     __i18nBase,
-        baseDoc && (baseDoc + 'i18n/'),
+    baseDoc && (baseDoc + 'i18n/'),
     fromImport,                         // ../i18n/ relative to module
-    baseDoc && (baseDoc + 'i18n/'),     // ./i18n/ next to the current page
     baseDoc && (baseDoc + '../i18n/'),  // ../i18n/ relative to page (root /i18n/)
     '/i18n/',                           // root /i18n/
-    '/form/i18n/',                      // explicit form path
     '/portal/i18n/',                    // explicit portal path
-    '/client-demo/web/i18n/',           // dev fallback
   ].filter(Boolean);
   return bases.map(b => (b.endsWith('/')?b:b+'/') + lang + '.json');
 }
