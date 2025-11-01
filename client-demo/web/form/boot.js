@@ -46,6 +46,9 @@ function showErr(m){
 
 try { if (window.AOS) AOS.init({ once: false }); } catch {}
 
+
+/* --- Single-button mode: autosave draft to localStorage (debounced) --- */
+function debounce(fn, ms){ let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); }; }
 diag('boot.js loaded; level=', level);
 
 // fallback section list helper
@@ -199,7 +202,26 @@ renderFallbackSections(res.template);
   }
 
   try {
-    renderForm({ template: res.template, data: res.data, level, onChange: ()=>{} });
+    
+// Prepare per-building draftKey and debounced autosave
+const bIdKey = (res && res.building && res.building.id) || (window.__buildingMeta && window.__buildingMeta.id) || 'b_1';
+const draftKey = `formDraft:${bIdKey}:${level}`;
+const autosave = debounce((data)=>{ try { localStorage.setItem(draftKey, JSON.stringify(data||{})); } catch {} }, 1200);
+
+renderForm({ template: res.template, data: res.data, level, onChange: autosave });
+
+// Ensure langchange rerender keeps autosave
+try {
+  window.__rerenderForm = function(){
+    try {
+      const ctx = (typeof getCurrentFormContext === 'function') ? getCurrentFormContext() : (__formCtx || {});
+      if (!ctx || !ctx.template) return;
+      renderForm({ template: ctx.template, data: ctx.data, level: ctx.level, onChange: autosave });
+      if (window.feather) window.feather.replace();
+    } catch (e) { console && console.warn && console.warn('rerender failed', e); }
+  };
+} catch {}
+
     setupChips(res.template);
     setupScrollSpy();
     if (window.feather) window.feather.replace();
