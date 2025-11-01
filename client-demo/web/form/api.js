@@ -1,28 +1,3 @@
-
-// Added: download ZIP helper
-async function download(id){
-  const url = `/buildings/${encodeURIComponent(id)}/download`;
-  const res = await fetch(url, { method: 'GET' });
-  if (!res.ok) {
-    const msg = await res.text().catch(()=>'');
-    throw new Error(`Download failed: ${res.status} ${msg}`);
-  }
-  const blob = await res.blob();
-  const cd = res.headers.get('Content-Disposition') || '';
-  let fname = 'download.zip';
-  const m = cd.match(/filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i);
-  if (m) fname = decodeURIComponent(m[1] || m[2]);
-  const a = document.createElement('a');
-  const urlObj = URL.createObjectURL(blob);
-  a.href = urlObj;
-  a.download = fname;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(()=> URL.revokeObjectURL(urlObj), 4000);
-}
-try { window.api = window.api || {}; if (!window.api.download) window.api.download = download; } catch {}
-
 // client-demo/web/form/api.js
 // ES module (loaded by the browser)
 
@@ -176,3 +151,28 @@ async getBuildingForm(id) {
     return r.json();
   },
 };
+
+
+/** Fallback download for non-module pages */
+async function __downloadShim(id){
+  const url = `/buildings/${encodeURIComponent(id)}/download`;
+  const res = await fetch(url, { method: 'GET' });
+  if (!res.ok) {
+    const msg = await res.text().catch(()=>'');
+    throw new Error(`Download failed: ${res.status} ${msg}`);
+  }
+  const blob = await res.blob();
+  const cd = res.headers.get('Content-Disposition') || '';
+  let fname = 'download.zip';
+  const m = cd.match(/filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i);
+  if (m) fname = decodeURIComponent(m[1] || m[2]);
+  const a = document.createElement('a');
+  const urlObj = URL.createObjectURL(blob);
+  a.href = urlObj;
+  a.download = fname;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=> URL.revokeObjectURL(urlObj), 4000);
+}
+try { window.api = window.api || {}; if (!window.api.download) window.api.download = __downloadShim; } catch {}

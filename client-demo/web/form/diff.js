@@ -296,18 +296,21 @@ function showConflict() {
   dlg.classList.remove('hidden');
 }
 
-\1
+function bindButtons() {
+  const review = document.getElementById('review-btn');
+  const publish = document.getElementById('publish-btn');
+  const save = document.getElementById('save-btn');
+  if (review && !review.__bound) { review.addEventListener('click', openReviewPanel); review.__bound = true; }
+  if (publish && !publish.__bound) { publish.addEventListener('click', publishWithConfirm); publish.__bound = true; }
 
 // Download ZIP of current.json + files
 const dl = document.getElementById('download-btn');
-if (dl) {
-  dl.addEventListener('click', async (ev)=>{
+if (dl && !dl.__bound) {
+  dl.addEventListener('click', async (ev) => {
     ev.preventDefault();
     try {
       const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__meta && window.__meta.id);
       if (!id) throw new Error('No building id');
-
-      // Prefer api.download if present, else fallback
       if (window.api && typeof window.api.download === 'function') {
         await window.api.download(id);
       } else {
@@ -333,17 +336,12 @@ if (dl) {
       }
     } catch (e) {
       console.error(e);
-      toast('Erreur lors du téléchargement', 'error');
+      try { toast('Erreur lors du téléchargement', 'error'); } catch {}
     }
   });
+  dl.__bound = true;
 }
 
-
-  const review = document.getElementById('review-btn');
-  const publish = document.getElementById('publish-btn');
-  const save = document.getElementById('save-btn');
-  if (review && !review.__bound) { review.addEventListener('click', openReviewPanel); review.__bound = true; }
-  if (publish && !publish.__bound) { publish.addEventListener('click', publishWithConfirm); publish.__bound = true; }
   if (save && !save.__bound) {
     save.addEventListener('click', async () => {
       const ctx = getCurrentFormContext();
