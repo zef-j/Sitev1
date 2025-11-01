@@ -296,7 +296,49 @@ function showConflict() {
   dlg.classList.remove('hidden');
 }
 
-function bindButtons() {
+\1
+
+// Download ZIP of current.json + files
+const dl = document.getElementById('download-btn');
+if (dl) {
+  dl.addEventListener('click', async (ev)=>{
+    ev.preventDefault();
+    try {
+      const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__meta && window.__meta.id);
+      if (!id) throw new Error('No building id');
+
+      // Prefer api.download if present, else fallback
+      if (window.api && typeof window.api.download === 'function') {
+        await window.api.download(id);
+      } else {
+        const url = `/buildings/${encodeURIComponent(id)}/download`;
+        const res = await fetch(url, { method: 'GET' });
+        if (!res.ok) {
+          const msg = await res.text().catch(()=>'');
+          throw new Error(`Download failed: ${res.status} ${msg}`);
+        }
+        const blob = await res.blob();
+        const cd = res.headers.get('Content-Disposition') || '';
+        let fname = 'download.zip';
+        const m = cd.match(/filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i);
+        if (m) fname = decodeURIComponent(m[1] || m[2]);
+        const a = document.createElement('a');
+        const urlObj = URL.createObjectURL(blob);
+        a.href = urlObj;
+        a.download = fname;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=> URL.revokeObjectURL(urlObj), 4000);
+      }
+    } catch (e) {
+      console.error(e);
+      toast('Erreur lors du téléchargement', 'error');
+    }
+  });
+}
+
+
   const review = document.getElementById('review-btn');
   const publish = document.getElementById('publish-btn');
   const save = document.getElementById('save-btn');
@@ -318,23 +360,6 @@ toast('Brouillon enregistré');
         toast('Échec de l’enregistrement.');
       }
     });
-
-  // Download ZIP of current.json + files
-  const dl = document.getElementById('download-btn');
-  if (dl) {
-    dl.addEventListener('click', async (ev)=>{
-      ev.preventDefault();
-      try {
-        const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__meta && window.__meta.id);
-        if (!id) throw new Error('No building id');
-        await api.download(id);
-      } catch (e) {
-        console.error(e);
-        toast('Erreur lors du téléchargement', 'error');
-      }
-    });
-  }
-
     save.__bound = true;
   }
   const v = document.getElementById('data-version');
@@ -420,20 +445,3 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.__bound = true;
   }
 });
-
-  // Download ZIP of current.json + files
-  const dl = document.getElementById('download-btn');
-  if (dl) {
-    dl.addEventListener('click', async (ev)=>{
-      ev.preventDefault();
-      try {
-        const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__meta && window.__meta.id);
-        if (!id) throw new Error('No building id');
-        await api.download(id);
-      } catch (e) {
-        console.error(e);
-        toast('Erreur lors du téléchargement', 'error');
-      }
-    });
-  }
-
