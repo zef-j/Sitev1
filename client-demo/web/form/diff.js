@@ -2,6 +2,7 @@ import { getCurrentFormContext } from './renderer.js';
 import { isFieldVisible } from './visibility.js';
 import { getAtPath } from './state.js';
 import { api } from './api.js';
+import { t, translatePage } from './i18n.js';
 
 function flattenTemplate(template) {
   const out = [];
@@ -296,52 +297,42 @@ function showConflict() {
   dlg.classList.remove('hidden');
 }
 
+
+function ensureDownloadButton() {
+  try {
+    let btn = document.getElementById('download-btn');
+    if (!btn) {
+      const publish = document.getElementById('publish-btn');
+      if (!publish || !publish.parentElement) return;
+      btn = document.createElement('button');
+      btn.id = 'download-btn';
+      btn.className = 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center';
+      btn.innerHTML = '<i data-feather="download" class="mr-2"></i><span data-i18n="ui.download">Télécharger</span>';
+      publish.parentElement.insertBefore(btn, publish.nextSibling);
+    }
+    // ensure i18n attribute is present and apply translation
+    const span = btn.querySelector('span') || btn;
+    span.setAttribute('data-i18n', 'ui.download');
+    span.setAttribute('data-i18n-fallback', 'Télécharger');
+    try { translatePage(btn); } catch {}
+    if (!btn.__bound) {
+      btn.addEventListener('click', () => {
+        const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__form && window.__form.id);
+        if (!id) return;
+        // go to server zip endpoint
+        const url = `${location.origin}/buildings/${encodeURIComponent(id)}/download`;
+        window.location.href = url;
+      });
+      btn.__bound = true;
+    }
+  } catch {}
+}
 function bindButtons() {
   const review = document.getElementById('review-btn');
   const publish = document.getElementById('publish-btn');
   const save = document.getElementById('save-btn');
   if (review && !review.__bound) { review.addEventListener('click', openReviewPanel); review.__bound = true; }
   if (publish && !publish.__bound) { publish.addEventListener('click', publishWithConfirm); publish.__bound = true; }
-
-// Download ZIP of current.json + files
-const dl = document.getElementById('download-btn');
-if (dl && !dl.__bound) {
-  dl.addEventListener('click', async (ev) => {
-    ev.preventDefault();
-    try {
-      const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__meta && window.__meta.id);
-      if (!id) throw new Error('No building id');
-      if (window.api && typeof window.api.download === 'function') {
-        await window.api.download(id);
-      } else {
-        const url = `/buildings/${encodeURIComponent(id)}/download`;
-        const res = await fetch(url, { method: 'GET' });
-        if (!res.ok) {
-          const msg = await res.text().catch(()=>'');
-          throw new Error(`Download failed: ${res.status} ${msg}`);
-        }
-        const blob = await res.blob();
-        const cd = res.headers.get('Content-Disposition') || '';
-        let fname = 'download.zip';
-        const m = cd.match(/filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i);
-        if (m) fname = decodeURIComponent(m[1] || m[2]);
-        const a = document.createElement('a');
-        const urlObj = URL.createObjectURL(blob);
-        a.href = urlObj;
-        a.download = fname;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(()=> URL.revokeObjectURL(urlObj), 4000);
-      }
-    } catch (e) {
-      console.error(e);
-      try { toast('Erreur lors du téléchargement', 'error'); } catch {}
-    }
-  });
-  dl.__bound = true;
-}
-
   if (save && !save.__bound) {
     save.addEventListener('click', async () => {
       const ctx = getCurrentFormContext();
