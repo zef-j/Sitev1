@@ -318,6 +318,23 @@ toast('Brouillon enregistré');
         toast('Échec de l’enregistrement.');
       }
     });
+
+  // Download ZIP of current.json + files
+  const dl = document.getElementById('download-btn');
+  if (dl) {
+    dl.addEventListener('click', async (ev)=>{
+      ev.preventDefault();
+      try {
+        const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__meta && window.__meta.id);
+        if (!id) throw new Error('No building id');
+        await api.download(id);
+      } catch (e) {
+        console.error(e);
+        toast('Erreur lors du téléchargement', 'error');
+      }
+    });
+  }
+
     save.__bound = true;
   }
   const v = document.getElementById('data-version');
@@ -403,3 +420,20 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.__bound = true;
   }
 });
+
+  // Download ZIP of current.json + files
+  const dl = document.getElementById('download-btn');
+  if (dl) {
+    dl.addEventListener('click', async (ev)=>{
+      ev.preventDefault();
+      try {
+        const id = (window.__buildingMeta && window.__buildingMeta.id) || (window.__meta && window.__meta.id);
+        if (!id) throw new Error('No building id');
+        await api.download(id);
+      } catch (e) {
+        console.error(e);
+        toast('Erreur lors du téléchargement', 'error');
+      }
+    });
+  }
+
