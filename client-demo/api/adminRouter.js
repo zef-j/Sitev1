@@ -1,4 +1,4 @@
-// ESM adminRouter.js — complete set including add/rename/delete and robust ID change
+// ESM adminRouter.js — full endpoints + robust ID changes with merge
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -8,7 +8,7 @@ import {
   backupRegistry, listBackups, validateRegistry, slugify, audit,
   findDataDirsForBuilding, archiveAndMaybeDeleteData
 } from './adminFs.js';
-import { findBuildingDirByCurrentJson, moveDir } from './adminMove.js';
+import { existsDir, expectedBuildingDir, findBuildingDirsByCurrentJson, moveDirWithMerge, readJsonSafe } from './adminMove.js';
 
 function readSecret() { try { return fs.readFileSync(SECRET_FILE, 'utf8').trim(); } catch { return ''; } }
 function ok(req) { const key = (req.headers['x-admin-secret'] || req.query.key || '').toString(); const secret = readSecret(); return secret ? (key===secret) : true; }
@@ -16,19 +16,12 @@ function requireOk(req,res){ if (!ok(req)) { res.status(403).json({ error: 'Forb
 
 async function getRegistry(){ return await readJson(REGISTRY_FILE); }
 
-function uniqueSlug(base, taken){
-  let s = base; let i=2;
-  const has = (x)=> taken.has(x);
-  while (has(s)) s = `${base}-${i++}`;
-  return s;
-}
+function uniqueSlug(base, taken){ let s = base; let i=2; while (taken.has(s)) s = `${base}-${i++}`; return s; }
 
 function treeFromRegistry(reg) {
   const map = new Map();
   for (const it of reg) {
-    if (!map.has(it.foundationId)) {
-      map.set(it.foundationId, { foundationId: it.foundationId, foundationName: it.foundationName, buildings: [] });
-    }
+    if (!map.has(it.foundationId)) map.set(it.foundationId, { foundationId: it.foundationId, foundationName: it.foundationName, buildings: [] });
     map.get(it.foundationId).buildings.push({ id: it.id, name: it.name });
   }
   const list = Array.from(map.values()).sort((a,b)=> a.foundationName.localeCompare(b.foundationName,'de'));
@@ -190,47 +183,47 @@ export default function createAdminRouter() {
     finally { await release(); }
   });
 
-  // ---- Change Building ID (robust) ----
+  // ---- Change Building ID (LOCK FIRST, robust, merge if dest exists) ----
   router.post('/change-building-id', async (req,res) => {
     const { foundationId, id, newId } = req.body || {};
     if (!foundationId || !id || !newId) return res.status(400).json({ error: 'foundationId, id and newId required' });
     const nid = slugify(newId);
-    const reg = await getRegistry();
-    const item = reg.find(x => x.foundationId === foundationId && x.id === id);
-    if (!item) return res.status(404).json({ error: 'building not found' });
-    if (reg.some(x => x.id === nid && x !== item)) return res.status(409).json({ error: 'newId already exists' });
 
-    // Locate data directories for old id
-    let dirs = await findDataDirsForBuilding(foundationId, id);
-    // Filter to paths that actually exist
-    dirs = dirs.filter(d => { try { return fs.statSync(d).isDirectory(); } catch { return false; } });
-    if (!dirs.length) dirs = await findBuildingDirByCurrentJson(id);
-
-    const release = await acquireLock('registry');
+    const release = await acquireLock('registry'); // lock early to avoid races
     try {
-      await audit('change-building-id', { foundationId, id, newId: nid, dataDirs: dirs.length }, req);
+      const reg = await getRegistry();
+      const item = reg.find(x => x.foundationId === foundationId && x.id === id);
+      if (!item) { res.status(404).json({ error: 'building not found' }); return; }
+      if (reg.some(x => x.id === nid && x !== item)) { res.status(409).json({ error: 'newId already exists' }); return; }
+      await audit('change-building-id/start', { foundationId, id, newId: nid }, req);
       await backupRegistry('change-building-id');
 
+      // Discover source dirs
+      const expected = expectedBuildingDir(foundationId, id);
+      let dirs = [];
+      if (await existsDir(expected)) dirs.push(expected);
+      else dirs = await findBuildingDirsByCurrentJson(id);
+
+      // Move / merge
       let moved = 0;
-      for (const d of dirs) {
-        const dest = path.join(path.dirname(d), nid);
-        await moveDir(d, dest);
-        // update current.json to keep it consistent
-        try {
-          const cur = path.join(dest, 'current.json');
-          const j = JSON.parse(fs.readFileSync(cur, 'utf8'));
-          j.buildingId = nid;
-          fs.writeFileSync(cur, JSON.stringify(j, null, 2));
-        } catch {}
-        moved++;
+      for (const src of dirs){
+        const dest = path.join(path.dirname(src), nid);
+        const result = await moveDirWithMerge(src, dest);
+        // fix current.json in dest
+        const cur = path.join(dest, 'current.json');
+        const j = await readJsonSafe(cur);
+        if (j) { j.buildingId = nid; await fsp.writeFile(cur, JSON.stringify(j, null, 2)); }
+        if (result.moved) moved++;
       }
 
-      // Update registry (always)
+      // Update registry last
       item.aliases = Array.isArray(item.aliases) ? item.aliases : [];
       if (!item.aliases.includes(id)) item.aliases.push(id);
       item.id = nid;
       validateRegistry(reg);
       await writeJsonAtomic(REGISTRY_FILE, reg);
+
+      await audit('change-building-id/done', { foundationId, from:id, to:nid, moved }, req);
       res.json({ ok: true, moved, id: nid, aliases: item.aliases });
     } catch (e) {
       res.status(500).json({ error: String(e.message || e) });
@@ -242,39 +235,58 @@ export default function createAdminRouter() {
     const { oldId, newId } = req.body || {};
     if (!oldId || !newId) return res.status(400).json({ error: 'oldId and newId required' });
     const nid = slugify(newId);
-    const reg = await getRegistry();
-    if (reg.some(x => x.foundationId === nid)) return res.status(409).json({ error: 'newId already exists' });
-
-    // Derive actual foundation dirs from buildings
-    const buildingIds = reg.filter(x=>x.foundationId===oldId).map(x=>x.id);
-    const dirmap = new Set();
-    for (const bid of buildingIds) {
-      let dirs = await findDataDirsForBuilding(oldId, bid);
-      dirs = dirs.filter(d => { try { return fs.statSync(d).isDirectory(); } catch { return false; } });
-      for (const d of dirs) dirmap.add(path.dirname(path.dirname(d)));
-    }
-    const fdirs = Array.from(dirmap);
-
     const release = await acquireLock('registry');
     try {
-      await audit('change-foundation-id', { oldId, newId: nid, dirs: fdirs.length }, req);
+      const reg = await getRegistry();
+      if (reg.some(x => x.foundationId === nid)) { res.status(409).json({ error: 'newId already exists' }); return; }
+
+      // Find actual foundation dirs by listing buildings for this foundation
+      const buildingIds = reg.filter(x=>x.foundationId===oldId).map(x=>x.id);
+      const fset = new Set();
+      for (const bid of buildingIds){
+        const bdir = expectedBuildingDir(oldId, bid);
+        if (await existsDir(bdir)) fset.add(path.dirname(path.dirname(bdir)));
+        else {
+          const found = await findBuildingDirsByCurrentJson(bid);
+          for (const p of found) fset.add(path.dirname(path.dirname(p)));
+        }
+      }
+      const fdirs = Array.from(fset);
+
+      await audit('change-foundation-id/start', { oldId, newId:nid, dirs:fdirs.length }, req);
       await backupRegistry('change-foundation-id');
 
-      for (const d of fdirs) {
+      // Rename/merge each foundation dir
+      for (const d of fdirs){
         const dest = path.join(path.dirname(d), nid);
-        try { await moveDir(d, dest); } catch {}
+        if (await existsDir(dest)) {
+          // merge buildings into dest/buildings/
+          const srcB = path.join(d,'buildings'); const dstB = path.join(dest,'buildings');
+          await fsp.mkdir(dstB, { recursive:true });
+          let ents = []; try { ents = await fsp.readdir(srcB, { withFileTypes:true }); } catch {}
+          for (const it of ents){
+            const s2 = path.join(srcB, it.name);
+            const d2 = path.join(dstB, it.name);
+            if (it.isDirectory()) await moveDirWithMerge(s2, d2);
+          }
+          await fsp.rm(d, { recursive:true, force:true });
+        } else {
+          await fsp.mkdir(path.dirname(dest), { recursive:true });
+          try { await fsp.rename(d, dest); } catch { await fsp.mkdir(dest, { recursive:true }); }
+        }
       }
+
+      // Update registry foundations
       for (const it of reg) if (it.foundationId === oldId) it.foundationId = nid;
 
-      // Update aliases file
-      let map = {};
-      try { map = JSON.parse(fs.readFileSync(FOUNDATION_ALIASES_FILE,'utf8')); } catch {}
-      map[oldId] = nid;
-      await writeJsonAtomic(FOUNDATION_ALIASES_FILE, map);
+      // foundation aliases file
+      let map = {}; try { map = JSON.parse(fs.readFileSync(FOUNDATION_ALIASES_FILE,'utf8')); } catch {}
+      map[oldId] = nid; await writeJsonAtomic(FOUNDATION_ALIASES_FILE, map);
 
       validateRegistry(reg);
       await writeJsonAtomic(REGISTRY_FILE, reg);
-      res.json({ ok: true, moved: fdirs.length, id: nid });
+      await audit('change-foundation-id/done', { oldId, to:nid }, req);
+      res.json({ ok: true, id: nid });
     } catch (e) {
       res.status(500).json({ error: String(e.message || e) });
     } finally { await release(); }
