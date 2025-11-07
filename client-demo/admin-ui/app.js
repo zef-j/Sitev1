@@ -1,17 +1,10 @@
 (function(){
   const API = '/admin/api';
-
   async function changeBuildingId(foundationId, id){
-    const newId = prompt('New ID (leave blank to cancel):', id);
+    const newId = prompt('New building ID (leave blank to cancel):', id);
     if (!newId || newId.trim()===id) return;
     await call('POST','/change-building-id',{ foundationId, id, newId: newId.trim() });
     toast('Building ID changed'); await loadTree();
-  }
-  async function changeFoundationId(oldId){
-    const newId = prompt('New foundation ID (leave blank to cancel):', oldId);
-    if (!newId || newId.trim()===oldId) return;
-    await call('POST','/change-foundation-id',{ oldId, newId: newId.trim() });
-    toast('Foundation ID changed'); await loadTree();
   }
 
   let KEY = sessionStorage.getItem('admin_key') || '';
@@ -76,8 +69,7 @@
               toast('Foundation deleted'); SEL=null; await loadTree();
             }catch(e){ toast(e.message, true); }
           };
-          const btnCidF = document.createElement('button'); btnCidF.textContent='Change ID'; btnCidF.onclick = ()=> changeFoundationId(f.foundationId);
-          right.append(btnSel, btnRen, btnCidF, btnDel);
+          right.append(btnSel, btnRen, btnDel);
           row.append(left, right);
           host.append(row);
         });
@@ -140,7 +132,7 @@
           toast('Building deleted'); await loadTree();
         }catch(e){ toast(e.message, true); }
       };
-      right.append(ren, del);
+      const cid=document.createElement('button'); cid.textContent='Change ID'; cid.onclick=()=>changeBuildingId(f.foundationId,b.id); right.append(ren, cid, del);
       row.append(left, right);
       list.append(row);
     });
@@ -164,8 +156,7 @@
             toast('Restored backup'); await loadTree();
           }catch(e){ toast(e.message, true); }
         };
-        const btnCid = document.createElement('button'); btnCid.textContent='Change ID'; btnCid.onclick = ()=> changeBuildingId(SEL.foundationId, b.id);
-        row.append(btn, btnCid); host.append(row);
+        row.append(btn); host.append(row);
       });
     }catch(e){ toast(e.message, true); }
   }

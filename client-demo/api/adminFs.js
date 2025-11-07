@@ -120,6 +120,7 @@ export async function findDataDirsForBuilding(foundationId, buildingId) {
   }
   const targetSuffix = path.join('foundations', foundationId, 'buildings', buildingId);
   const pending = [...roots];
+  let foundAny = false;
   while (pending.length) {
     const cur = pending.shift();
     let ents;
@@ -127,8 +128,30 @@ export async function findDataDirsForBuilding(foundationId, buildingId) {
     for (const e of ents) {
       const full = path.join(cur, e.name);
       if (e.isDirectory()) {
-        if (full.endsWith(targetSuffix)) matches.push(full);
+        if (full.endsWith(targetSuffix)) { matches.push(full); foundAny = true; }
         else pending.push(full);
+      }
+    }
+  }
+
+  // FALLBACK_ANY_FOUNDATION: if nothing matched exact foundationId, search by buildingId anywhere
+  if (!matches.length) {
+    const targetSuffix2 = path.join('buildings', buildingId);
+    const roots2 = [];
+    for (const candidate of ['orgs','sites','.']) {
+      const p = path.join(DATA_ROOT, candidate);
+      if (fs.existsSync(p) && fs.statSync(p).isDirectory()) roots2.push(p);
+    }
+    const pending2 = [...roots2];
+    while (pending2.length) {
+      const cur = pending2.shift();
+      let ents; try { ents = await fsp.readdir(cur, { withFileTypes: true }); } catch { continue; }
+      for (const e of ents) {
+        const full = path.join(cur, e.name);
+        if (e.isDirectory()) {
+          if (full.endsWith(targetSuffix2)) matches.push(full);
+          else pending2.push(full);
+        }
       }
     }
   }
@@ -145,53 +168,6 @@ async function copyDir(src, dest) {
     if (e.isDirectory()) await copyDir(s, d);
     else await fsp.copyFile(s, d);
   }
-}
-
-
-export async function findFoundationDirs(foundationId){
-  const matches = [];
-  const roots = [];
-  for (const candidate of ['orgs','sites','.']){
-    const p = path.join(DATA_ROOT, candidate);
-    if (fs.existsSync(p) && fs.statSync(p).isDirectory()) roots.push(p);
-  }
-  const targetSuffix = path.join('foundations', foundationId);
-  const pending = [...roots];
-  while (pending.length){
-    const cur = pending.shift();
-    let ents;
-    try { ents = await fsp.readdir(cur, { withFileTypes:true }); } catch { continue; }
-    for (const e of ents){
-      const full = path.join(cur, e.name);
-      if (e.isDirectory()){
-        if (full.endsWith(targetSuffix)) matches.push(full);
-        else pending.push(full);
-      }
-    }
-  }
-  return matches;
-}
-
-export async function safeRename(src, dest){
-  await fsp.mkdir(path.dirname(dest), { recursive:true });
-  // If destination exists, throw to avoid overwriting
-  try {
-    const st = await fsp.stat(dest);
-    if (st) throw new Error('Destination exists: '+dest);
-  } catch {}
-  await fsp.rename(src, dest);
-}
-
-export async function updateCurrentJsonBuildingId(dir, newId){
-  const cur = path.join(dir, 'current.json');
-  try {
-    const s = await fsp.readFile(cur, 'utf8');
-    const j = JSON.parse(s);
-    if (j && typeof j === 'object'){
-      j.buildingId = newId;
-      await fsp.writeFile(cur, JSON.stringify(j, null, 2));
-    }
-  } catch {}
 }
 
 export async function archiveAndMaybeDeleteData(paths, tag, erase) {
