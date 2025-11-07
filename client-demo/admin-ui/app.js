@@ -1,7 +1,8 @@
 (function(){
   const API = '/admin/api';
+  let KEY = sessionStorage.getItem('admin_key') || '';
+  const headers = () => KEY ? { 'x-admin-secret': KEY, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
 
-  async 
   async function changeBuildingId(foundationId, id){
     const cur = id;
     const newId = prompt('New building ID (slug will be auto-generated):', cur);
@@ -21,18 +22,17 @@
       toast('Foundation ID changed'); await loadTree();
     }catch(e){ toast(e.message||String(e), true); }
   }
-Y = sessionStorage.getItem('admin_key') || '';
-  const headers = () => KEY ? { 'x-admin-secret': KEY, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
 
-  function fmtSize(n){ if(n<1024) return n+' B'; if(n<1024*1024) return (n/1024).toFixed(1)+' KB'; return (n/1024/1024).toFixed(1)+' MB'; }
+function fmtSize(n){ if(n<1024) return n+' B'; if(n<1024*1024) return (n/1024).toFixed(1)+' KB'; return (n/1024/1024).toFixed(1)+' MB'; }
   function toast(msg, warn=false){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.toggle('warn', !!warn); t.style.display='block'; setTimeout(()=>t.style.display='none', 2600); }
 
   async function call(method, path, body){
     const qs = (method==='GET' && KEY) ? ('?key='+encodeURIComponent(KEY)) : '';
-    const r = await fetch(API + (path.startsWith('/') ? path : '/' + path) + qs, { method, headers: headers(), body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
+    const url = API + (String(path).startsWith('/') ? path : '/' + String(path)) + qs;
+    const r = await fetch(url, { method, headers: headers(), body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
     if (!r.ok) {
       let txt = await r.text().catch(()=>'');
-      try { const j = JSON.parse(txt); throw new Error(j.error || txt || r.statusText); } catch { throw new Error(txt || r.statusText); }
+      try { const j = JSON.parse(txt); throw new Error(j.error || r.statusText); } catch { throw new Error(txt || r.statusText); }
     }
     return r.json();
   }
