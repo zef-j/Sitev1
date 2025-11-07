@@ -34,10 +34,6 @@ export const LOCK_DIR    = path.join(DATA_ROOT, '_locks');
 export const SECRET_FILE = path.join(ADMIN_DIR, 'secret.txt');
 export const AUDIT_LOG   = path.join(ADMIN_DIR, 'audit.log');
 
-export default {
-  DATA_ROOT, REGISTRY_FILE, ADMIN_DIR, BACKUP_DIR, DATA_BKP_DIR, LOCK_DIR, SECRET_FILE, AUDIT_LOG
-};
-
 export const FOUNDATION_ALIASES_FILE = path.join(DATA_ROOT, 'foundation-aliases.json');
 
 export default {
