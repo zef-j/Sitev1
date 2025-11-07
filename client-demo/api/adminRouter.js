@@ -1,6 +1,7 @@
 // ESM adminRouter.js — full endpoints + robust ID changes with merge
 import express from 'express';
 import fs from 'fs';
+import fsp from 'fs/promises';
 import path from 'path';
 import { DATA_ROOT, REGISTRY_FILE, SECRET_FILE, BACKUP_DIR, FOUNDATION_ALIASES_FILE } from './adminConfig.js';
 import {
@@ -15,6 +16,14 @@ function ok(req) { const key = (req.headers['x-admin-secret'] || req.query.key |
 function requireOk(req,res){ if (!ok(req)) { res.status(403).json({ error: 'Forbidden' }); return false; } return true; }
 
 async function getRegistry(){ return await readJson(REGISTRY_FILE); }
+async function writeCurrentJsonBuildingId(dir, nid){
+  try {
+    const cur = path.join(dir, 'current.json');
+    const j = await readJsonSafe(cur);
+    if (j) { j.buildingId = nid; await fsp.writeFile(cur, JSON.stringify(j, null, 2)); }
+  } catch {}
+}
+
 
 function uniqueSlug(base, taken){ let s = base; let i=2; while (taken.has(s)) s = `${base}-${i++}`; return s; }
 
@@ -210,9 +219,7 @@ export default function createAdminRouter() {
         const dest = path.join(path.dirname(src), nid);
         const result = await moveDirWithMerge(src, dest);
         // fix current.json in dest
-        const cur = path.join(dest, 'current.json');
-        const j = await readJsonSafe(cur);
-        if (j) { j.buildingId = nid; await fsp.writeFile(cur, JSON.stringify(j, null, 2)); }
+        await writeCurrentJsonBuildingId(dest, nid)
         if (result.moved) moved++;
       }
 
