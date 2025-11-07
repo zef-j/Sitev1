@@ -1,13 +1,27 @@
 (function(){
   const API = '/admin/api';
+
+  async 
   async function changeBuildingId(foundationId, id){
-    const newId = prompt('New building ID (leave blank to cancel):', id);
-    if (!newId || newId.trim()===id) return;
-    await call('POST','/change-building-id',{ foundationId, id, newId: newId.trim() });
-    toast('Building ID changed'); await loadTree();
+    const cur = id;
+    const newId = prompt('New building ID (slug will be auto-generated):', cur);
+    if (!newId || newId.trim()===cur) return;
+    try{
+      await call('POST','/change-building-id',{ foundationId, id, newId: newId.trim() });
+      toast('Building ID changed'); await loadTree();
+    }catch(e){ toast(e.message||String(e), true); }
   }
 
-  let KEY = sessionStorage.getItem('admin_key') || '';
+  async function changeFoundationId(foundationId){
+    const cur = foundationId;
+    const newId = prompt('New foundation ID (slug will be auto-generated):', cur);
+    if (!newId || newId.trim()===cur) return;
+    try{
+      await call('POST','/change-foundation-id',{ oldId: foundationId, newId: newId.trim() });
+      toast('Foundation ID changed'); await loadTree();
+    }catch(e){ toast(e.message||String(e), true); }
+  }
+Y = sessionStorage.getItem('admin_key') || '';
   const headers = () => KEY ? { 'x-admin-secret': KEY, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
 
   function fmtSize(n){ if(n<1024) return n+' B'; if(n<1024*1024) return (n/1024).toFixed(1)+' KB'; return (n/1024/1024).toFixed(1)+' MB'; }
@@ -15,7 +29,7 @@
 
   async function call(method, path, body){
     const qs = (method==='GET' && KEY) ? ('?key='+encodeURIComponent(KEY)) : '';
-    const r = await fetch(API+path+qs, { method, headers: headers(), body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
+    const r = await fetch(API + (path.startsWith('/') ? path : '/' + path) + qs, { method, headers: headers(), body: body ? JSON.stringify(body) : undefined, cache: 'no-store' });
     if (!r.ok) {
       let txt = await r.text().catch(()=>'');
       try { const j = JSON.parse(txt); throw new Error(j.error || txt || r.statusText); } catch { throw new Error(txt || r.statusText); }
@@ -69,7 +83,8 @@
               toast('Foundation deleted'); SEL=null; await loadTree();
             }catch(e){ toast(e.message, true); }
           };
-          right.append(btnSel, btnRen, btnDel);
+          const btnCidF = document.createElement('button'); btnCidF.textContent='Change ID'; btnCidF.onclick=()=>changeFoundationId(f.foundationId);
+          right.append(btnSel, btnRen, btnCidF, btnDel);
           row.append(left, right);
           host.append(row);
         });
@@ -132,7 +147,8 @@
           toast('Building deleted'); await loadTree();
         }catch(e){ toast(e.message, true); }
       };
-      const cid=document.createElement('button'); cid.textContent='Change ID'; cid.onclick=()=>changeBuildingId(f.foundationId,b.id); right.append(ren, cid, del);
+      const cid=document.createElement('button'); cid.textContent='Change ID'; cid.onclick=()=>changeBuildingId(f.foundationId,b.id);
+      right.append(ren, cid, del);
       row.append(left, right);
       list.append(row);
     });
