@@ -43,6 +43,23 @@ type Data = {
 
 
 
+
+
+// --- Aliases helpers --------------------------------------------------------
+function getFoundationAliases(): Record<string,string> {
+  try {
+    const p = path.join(DATA_ROOT, 'foundation-aliases.json');
+    return JSON.parse(fs.readFileSync(p,'utf8'));
+  } catch { return {}; }
+}
+function getBuildingByIdOrAlias(id: string): { meta: BuildingMeta | null } {
+  const all = getBuildings() as any[];
+  let found = all.find(b => b.id === id);
+  if (found) return { meta: found };
+  found = all.find(b => Array.isArray(b.aliases) && b.aliases.includes(id));
+  if (found) return { meta: found };
+  return { meta: null };
+}
 // --- utilities --------------------------------------------------------------
 function ensureDir(p: string) { fs.mkdirSync(p, { recursive: true }); }
 function readJSON<T>(filePath: string, fallback: T): T {
@@ -128,9 +145,7 @@ function getBuildings(): BuildingMeta[] {
   return readJSON(path.join(DATA_ROOT, 'buildings.json'), [] as BuildingMeta[]);
 }
 function getBuildingMeta(id: string): BuildingMeta | null {
-  const all = getBuildings();
-  const found = all.find(b => b.id === id);
-  return found || null;
+  return getBuildingByIdOrAlias(id).meta;
 }
 function getBuildingDir(meta: BuildingMeta) {
   const existing = locateExistingFoundationFolder(meta.id);
@@ -206,6 +221,11 @@ app.get('/foundations', (_req, res) => {
     const fid = b.foundationId || 'f_default';
     const fname = b.foundationName || 'Default';
     if (!map.has(fid)) map.set(fid, { id: fid, name: fname });
+
+app.get('/foundation-aliases', (_req, res) => {
+  res.json(getFoundationAliases());
+});
+
   }
   res.json(Array.from(map.values()));
 });

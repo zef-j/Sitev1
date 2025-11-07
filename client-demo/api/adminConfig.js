@@ -37,3 +37,9 @@ export const AUDIT_LOG   = path.join(ADMIN_DIR, 'audit.log');
 export default {
   DATA_ROOT, REGISTRY_FILE, ADMIN_DIR, BACKUP_DIR, DATA_BKP_DIR, LOCK_DIR, SECRET_FILE, AUDIT_LOG
 };
+
+export const FOUNDATION_ALIASES_FILE = path.join(DATA_ROOT, 'foundation-aliases.json');
+
+export default {
+  DATA_ROOT, REGISTRY_FILE, ADMIN_DIR, BACKUP_DIR, DATA_BKP_DIR, LOCK_DIR, SECRET_FILE, AUDIT_LOG, FOUNDATION_ALIASES_FILE
+};

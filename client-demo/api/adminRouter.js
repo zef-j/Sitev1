@@ -2,11 +2,11 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
-import { REGISTRY_FILE, SECRET_FILE, BACKUP_DIR } from './adminConfig.js';
+import { REGISTRY_FILE, SECRET_FILE, BACKUP_DIR, FOUNDATION_ALIASES_FILE } from './adminConfig.js';
 import {
   ensureDirs, acquireLock, readJson, writeJsonAtomic,
   backupRegistry, listBackups, validateRegistry, slugify, audit,
-  findDataDirsForBuilding, archiveAndMaybeDeleteData
+  findDataDirsForBuilding, archiveAndMaybeDeleteData, findFoundationDirs, safeRename, updateCurrentJsonBuildingId
 } from './adminFs.js';
 
 function readSecret() {
@@ -206,6 +206,83 @@ export default function createAdminRouter() {
       validateRegistry(reg);
       await writeJsonAtomic(REGISTRY_FILE, reg);
       res.json({ ok: true });
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
+  });
+
+  
+  // --- Change Building ID (slug) -------------------------------------------
+  router.post('/change-building-id', async (req,res) => {
+    const { foundationId, id, newId } = req.body || {};
+    if (!foundationId || !id || !newId) return res.status(400).json({ error: 'foundationId, id and newId required' });
+    const nid = slugify(newId);
+    const reg = await readJson(REGISTRY_FILE);
+    const item = reg.find(x => x.foundationId === foundationId && x.id === id);
+    if (!item) return res.status(404).json({ error: 'building not found' });
+    if (reg.some(x => x.id === nid && x !== item)) return res.status(409).json({ error: 'newId already exists' });
+
+    // Locate data dirs
+    const dirs = await findDataDirsForBuilding(foundationId, id);
+
+    const release = await acquireLock('registry');
+    try {
+      await audit('change-building-id', { foundationId, id, newId: nid, dataDirs: dirs.length }, req);
+      await backupRegistry('change-building-id');
+
+      // Move folders and update current.json
+      for (const d of dirs) {
+        const dest = path.join(path.dirname(d), nid);
+        await safeRename(d, dest);
+        await updateCurrentJsonBuildingId(dest, nid);
+      }
+
+      // Update registry entry + aliases
+      item.aliases = Array.isArray(item.aliases) ? item.aliases : [];
+      if (!item.aliases.includes(id)) item.aliases.push(id);
+      item.id = nid;
+      validateRegistry(reg);
+      await writeJsonAtomic(REGISTRY_FILE, reg);
+      res.json({ ok: true, moved: dirs.length, id: nid, aliases: item.aliases });
+    } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
+    finally { await release(); }
+  });
+
+  // --- Change Foundation ID (slug) -----------------------------------------
+  router.post('/change-foundation-id', async (req,res) => {
+    const { oldId, newId } = req.body || {};
+    if (!oldId || !newId) return res.status(400).json({ error: 'oldId and newId required' });
+    const nid = slugify(newId);
+    const reg = await readJson(REGISTRY_FILE);
+    const exists = reg.some(x => x.foundationId === nid);
+    if (exists) return res.status(409).json({ error: 'newId already exists' });
+
+    const fdirs = await findFoundationDirs(oldId);
+
+    const release = await acquireLock('registry');
+    try {
+      await audit('change-foundation-id', { oldId, newId: nid, dirs: fdirs.length }, req);
+      await backupRegistry('change-foundation-id');
+
+      // Rename foundation folders
+      for (const d of fdirs) {
+        const dest = path.join(path.dirname(d), nid);
+        await safeRename(d, dest);
+      }
+
+      // Update registry entries
+      for (const it of reg) if (it.foundationId === oldId) it.foundationId = nid;
+
+      // Update aliases file
+      try {
+        let map = {};
+        try { map = await readJson(FOUNDATION_ALIASES_FILE); } catch {}
+        map[oldId] = nid;
+        await writeJsonAtomic(FOUNDATION_ALIASES_FILE, map);
+      } catch {}
+
+      validateRegistry(reg);
+      await writeJsonAtomic(REGISTRY_FILE, reg);
+      res.json({ ok: true, moved: fdirs.length, id: nid });
     } catch (e) { res.status(500).json({ error: String(e.message || e) }); }
     finally { await release(); }
   });

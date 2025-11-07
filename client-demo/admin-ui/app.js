@@ -1,5 +1,19 @@
 (function(){
   const API = '/admin/api';
+
+  async function changeBuildingId(foundationId, id){
+    const newId = prompt('New ID (leave blank to cancel):', id);
+    if (!newId || newId.trim()===id) return;
+    await call('POST','/change-building-id',{ foundationId, id, newId: newId.trim() });
+    toast('Building ID changed'); await loadTree();
+  }
+  async function changeFoundationId(oldId){
+    const newId = prompt('New foundation ID (leave blank to cancel):', oldId);
+    if (!newId || newId.trim()===oldId) return;
+    await call('POST','/change-foundation-id',{ oldId, newId: newId.trim() });
+    toast('Foundation ID changed'); await loadTree();
+  }
+
   let KEY = sessionStorage.getItem('admin_key') || '';
   const headers = () => KEY ? { 'x-admin-secret': KEY, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
 
@@ -62,7 +76,8 @@
               toast('Foundation deleted'); SEL=null; await loadTree();
             }catch(e){ toast(e.message, true); }
           };
-          right.append(btnSel, btnRen, btnDel);
+          const btnCidF = document.createElement('button'); btnCidF.textContent='Change ID'; btnCidF.onclick = ()=> changeFoundationId(f.foundationId);
+          right.append(btnSel, btnRen, btnCidF, btnDel);
           row.append(left, right);
           host.append(row);
         });
@@ -149,7 +164,8 @@
             toast('Restored backup'); await loadTree();
           }catch(e){ toast(e.message, true); }
         };
-        row.append(btn); host.append(row);
+        const btnCid = document.createElement('button'); btnCid.textContent='Change ID'; btnCid.onclick = ()=> changeBuildingId(SEL.foundationId, b.id);
+        row.append(btn, btnCid); host.append(row);
       });
     }catch(e){ toast(e.message, true); }
   }

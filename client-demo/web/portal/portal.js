@@ -1,4 +1,19 @@
 import { translatePage, ensureLangSelector, initI18n } from '../form/i18n.js';
+
+async function resolveFoundationId(fid){
+  try{
+    const r = await fetch('../foundation-aliases');
+    if (!r.ok) return fid;
+    const map = await r.json();
+    if (map && map[fid] && map[fid] !== fid) {
+      const url = new URL(location.href);
+      url.searchParams.set('id', map[fid]);
+      location.replace(url.toString());
+      return map[fid];
+    }
+  }catch{}
+  return fid;
+}
 import { api } from '../form/api.js';
 import { computeProgress } from '../form/progress.js';
 
@@ -50,7 +65,7 @@ async function loadFoundations(){ try{ await initI18n(); }catch{} try{ ensureLan
 }
 
 async function loadFoundation(){ try{ await initI18n(); }catch{} try{ ensureLangSelector(document.querySelector('body .flex')||document.body); await initI18n(); }catch{}
-  const fid = qs('id') || 'f_default';
+  const fid0 = qs('id') || 'f_default'; await resolveFoundationId(fid0); const fid = qs('id') || fid0;
   const cont = document.getElementById('list');
   const crumb = document.getElementById('crumb-foundation');
   const title = document.getElementById('title');
