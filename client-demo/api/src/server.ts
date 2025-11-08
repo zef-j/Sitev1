@@ -8,7 +8,7 @@ import multer from 'multer';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - JS module default export
 import adminRouter from '../adminRouter.js';
-import { router as changeBuildingIdRouter } from './admin/changeBuildingId.js';
+import { router as changeBuildingIdRouter } from './admin/changeBuildingId';
 type VersionListItem = { versionId: string; createdAt: string; dataVersion: number };
 
 const app = express();
@@ -451,18 +451,18 @@ app.use('/admin', express.static(path.resolve(process.cwd(), '../admin-ui'), { r
 app.use('/admin/api', changeBuildingIdRouter);
 app.use('/admin/api', adminRouter());
 
-
-// Normalize trailing slash after HTML files (e.g., /portal/index.html/ -> /portal/index.html)
 app.use((req, res, next) => {
   if (req.method === 'GET') {
     const m = req.path.match(/^\/(portal|form)\/(.+\.html)\/$/);
     if (m) {
-      // rewrite in-place without redirect to avoid extra roundtrips
-      req.url = `/${m[1]}/${m[2]}` + (req.url.endsWith('?') ? '' : req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '');
+      const i = req.url.indexOf('?');
+      const qs = i >= 0 ? req.url.slice(i) : '';
+      return res.redirect(301, `/${m[1]}/${m[2]}${qs}`);
     }
   }
   next();
 });
+
 app.use('/portal', express.static(
   path.resolve(process.cwd(), '../web/portal'),
   { redirect: false }
