@@ -468,7 +468,11 @@ app.use('/portal', express.static(
   { redirect: false }
 ));
 app.use('/form',   express.static(path.resolve(process.cwd(), '../web/form')));
-app.use('/i18n',  express.static(path.resolve(process.cwd(), '../../i18n')));
+const I18N_DIR = path.resolve(process.cwd(), '../../../i18n');
+app.use('/i18n',  express.static(I18N_DIR));
+app.use('/form/i18n',  express.static(I18N_DIR));
+app.use('/portal/i18n',  express.static(I18N_DIR));
+app.use('/client-demo/web/i18n', express.static(I18N_DIR));
 
 
 // --- Start -----------------------------------------------------------------
