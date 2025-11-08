@@ -1,11 +1,4 @@
-// tools/audit-registry.mjs (REFINED: count only building roots)
-// Audit that registry (buildings.json) matches on-disk folders.
-// Counts only directories exactly matching:
-//   .../foundations/<foundationId>/buildings/<buildingId>
-//
-// Usage:
-//   DATA_ROOT=/srv/customer/var/se-cpval/data node tools/audit-registry.mjs | jq .
-//
+// tools/audit-registry.mjs (ROOT-ONLY, FIXED)
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -54,16 +47,15 @@ function* walkDirs(dir) {
 function isBuildingRoot(p) {
   const parts = p.split(path.sep);
   const iB = parts.lastIndexOf('buildings');
-  // Must be .../foundations/<foundationId>/buildings/<buildingId>
-  return iB > 0 &&
-         parts[iB - 1] === 'foundations' &&            // parent of 'buildings' is 'foundations'
-         iB + 1 === parts.length - 1;                  // exactly one segment after 'buildings' (the buildingId)
+  return iB > 1 &&
+         parts[iB - 2] === 'foundations' &&
+         iB + 1 === parts.length - 1;
 }
 function extractIds(p) {
   const parts = p.split(path.sep);
   const iB = parts.lastIndexOf('buildings');
   return {
-    foundationId: parts[iB - 2],
+    foundationId: parts[iB - 1],
     buildingId: parts[iB + 1],
   };
 }
@@ -71,7 +63,6 @@ function expectedDir(foundationId, buildingId) {
   return path.join(DATA_ROOT, 'orgs', 'main', 'foundations', foundationId, 'buildings', buildingId);
 }
 
-// Collect building ROOT dirs on disk
 const buildingRoots = [];
 for (const full of walkDirs(path.join(DATA_ROOT, 'orgs'))) {
   if (isBuildingRoot(full)) {
@@ -83,7 +74,7 @@ for (const full of walkDirs(path.join(DATA_ROOT, 'orgs'))) {
 const rep = {
   dataRoot: DATA_ROOT,
   registryCount: registry.length,
-  diskCount: buildingRoots.length,  // now equals number of root dirs, not subfolders
+  diskCount: buildingRoots.length,
   missingOnDisk: [],
   wrongLocation: [],
   strayOnDisk: [],
@@ -92,7 +83,6 @@ const rep = {
 
 const regById = new Map(registry.map(b => [b.id, b]));
 
-// 1) Every registry entry must exist at expected path
 for (const b of registry) {
   const exp = expectedDir(b.foundationId, b.id);
   if (!fs.existsSync(exp)) {
@@ -112,7 +102,6 @@ for (const b of registry) {
   }
 }
 
-// 2) Stray building root dirs not in registry (by id)
 for (const hit of buildingRoots) {
   if (!regById.has(hit.buildingId)) {
     rep.strayOnDisk.push(hit);
