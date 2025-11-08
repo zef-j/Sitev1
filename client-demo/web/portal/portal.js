@@ -18,6 +18,48 @@ async function resolveFoundationId(fid){
 import { api } from '../form/api.js';
 import { computeProgress } from '../form/progress.js';
 
+
+// --- Global Download button injection --------------------------------------
+function injectGlobalDownloadButton(){
+  try{
+    const header = document.querySelector('.max-w-6xl .flex.items-center, .max-w-6xl .flex.items-center.space-x-3, .max-w-6xl .flex.items-center.mb-6') || document.querySelector('.max-w-6xl');
+    if (!header) return;
+    if (document.getElementById('global-download-btn')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'ml-auto';
+    const btn = document.createElement('button');
+    btn.id = 'global-download-btn';
+    btn.className = 'bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow-sm inline-flex items-center';
+    btn.innerHTML = '<i data-feather="download" class="mr-2"></i><span data-i18n="ui.download">Télécharger</span>';
+    btn.addEventListener('click', async (ev)=>{
+      ev.preventDefault();
+      try{
+        const res = await fetch('/download/global-overview', { method: 'GET' });
+        if (!res.ok) throw new Error('Download failed');
+        const blob = await res.blob();
+        const cd = res.headers.get('Content-Disposition') || '';
+        let fname = 'global_overview.xlsx';
+        const m = cd.match(/filename\*=UTF-8''([^;]+)|filename="([^"]+)"/i);
+        if (m) fname = decodeURIComponent(m[1] || m[2]);
+        const a = document.createElement('a');
+        const urlObj = URL.createObjectURL(blob);
+        a.href = urlObj;
+        a.download = fname;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(()=> URL.revokeObjectURL(urlObj), 4000);
+      }catch(e){
+        console.error(e);
+        try{ alert('Erreur lors du téléchargement'); }catch{}
+      }
+    });
+    wrap.appendChild(btn);
+    header.appendChild(wrap);
+    try{ if (window.feather) window.feather.replace(); }catch{}
+    try{ if (window.translatePage) window.translatePage(document); }catch{}
+  }catch(e){ console.warn('injectGlobalDownloadButton failed', e); }
+}
 const baseFormUrl = '../form/app.html';
 const qs = (k)=> new URLSearchParams(location.search).get(k) || '';
 const foundationUrl = (fid)=> `./foundation.html?id=${encodeURIComponent(fid)}`;
@@ -93,4 +135,4 @@ async function loadFoundation(){ try{ await initI18n(); }catch{} try{ ensureLang
   feather.replace(); try{ translatePage(document); }catch{}
 }
 
-if (location.pathname.endsWith('index.html')) loadFoundations(); else loadFoundation();
+if (location.pathname.endsWith('index.html')) { injectGlobalDownloadButton(); loadFoundations(); } else { loadFoundation(); }
