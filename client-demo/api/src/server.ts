@@ -8,7 +8,7 @@ import multer from 'multer';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - JS module default export
 import adminRouter from '../adminRouter.js';
-import { router as changeBuildingIdRouter } from './admin/changeBuildingId';
+import { router as changeBuildingIdRouter } from './admin/changeBuildingId.js';
 type VersionListItem = { versionId: string; createdAt: string; dataVersion: number };
 
 const app = express();
