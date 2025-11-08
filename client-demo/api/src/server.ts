@@ -11,6 +11,7 @@ import adminRouter from '../adminRouter.js';
 import { router as changeBuildingIdRouter } from './admin/changeBuildingId.js';
 type VersionListItem = { versionId: string; createdAt: string; dataVersion: number };
 import { buildGlobalOverviewBuffer } from './globalOverview.js';
+import { router as downloadsRouter } from './routes/downloads.js';
 
 const app = express();
 app.use(cors());
@@ -496,6 +497,7 @@ app.get('/download/global-overview', async (_req, res) => {
 
 });
 
+app.use(downloadsRouter);
 // Static files (disable directory slash redirect for /portal)
 app.use('/admin', express.static(path.resolve(process.cwd(), '../admin-ui'), { redirect: false }));
 app.use('/admin/api', changeBuildingIdRouter);
