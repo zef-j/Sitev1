@@ -3,9 +3,9 @@
 import path from 'path';
 import fs from 'fs';
 import express from 'express';
-import { getConfig } from '../lib/config';
-import { loadRegistry, saveRegistryAtomic, expectedBuildingDir, BuildingEntry } from '../lib/registry';
-import { withFileLock, moveDirWithMerge } from '../lib/fsx';
+import { getConfig } from '../lib/config.js';
+import { loadRegistry, saveRegistryAtomic, expectedBuildingDir, BuildingEntry } from '../lib/registry.js';
+import { withFileLock, moveDirWithMerge } from '../lib/fsx.js';
 
 export const router = express.Router();
 

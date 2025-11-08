@@ -2,8 +2,8 @@
 // client-demo/api/src/lib/registry.ts
 import fs from 'fs';
 import path from 'path';
-import { ensureDir, readJSON, writeJSONAtomic, backupFile } from './fsx';
-import { getConfig } from './config';
+import { ensureDir, readJSON, writeJSONAtomic, backupFile } from './fsx.js';
+import { getConfig } from './config.js';
 
 export interface BuildingEntry {
   id: string;
