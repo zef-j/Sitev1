@@ -451,6 +451,18 @@ app.use('/admin', express.static(path.resolve(process.cwd(), '../admin-ui'), { r
 app.use('/admin/api', changeBuildingIdRouter);
 app.use('/admin/api', adminRouter());
 
+
+// Normalize trailing slash after HTML files (e.g., /portal/index.html/ -> /portal/index.html)
+app.use((req, res, next) => {
+  if (req.method === 'GET') {
+    const m = req.path.match(/^\/(portal|form)\/(.+\.html)\/$/);
+    if (m) {
+      // rewrite in-place without redirect to avoid extra roundtrips
+      req.url = `/${m[1]}/${m[2]}` + (req.url.endsWith('?') ? '' : req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '');
+    }
+  }
+  next();
+});
 app.use('/portal', express.static(
   path.resolve(process.cwd(), '../web/portal'),
   { redirect: false }
