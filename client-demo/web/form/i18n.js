@@ -17,21 +17,21 @@ export function setLang(lang){
 // Base in-memory dictionary (UI + months). Template keys will be merged from JSONs.
 const dict = {
   fr: {
-    'ui.progress':'Progression','ui.review':'Revue','ui.publish':'Publier','ui.save':'Sauvegarder',
+    'ui.progress':'Progression','ui.review':'Revue','ui.publish':'Sauvegarder','ui.save':'Sauvegarder',
     'ui.download':'Télécharger',
     'ui.foundations':'Fondations','ui.foundation':'Fondation','ui.completedTotal':'Total complété:',
     'ui.select':'Sélectionner','ui.chooseFile':'Choisir un fichier','ui.backHome':'← Accueil',
     'months.jan':'Janvier','months.feb':'Février','months.mar':'Mars','months.apr':'Avril','months.may':'Mai','months.jun':'Juin','months.jul':'Juillet','months.aug':'Août','months.sep':'Septembre','months.oct':'Octobre','months.nov':'Novembre','months.dec':'Décembre',
   },
   de: {
-    'ui.progress':'Fortschritt','ui.review':'Review','ui.publish':'Veröffentlichen','ui.save':'Speichern',
+    'ui.progress':'Fortschritt','ui.review':'Review','ui.publish':'Speichern','ui.save':'Speichern',
     'ui.download':'Herunterladen',
     'ui.foundations':'Stiftungen','ui.foundation':'Stiftung','ui.completedTotal':'Insgesamt abgeschlossen:',
     'ui.select':'Auswählen','ui.chooseFile':'Datei wählen','ui.backHome':'← Startseite',
     'months.jan':'Januar','months.feb':'Februar','months.mar':'März','months.apr':'April','months.may':'Mai','months.jun':'Juni','months.jul':'Juli','months.aug':'August','months.sep':'September','months.oct':'Oktober','months.nov':'November','months.dec':'Dezember',
   },
   en: {
-    'ui.progress':'Progress','ui.review':'Review','ui.publish':'Publish','ui.save':'Save',
+    'ui.progress':'Progress','ui.review':'Review','ui.publish':'Save','ui.save':'Save',
     'ui.download':'Download',
     'ui.foundations':'Foundations','ui.foundation':'Foundation','ui.completedTotal':'Total completed:',
     'ui.select':'Select','ui.chooseFile':'Choose file','ui.backHome':'← Home',

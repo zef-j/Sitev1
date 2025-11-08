@@ -176,11 +176,11 @@ function confirmPublish(summaryHtml) {
       dlg.className = 'fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50';
       dlg.innerHTML = `
         <div class="bg-white rounded-xl shadow-xl p-5 max-w-md w-full">
-          <div class="text-lg font-semibold mb-2">Confirmer la publication</div>
-          <div class="text-sm text-gray-700 mb-3">${summaryHtml || 'Publier les changements actuels ?'}</div>
+          <div class="text-lg font-semibold mb-2">Confirmer la sauvegarde</div>
+          <div class="text-sm text-gray-700 mb-3">${summaryHtml || 'Sauvegarder les changements actuels ?'}</div>
           <div class="flex justify-end space-x-2">
             <button id="pub-cancel" class="px-3 py-2 rounded bg-gray-100 hover:bg-gray-200">Annuler</button>
-            <button id="pub-continue" class="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Publier</button>
+            <button id="pub-continue" class="px-3 py-2 rounded bg-blue-600 text-white hover:bg-blue-700">Sauvegarder</button>
           </div>
         </div>`;
       document.body.appendChild(dlg);
@@ -233,7 +233,7 @@ export async function publishWithConfirm() {
                 destructive.map(it => `<div>• ${escapeHtml(it.label)} <span class="text-gray-400">(${escapeHtml(it.path)})</span></div>`).join('') +
                 '</div>';
     } else {
-      summary = 'Publier les changements actuels ?';
+      summary = 'Sauvegarder les changements actuels ?';
     }
     const okPub = await confirmPublish(summary);
     if (!okPub) return;
