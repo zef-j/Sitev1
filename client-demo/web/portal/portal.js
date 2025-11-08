@@ -1,4 +1,5 @@
-import { translatePage, ensureLangSelector, initI18n } from '../form/i18n.js';
+import { ensureLangSelector, initI18n, setI18nBase, translatePage } from '../form/i18n.js';
+setI18nBase('/i18n/');
 
 async function resolveFoundationId(fid){
   try{

@@ -454,6 +454,7 @@ app.use('/portal', express.static(
   { redirect: false }
 ));
 app.use('/form',   express.static(path.resolve(process.cwd(), '../web/form')));
+app.use('/i18n',  express.static(path.resolve(process.cwd(), '../../i18n')));
 
 
 // --- Start -----------------------------------------------------------------

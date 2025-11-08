@@ -1,4 +1,5 @@
-import { translatePage, ensureLangSelector, getLang, setLang, t, initI18n } from './i18n.js';
+import { ensureLangSelector, getLang, initI18n, setI18nBase, setLang, t, translatePage } from './i18n.js';
+setI18nBase('/i18n/');
 
 window.__ensureHomeLink = window.__ensureHomeLink || function(){
   try{
