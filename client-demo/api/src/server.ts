@@ -8,6 +8,7 @@ import multer from 'multer';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore - JS module default export
 import adminRouter from '../adminRouter.js';
+import { router as changeBuildingIdRouter } from './admin/changeBuildingId';
 type VersionListItem = { versionId: string; createdAt: string; dataVersion: number };
 
 const app = express();
@@ -447,6 +448,7 @@ app.get('/__health', (_req, res) => {
 
 // Static files (disable directory slash redirect for /portal)
 app.use('/admin', express.static(path.resolve(process.cwd(), '../admin-ui'), { redirect: false }));
+app.use('/admin/api', changeBuildingIdRouter);
 app.use('/admin/api', adminRouter());
 
 app.use('/portal', express.static(
