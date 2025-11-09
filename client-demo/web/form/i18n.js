@@ -87,23 +87,13 @@ let __i18nBase = null;
 export function setI18nBase(path){ try{ __i18nBase = path && String(path); }catch{} }
 
 function fetchCandidates(lang){
-
-  const fromImport = (()=>{ try { return new URL('../i18n/', import.meta.url).href; } catch { return null; } })();
-  const baseDoc = (()=>{ try { return new URL('.', document.baseURI || location.href).href; } catch { return null; } })();
-  const bases = [
-    __i18nBase,
-        baseDoc && (baseDoc + 'i18n/'),
-    fromImport,                         // ../i18n/ relative to module
-    baseDoc && (baseDoc + 'i18n/'),     // ./i18n/ next to the current page
-    baseDoc && (baseDoc + '../i18n/'),  // ../i18n/ relative to page (root /i18n/)
-    '/i18n/',                           // root /i18n/
-    '/form/i18n/',                      // explicit form path
-    '/portal/i18n/',                    // explicit portal path
-    '/client-demo/web/i18n/',           // dev fallback
-  ].filter(Boolean);
-  // de-duplicate bases
+  // build a minimal list of bases: explicit override first, then absolute /i18n/
+  const bases = [];
+  try { if (__i18nBase && typeof __i18nBase === 'string') bases.push(__i18nBase); } catch {}
+  bases.push('/i18n/');
+  // de-duplicate
   const seen = new Set();
-  const uniq = bases.filter(b => (seen.has(b) ? false : (seen.add(b), true)));
+  const uniq = bases.filter(b => (b && (seen.has(b) ? false : (seen.add(b), true))));
   return uniq.map(b => (b.endsWith('/')?b:b+'/') + lang + '.json');
 }
 
@@ -123,7 +113,7 @@ export async function loadExternalTranslations(lang){
       const payload = j[lang] && typeof j[lang] === 'object' ? j[lang] : j;
       dict[lang] = { ...(payload||{}), ...(dict[lang]||{}) };
       try{ console.debug('[i18n] loaded', lang, 'from', u, 'keys=', Object.keys(payload||{}).length); }catch{}
-      continue;
+      return; // stop after the first successful load
     }
   }
   try{ if (window.__I18N_DIAG) { console.warn('[i18n] failed to load', lang, 'from', urls); } }catch{}
