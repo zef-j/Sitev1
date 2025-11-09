@@ -14,6 +14,31 @@ import { buildGlobalOverviewBuffer } from './globalOverview.js';
 import { router as downloadsRouter } from './routes/downloads.js';
 
 const app = express();
+
+// --- Static path resolvers (robust to cwd = api or api/dist) ---
+const __dirname2 = path.dirname(new URL(import.meta.url).pathname);
+function firstExisting(paths: string[]): string {
+  for (const p of paths) { try { if (fs.existsSync(p)) return p; } catch {} }
+  return paths[0];
+}
+const PORTAL_DIR = firstExisting([
+  path.resolve(__dirname2, '../../web/portal'),
+  path.resolve(process.cwd(), '../web/portal'),
+]);
+const FORM_DIR = firstExisting([
+  path.resolve(__dirname2, '../../web/form'),
+  path.resolve(process.cwd(), '../web/form'),
+]);
+const I18N_DIR = firstExisting([
+  path.resolve(__dirname2, '../../../i18n'),       // if running from dist/
+  path.resolve(__dirname2, '../../../../i18n'),    // safety in case layout differs
+  path.resolve(process.cwd(), '../../i18n'),       // if cwd=api/
+  path.resolve(process.cwd(), '../i18n'),
+  path.resolve(process.cwd(), 'i18n'),
+]);
+// helpful logs once at boot
+try { console.log('[static]', { PORTAL_DIR, FORM_DIR, I18N_DIR }); } catch {}
+
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.set('etag', false);
@@ -515,12 +540,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/portal', express.static(
-  path.resolve(process.cwd(), '../web/portal'),
-  { redirect: false }
-));
-app.use('/form',   express.static(path.resolve(process.cwd(), '../web/form')));
-app.use('/i18n',  express.static(path.resolve(process.cwd(), '../../i18n')));
+app.use('/portal', express.static(PORTAL_DIR, { redirect: false }));
+app.use('/form',   express.static(FORM_DIR));
+app.use('/i18n',  express.static(I18N_DIR));
 
 
 // --- Start -----------------------------------------------------------------

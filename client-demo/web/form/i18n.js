@@ -101,7 +101,10 @@ function fetchCandidates(lang){
     '/portal/i18n/',                    // explicit portal path
     '/client-demo/web/i18n/',           // dev fallback
   ].filter(Boolean);
-  return bases.map(b => (b.endsWith('/')?b:b+'/') + lang + '.json');
+  // de-duplicate bases
+  const seen = new Set();
+  const uniq = bases.filter(b => (seen.has(b) ? false : (seen.add(b), true)));
+  return uniq.map(b => (b.endsWith('/')?b:b+'/') + lang + '.json');
 }
 
 async function tryFetch(url){
@@ -123,7 +126,7 @@ export async function loadExternalTranslations(lang){
       continue;
     }
   }
-  try{ console.warn('[i18n] failed to load', lang, 'from', urls); }catch{}
+  try{ if (window.__I18N_DIAG) { console.warn('[i18n] failed to load', lang, 'from', urls); } }catch{}
 }
 
 export async function initI18n(){
