@@ -20,6 +20,48 @@
               "level": "L1"
             }
           ]
+        },
+        {
+          "id": "photos",
+          "title": "Photos",
+          "fields": [
+            {
+              "id": "photo-exterieur-1",
+              "label": "Veuillez importer une photo du bâtiment, vue de l'extérieur. (p.ex. façade sud/façade nord-est)",
+              "type": "file",
+              "level": "L1"
+            },
+            {
+              "id": "photo-exterieur-1-libelle",
+              "label": "Libellé de la photo",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "photo-exterieur-2",
+              "label": "Veuillez importer une photo du bâtiment, vue de l'extérieur. (p.ex. façade sud/façade nord-est)",
+              "type": "file",
+              "level": "L1"
+            },
+            {
+              "id": "photo-exterieur-2-libelle",
+              "label": "Libellé de la photo",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "photo-exterieur-3",
+              "label": "Veuillez importer une photo du bâtiment, vue de l'extérieur. (p.ex. façade sud/façade nord-est)",
+              "type": "file",
+              "level": "L1"
+            },
+            {
+              "id": "photo-exterieur-3-libelle",
+              "label": "Libellé de la photo",
+              "type": "text",
+              "level": "L1"
+            }
+          ]
         }
       ]
     },
@@ -55,7 +97,11 @@
               "label": "Année de construction",
               "type": "number",
               "level": "L1",
-              "validation": { "min": 1900, "max": 2100, "step": 1}
+              "validation": {
+                "min": 1900,
+                "max": 2100,
+                "step": 1
+              }
             },
             {
               "id": "informations-batiment-proprietaire",
@@ -84,6 +130,18 @@
             {
               "id": "informations-batiment-etages-sous-sol",
               "label": "Nombre d’étage(s) Sous-Sol",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-emprise-sol-largeur",
+              "label": "Emprise au sol : Largeur [m]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "informations-batiment-emprise-sol-longueur",
+              "label": "Emprise au sol : Longueur [m]",
               "type": "number",
               "level": "L1"
             },
@@ -121,7 +179,11 @@
               "id": "informations-batiment-derniere-renovation-date",
               "label": "Date de la dernière rénovation importante",
               "type": "number",
-              "validation": { "min": 1900, "max": 2100, "step": 1 },
+              "validation": {
+                "min": 1900,
+                "max": 2100,
+                "step": 1
+              },
               "level": "L1"
             },
             {
@@ -315,7 +377,7 @@
             },
             {
               "id": "roi",
-              "label": "Retour sur investissement [CHF]",
+              "label": "Retour sur investissement [années]",
               "type": "number",
               "level": "L1"
             },
@@ -340,7 +402,7 @@
             },
             {
               "id": "production-mensuelle",
-              "label": "Production mensuelle [kWh]",
+              "label": "Production mensuelle [kWh] (estimées)",
               "type": "monthTable",
               "unit": "kWh",
               "level": "L1"
@@ -364,86 +426,89 @@
           "id": "enveloppe-batiment",
           "title": "Enveloppe du bâtiment",
           "fields": [
-    {
-      "id": "env-subtitle-rapports",
-      "type": "subtitle",
-      "text": "Rapports",
-      "containsData": false,
-      "style": {
-        "size": "lg",
-        "weight": "bold",
-        "color": "blue",
-        "margin": "sm",
-        "span": 2
-      }
-    },
-    {
-      "id": "rapport-cecb",
-      "label": "Existe-t-il un rapport CECB/CECB+ ?",
-      "type": "select",
-      "options": [
-        "Oui",
-        "Non"
-      ],
-      "level": "L1"
-    },
-    {
-      "id": "rapport-cecb-file",
-      "label": "Upload rapport CECB/CECB+",
-      "type": "file",
-      "level": "L1",
-      "visibilityRules": {
-        "allOf": [
-          {
-            "eq": [
-              "analyse-thermique.enveloppe-batiment.rapport-cecb",
-              "Oui"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "id": "rapport-energetique",
-      "label": "Existe-t-il d'autres rapports énergétiques (audit PEIK etc.) ?",
-      "type": "select",
-      "options": [
-        "Oui",
-        "Non"
-      ],
-      "level": "L1",
-      "style": { "showWhenRapportOui": true, "showWhenRapportNon": true },
-
-      "visibilityRules": {
-        "allOf": [
+            {
+              "id": "env-subtitle-rapports",
+              "type": "subtitle",
+              "text": "Rapports",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "rapport-cecb",
+              "label": "Existe-t-il un rapport CECB/CECB+ ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "rapport-cecb-file",
+              "label": "Upload rapport CECB/CECB+",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
                   {
-            "eq": [
-              "analyse-thermique.enveloppe-batiment.rapport-energetique",
-              "Non"
-            ]
-          }
-      ]
-    }
-    },
-    {
-      "id": "rapport-energetique-file",
-      "label": "Upload autres rapports énergétiques",
-      "type": "file",
-      "level": "L1",
-      "style": { "showWhenRapportOui": true, "showWhenRapportNon": true },
-      "visibilityRules": {
-        "allOf": [
-          {
-            "eq": [
-              "analyse-thermique.enveloppe-batiment.rapport-energetique",
-              "Non"
-            ]
-          }
-        ]
-      }
-    },
-
-
+                    "eq": [
+                      "analyse-thermique.enveloppe-batiment.rapport-cecb",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "rapport-energetique",
+              "label": "Existe-t-il d'autres rapports énergétiques (audit PEIK etc.) ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1",
+              "style": {
+                "showWhenRapportOui": true,
+                "showWhenRapportNon": true
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.enveloppe-batiment.rapport-energetique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "rapport-energetique-file",
+              "label": "Upload autres rapports énergétiques",
+              "type": "file",
+              "level": "L1",
+              "style": {
+                "showWhenRapportOui": true,
+                "showWhenRapportNon": true
+              },
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.enveloppe-batiment.rapport-energetique",
+                      "Non"
+                    ]
+                  }
+                ]
+              }
+            },
             {
               "id": "env-subtitle-toiture",
               "type": "subtitle",
@@ -488,6 +553,23 @@
               "level": "L1"
             },
             {
+              "id": "toiture-type",
+              "label": "Type de toiture",
+              "type": "select",
+              "options": [
+                "plate",
+                "inclinée",
+                "inclinée avec grand angle"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "toiture-remarques",
+              "label": "Remarques et compléments sur la toiture",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
               "id": "env-subtitle-murs-ext",
               "type": "subtitle",
               "text": "Murs extérieurs",
@@ -526,9 +608,26 @@
               "level": "L1"
             },
             {
+              "id": "murs-ext-dispositifs-anti-chutes",
+              "label": "Dispositifs anti-chutes",
+              "type": "select",
+              "options": [
+                "Présents ancrés",
+                "Présents non-ancrés",
+                "Non présents ou défectueux"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "murs-ext-remarques",
+              "label": "Remarques et compléments sur les murs extérieurs",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
               "id": "env-subtitle-fenetres",
               "type": "subtitle",
-              "text": "Fenêtres",
+              "text": "Ouvertures",
               "containsData": false,
               "style": {
                 "size": "lg",
@@ -542,6 +641,30 @@
               "id": "fenetres-annee",
               "label": "Année de pose des fenêtres",
               "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "fenetres-nombre",
+              "label": "Nombre de fenêtres",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "portes-nombre",
+              "label": "Nombre de portes",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "ouvertures-speciales-nombre",
+              "label": "Nombre d’ouvertures spéciales",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "fenetres-portes-commentaires",
+              "label": "Description des ouvertures (p.ex 1 velux, 1 porte garage, double battants..)",
+              "type": "textarea",
               "level": "L1"
             },
             {
@@ -573,6 +696,12 @@
                 "Bois+PVC",
                 "Autres"
               ],
+              "level": "L1"
+            },
+            {
+              "id": "fenetres-remarques",
+              "label": "Remarques et compléments sur les ouvertures",
+              "type": "textarea",
               "level": "L1"
             },
             {
@@ -611,6 +740,12 @@
               "id": "murs-int-isolation-epaisseur",
               "label": "Isolation murs intérieurs : épaisseur (cm)",
               "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "murs-int-remarques",
+              "label": "Remarques et compléments sur les murs intérieurs",
+              "type": "textarea",
               "level": "L1"
             },
             {
@@ -664,284 +799,409 @@
             {
               "id": "remarques-enveloppe",
               "label": "Remarques et compléments",
-              "style": { "showWhenRapportOui": true },
+              "style": {
+                "showWhenRapportOui": true
+              },
               "type": "textarea",
               "level": "L1"
             }
           ]
         },
-{
-  "id": "systemes-techniques",
-  "title": "Systèmes techniques",
-  "fields": [
-    {
-      "id": "sys-subtitle-chauffage",
-      "type": "subtitle",
-      "text": "Chauffage",
-      "containsData": false,
-      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
-    },
-    {
-      "id": "chauffage-schema",
-      "label": "Existe-t-il un schéma de l'installation de production/distribution de chaleur ?",
-      "type": "select",
-      "options": ["Oui", "Non"],
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-schema-file",
-      "label": "Upload schéma installation (si disponible)",
-      "type": "file",
-      "level": "L1",
-      "visibilityRules": {
-        "allOf": [
-          { "eq": ["analyse-thermique.systemes-techniques.chauffage-schema", "Oui"] }
-        ]
-      }
-    },
-    {
-      "id": "chauffage-type-systeme",
-      "label": "Type de système de chauffage",
-      "type": "select",
-      "options": ["Chaudière gaz", "Chaudière mazout", "PAC air-eau", "PAC géothermique", "Chauffage à distance", "Autre"],
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-puissance",
-      "label": "Puissance de l’installation [kW]",
-      "type": "text",
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-etat",
-      "label": "État général de l’installation chauffage",
-      "type": "select",
-      "options": ["Bon", "Moyen", "Dégradé", "NSP"],
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-annee-installation",
-      "label": "Année d’installation chauffage",
-      "type": "number",
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-rendement",
-      "label": "Rendement ou label énergétique",
-      "type": "text",
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-emetteurs",
-      "label": "Type d’émetteurs",
-      "type": "select",
-      "options": ["Radiateurs", "Plancher chauffant", "Convecteurs", "Autres"],
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-regulation",
-      "label": "Régulation",
-      "type": "select",
-      "options": ["Sonde extérieure", "Thermostats pièce", "Vannes thermostatiques", "Aucune"],
-      "level": "L1"
-    },
-    {
-      "id": "chauffage-notes",
-      "label": "Remarques et compléments",
-      "type": "textarea",
-      "level": "L1"
-    },
-
-    {
-      "id": "sys-subtitle-ecs",
-      "type": "subtitle",
-      "text": "ECS",
-      "containsData": false,
-      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
-    },
-    {
-      "id": "ecs-type",
-      "label": "Production d’eau chaude sanitaire (ECS) - type producteur",
-      "type": "select",
-      "options": ["Boiler électrique", "Solaire thermique", "Chaudière gaz", "Chaudière mazout", "PAC air-eau", "PAC géothermique", "Chauffage à distance", "Autre", "NSP"],
-      "level": "L1"
-    },
-    {
-      "id": "ecs-integree",
-      "label": "Production d’eau chaude sanitaire intégrée au chauffage ou séparée ?",
-      "type": "select",
-      "options": ["Intégrée", "Séparée"],
-      "level": "L1"
-    },
-    {
-      "id": "ecs-notes",
-      "label": "Remarques et compléments",
-      "type": "textarea",
-      "level": "L1"
-    },
-
-    {
-      "id": "sys-subtitle-ventilation",
-      "type": "subtitle",
-      "text": "Ventilation",
-      "containsData": false,
-      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
-    },
-    {
-      "id": "ventilation-type",
-      "label": "Type de ventilation",
-      "type": "select",
-      "options": ["Naturel", "Simple flux", "Double flux", "Récupération de chaleur", "Aucun", "NSP"],
-      "level": "L1"
-    },
-    {
-      "id": "ventilation-debit",
-      "label": "Ventilation - débit [m³/h]",
-      "type": "number",
-      "level": "L1"
-    },
-    {
-      "id": "ventilation-annee",
-      "label": "Année d’installation ventilation",
-      "type": "number",
-      "level": "L1"
-    },
-    {
-      "id": "ventilation-notes",
-      "label": "Remarques et compléments",
-      "type": "textarea",
-      "level": "L1"
-    },
-
-    {
-      "id": "sys-subtitle-refroidissement",
-      "type": "subtitle",
-      "text": "Raffraîchissement",
-      "containsData": false,
-      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
-    },
-    {
-      "id": "refroidissement-present",
-      "label": "Refroidissement présent ?",
-      "type": "select",
-      "options": ["Oui", "Non"],
-      "level": "L1"
-    },
-    {
-      "id": "refroidissement-type",
-      "label": "Refroidissement : type",
-      "type": "select",
-      "options": ["PAC", "Free cooling", "Récupération d'énergie", "Climatiseur (split)"],
-      "level": "L1"
-    },
-    {
-      "id": "refroidissement-notes",
-      "label": "Remarques et compléments",
-      "type": "textarea",
-      "level": "L1"
-    },
-
-    {
-      "id": "sys-subtitle-eclairage",
-      "type": "subtitle",
-      "text": "Éclairage",
-      "containsData": false,
-      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
-    },
-    {
-      "id": "eclairage-type",
-      "label": "Éclairage : type",
-      "type": "select",
-      "options": ["LED", "Fluorescent", "Halogène", "Autres"],
-      "level": "L1"
-    },
-    {
-      "id": "eclairage-notes",
-      "label": "Remarques et compléments",
-      "type": "textarea",
-      "level": "L1"
-    },
-
-    {
-      "id": "sys-subtitle-confort",
-      "type": "subtitle",
-      "text": "Confort",
-      "containsData": false,
-      "style": { "size": "lg", "weight": "bold", "color": "blue", "margin": "sm", "span": 2 }
-    },
-    {
-      "id": "comfort-hiver",
-      "label": "Températures intérieures en hiver",
-      "type": "select",
-      "options": ["Confort", "Surchauffe", "Froid"],
-      "level": "L1"
-    },
-    {
-      "id": "comfort-hiver-valeur",
-      "label": "Température intérieure en hiver [°C]",
-      "type": "number",
-      "level": "L1",
-      "visibilityRules": {
-        "allOf": [
-          { "eq": ["analyse-thermique.systemes-techniques.comfort-hiver", "Valeur °C"] }
-        ]
-      }
-    },
-    {
-      "id": "comfort-ete",
-      "label": "Températures intérieures en été",
-      "type": "select",
-      "options": ["Confort", "Surchauffe", "Froid"],
-      "level": "L1"
-    },
-    {
-      "id": "comfort-ete-valeur",
-      "label": "Température intérieure en été [°C]",
-      "type": "number",
-      "level": "L1",
-      "visibilityRules": {
-        "allOf": [
-          { "eq": ["analyse-thermique.systemes-techniques.comfort-ete", "Valeur °C"] }
-        ]
-      }
-    },
-    {
-      "id": "comfort-humidite",
-      "label": "Présence d’humidité",
-      "type": "select",
-      "options": ["Oui", "Non"],
-      "level": "L1"
-    },
-    {
-      "id": "comfort-moisissures",
-      "label": "Présence de moisissures",
-      "type": "select",
-      "options": ["Oui", "Non"],
-      "level": "L1"
-    },
-    {
-      "id": "comfort-etancheite",
-      "label": "Problèmes d’étanchéité",
-      "type": "select",
-      "options": ["Oui", "Non"],
-      "level": "L1"
-    },
-    {
-      "id": "comfort-bruit",
-      "label": "Bruit lié aux installations techniques",
-      "type": "select",
-      "options": ["Oui", "Non"],
-      "level": "L1"
-    },
-    {
-      "id": "comfort-notes",
-      "label": "Remarques et compléments",
-      "type": "textarea",
-      "level": "L1"
-    }
-  ]
-},
-
+        {
+          "id": "systemes-techniques",
+          "title": "Systèmes techniques",
+          "fields": [
+            {
+              "id": "sys-subtitle-chauffage",
+              "type": "subtitle",
+              "text": "Chauffage",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "chauffage-schema",
+              "label": "Existe-t-il un schéma de l'installation de production/distribution de chaleur ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-schema-file",
+              "label": "Upload schéma installation (si disponible)",
+              "type": "file",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.systemes-techniques.chauffage-schema",
+                      "Oui"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "chauffage-type-systeme",
+              "label": "Type de système de chauffage",
+              "type": "select",
+              "options": [
+                "Chaudière gaz",
+                "Chaudière mazout",
+                "PAC air-eau",
+                "PAC géothermique",
+                "Chauffage à distance",
+                "Autre"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-puissance",
+              "label": "Puissance de l’installation [kW]",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-etat",
+              "label": "État général de l’installation chauffage",
+              "type": "select",
+              "options": [
+                "Bon",
+                "Moyen",
+                "Dégradé",
+                "NSP"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-annee-installation",
+              "label": "Année d’installation chauffage",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-rendement",
+              "label": "Rendement ou label énergétique",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-emetteurs",
+              "label": "Type d’émetteurs",
+              "type": "select",
+              "options": [
+                "Radiateurs",
+                "Plancher chauffant",
+                "Convecteurs",
+                "Autres"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-regulation",
+              "label": "Régulation",
+              "type": "select",
+              "options": [
+                "Sonde extérieure",
+                "Thermostats pièce",
+                "Vannes thermostatiques",
+                "Aucune"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "chauffage-notes",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-ecs",
+              "type": "subtitle",
+              "text": "ECS",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "ecs-type",
+              "label": "Production d’eau chaude sanitaire (ECS) - type producteur",
+              "type": "select",
+              "options": [
+                "Boiler électrique",
+                "Solaire thermique",
+                "Chaudière gaz",
+                "Chaudière mazout",
+                "PAC air-eau",
+                "PAC géothermique",
+                "Chauffage à distance",
+                "Autre",
+                "NSP"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "ecs-integree",
+              "label": "Production d’eau chaude sanitaire intégrée au chauffage ou séparée ?",
+              "type": "select",
+              "options": [
+                "Intégrée",
+                "Séparée"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "ecs-notes",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-ventilation",
+              "type": "subtitle",
+              "text": "Ventilation",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "ventilation-type",
+              "label": "Type de ventilation",
+              "type": "select",
+              "options": [
+                "Naturel",
+                "Simple flux",
+                "Double flux",
+                "Récupération de chaleur",
+                "Aucun",
+                "NSP"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "ventilation-debit",
+              "label": "Ventilation - débit [m³/h]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "ventilation-annee",
+              "label": "Année d’installation ventilation",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "ventilation-notes",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-refroidissement",
+              "type": "subtitle",
+              "text": "Raffraîchissement",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "refroidissement-present",
+              "label": "Refroidissement présent ?",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "refroidissement-type",
+              "label": "Refroidissement : type",
+              "type": "select",
+              "options": [
+                "PAC",
+                "Free cooling",
+                "Récupération d'énergie",
+                "Climatiseur (split)"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "refroidissement-notes",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-eclairage",
+              "type": "subtitle",
+              "text": "Éclairage",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "eclairage-type",
+              "label": "Éclairage : type",
+              "type": "select",
+              "options": [
+                "LED",
+                "Fluorescent",
+                "Halogène",
+                "Autres"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "eclairage-notes",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            },
+            {
+              "id": "sys-subtitle-confort",
+              "type": "subtitle",
+              "text": "Confort",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "comfort-hiver",
+              "label": "Températures intérieures en hiver",
+              "type": "select",
+              "options": [
+                "Confort",
+                "Surchauffe",
+                "Froid"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-hiver-valeur",
+              "label": "Température intérieure en hiver [°C]",
+              "type": "number",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.systemes-techniques.comfort-hiver",
+                      "Valeur °C"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "comfort-ete",
+              "label": "Températures intérieures en été",
+              "type": "select",
+              "options": [
+                "Confort",
+                "Surchauffe",
+                "Froid"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-ete-valeur",
+              "label": "Température intérieure en été [°C]",
+              "type": "number",
+              "level": "L1",
+              "visibilityRules": {
+                "allOf": [
+                  {
+                    "eq": [
+                      "analyse-thermique.systemes-techniques.comfort-ete",
+                      "Valeur °C"
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "id": "comfort-humidite",
+              "label": "Présence d’humidité",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-moisissures",
+              "label": "Présence de moisissures",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-etancheite",
+              "label": "Problèmes d’étanchéité",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-bruit",
+              "label": "Bruit lié aux installations techniques",
+              "type": "select",
+              "options": [
+                "Oui",
+                "Non"
+              ],
+              "level": "L1"
+            },
+            {
+              "id": "comfort-notes",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        },
         {
           "id": "maintenance-entretien",
           "title": "Maintenance et entretien",
@@ -1085,6 +1345,12 @@
               "level": "L1"
             },
             {
+              "id": "balcons-facade-lineaires",
+              "label": "Balcons apposés sur façade [m linéaires apposés]",
+              "type": "number",
+              "level": "L1"
+            },
+            {
               "id": "mnt-subtitle-remarques",
               "type": "subtitle",
               "text": "Remarques et compléments",
@@ -1153,9 +1419,8 @@
                     ]
                   }
                 ]
-                }
-              },
-
+              }
+            },
             {
               "id": "sism-subtitle-structure",
               "type": "subtitle",
@@ -1447,7 +1712,9 @@
               "label": "Remarques et compléments",
               "type": "textarea",
               "level": "L1",
-              "style": { "showWhenRapportOui": true },
+              "style": {
+                "showWhenRapportOui": true
+              },
               "visibilityRules": {
                 "allOf": [
                   {
@@ -1772,7 +2039,9 @@
               "label": "Remarques et compléments",
               "type": "textarea",
               "level": "L1",
-              "style": { "showWhenRapportOui": true },
+              "style": {
+                "showWhenRapportOui": true
+              },
               "visibilityRules": {
                 "allOf": [
                   {
@@ -2076,7 +2345,9 @@
               "label": "Remarques et compléments",
               "type": "textarea",
               "level": "L1",
-              "style": { "showWhenRapportOui": true },
+              "style": {
+                "showWhenRapportOui": true
+              },
               "visibilityRules": {
                 "allOf": [
                   {
@@ -2390,6 +2661,639 @@
                   }
                 ]
               }
+            },
+            {
+              "id": "acc-subtitle-remarques",
+              "type": "subtitle",
+              "text": "Remarques et compléments",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "remarques-accessibilite",
+              "label": "Remarques et compléments",
+              "type": "textarea",
+              "level": "L1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "notation-etat-vetuste",
+      "title": "Visites",
+      "icon": "activity",
+      "subsections": [
+        {
+          "id": "installations-techniques",
+          "title": "",
+          "fields": [
+            {
+              "id": "vetuste-subtitle-table",
+              "type": "subtitle",
+              "text": "Etat de vétusté",
+              "containsData": false,
+              "style": {
+                "size": "lg",
+                "weight": "bold",
+                "color": "blue",
+                "margin": "sm",
+                "span": 2
+              }
+            },
+            {
+              "id": "vetuste-c-installation-1",
+              "label": "Gros œuvres – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-c-remarques-1",
+              "label": "Gros œuvres – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-c-installation-2",
+              "label": "Gros œuvres – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-c-remarques-2",
+              "label": "Gros œuvres – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d01-installation-1",
+              "label": "Installations électriques – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d01-remarques-1",
+              "label": "Installations électriques – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d01-installation-2",
+              "label": "Installations électriques – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d01-remarques-2",
+              "label": "Installations électriques – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0201-installation-1",
+              "label": "Niveau de gestion – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0201-remarques-1",
+              "label": "Niveau de gestion – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0201-installation-2",
+              "label": "Niveau de gestion – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0201-remarques-2",
+              "label": "Niveau de gestion – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0202-installation-1",
+              "label": "Niveau d'automation – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0202-remarques-1",
+              "label": "Niveau d'automation – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0202-installation-2",
+              "label": "Niveau d'automation – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0202-remarques-2",
+              "label": "Niveau d'automation – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d03-installation-1",
+              "label": "Installations de sécurité – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d03-remarques-1",
+              "label": "Installations de sécurité – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d03-installation-2",
+              "label": "Installations de sécurité – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d03-remarques-2",
+              "label": "Installations de sécurité – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d04-installation-1",
+              "label": "Installations de protection contre l'incendie – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d04-remarques-1",
+              "label": "Installations de protection contre l'incendie – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d04-installation-2",
+              "label": "Installations de protection contre l'incendie – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d04-remarques-2",
+              "label": "Installations de protection contre l'incendie – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0502-installation-1",
+              "label": "Production de chaleur – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0502-remarques-1",
+              "label": "Production de chaleur – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0502-installation-2",
+              "label": "Production de chaleur – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0502-remarques-2",
+              "label": "Production de chaleur – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0504-installation-1",
+              "label": "Distribution de chaleur – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0504-remarques-1",
+              "label": "Distribution de chaleur – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0504-installation-2",
+              "label": "Distribution de chaleur – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0504-remarques-2",
+              "label": "Distribution de chaleur – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0505-installation-1",
+              "label": "Emission de chaleur – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0505-remarques-1",
+              "label": "Emission de chaleur – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0505-installation-2",
+              "label": "Emission de chaleur – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0505-remarques-2",
+              "label": "Emission de chaleur – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0602-installation-1",
+              "label": "Production de froid – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0602-remarques-1",
+              "label": "Production de froid – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0602-installation-2",
+              "label": "Production de froid – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0602-remarques-2",
+              "label": "Production de froid – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0604-installation-1",
+              "label": "Distribution de froid – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0604-remarques-1",
+              "label": "Distribution de froid – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0604-installation-2",
+              "label": "Distribution de froid – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0604-remarques-2",
+              "label": "Distribution de froid – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0702-installation-1",
+              "label": "Conditionnement d'air – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0702-remarques-1",
+              "label": "Conditionnement d'air – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0702-installation-2",
+              "label": "Conditionnement d'air – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d0702-remarques-2",
+              "label": "Conditionnement d'air – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d08-installation-1",
+              "label": "Installation de distribution d'eau – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d08-remarques-1",
+              "label": "Installation de distribution d'eau – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d08-installation-2",
+              "label": "Installation de distribution d'eau – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d08-remarques-2",
+              "label": "Installation de distribution d'eau – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d09-installation-1",
+              "label": "Installations pour eaux usées – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d09-remarques-1",
+              "label": "Installations pour eaux usées – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d09-installation-2",
+              "label": "Installations pour eaux usées – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d09-remarques-2",
+              "label": "Installations pour eaux usées – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d10-installation-1",
+              "label": "Installations de distribution de gaz – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d10-remarques-1",
+              "label": "Installations de distribution de gaz – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d10-installation-2",
+              "label": "Installations de distribution de gaz – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d10-remarques-2",
+              "label": "Installations de distribution de gaz – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d11-installation-1",
+              "label": "Installations pour agents et fluides spéciaux – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d11-remarques-1",
+              "label": "Installations pour agents et fluides spéciaux – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d11-installation-2",
+              "label": "Installations pour agents et fluides spéciaux – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d11-remarques-2",
+              "label": "Installations pour agents et fluides spéciaux – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1201-installation-1",
+              "label": "Ascenseurs – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1201-remarques-1",
+              "label": "Ascenseurs – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1201-installation-2",
+              "label": "Ascenseurs – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1201-remarques-2",
+              "label": "Ascenseurs – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1202-installation-1",
+              "label": "Ascenseurs de charge et de service – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1202-remarques-1",
+              "label": "Ascenseurs de charge et de service – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1202-installation-2",
+              "label": "Ascenseurs de charge et de service – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-d1202-remarques-2",
+              "label": "Ascenseurs de charge et de service – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e02-installation-1",
+              "label": "Revêtements de façades – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e02-remarques-1",
+              "label": "Revêtements de façades – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e02-installation-2",
+              "label": "Revêtements de façades – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e02-remarques-2",
+              "label": "Revêtements de façades – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e03-installation-1",
+              "label": "Fenêtres, portes, dispositifs de protection – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e03-remarques-1",
+              "label": "Fenêtres, portes, dispositifs de protection – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e03-installation-2",
+              "label": "Fenêtres, portes, dispositifs de protection – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-e03-remarques-2",
+              "label": "Fenêtres, portes, dispositifs de protection – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f01-installation-1",
+              "label": "Couvertures – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f01-remarques-1",
+              "label": "Couvertures – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f01-installation-2",
+              "label": "Couvertures – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f01-remarques-2",
+              "label": "Couvertures – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f02-installation-1",
+              "label": "Eléments incorporés dans toitures – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f02-remarques-1",
+              "label": "Eléments incorporés dans toitures – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f02-installation-2",
+              "label": "Eléments incorporés dans toitures – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-f02-remarques-2",
+              "label": "Eléments incorporés dans toitures – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-g-installation-1",
+              "label": "Aménagements intérieurs – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-g-remarques-1",
+              "label": "Aménagements intérieurs – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-g-installation-2",
+              "label": "Aménagements intérieurs – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-g-remarques-2",
+              "label": "Aménagements intérieurs – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-i-installation-1",
+              "label": "Abords de bâtiments – installation 1",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-i-remarques-1",
+              "label": "Abords de bâtiments – Remarques installation 1",
+              "type": "text",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-i-installation-2",
+              "label": "Abords de bâtiments – installation 2",
+              "type": "number",
+              "level": "L1"
+            },
+            {
+              "id": "vetuste-i-remarques-2",
+              "label": "Abords de bâtiments – Remarques installation 2",
+              "type": "text",
+              "level": "L1"
+            }
+          ]
+        },
+        {
+          "id": "photos-visites",
+          "title": "Photos des visites",
+          "fields": [
+            {
+              "id": "upload-photos-visites",
+              "label": "Upload des photos des visites (fichier .zip)",
+              "type": "file",
+              "level": "L1"
             }
           ]
         }
