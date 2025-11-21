@@ -2708,580 +2708,132 @@
               }
             },
             {
-              "id": "vetuste-c-installation-1",
-              "label": "Gros œuvres – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-c-remarques-1",
-              "label": "Gros œuvres – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-c-installation-2",
-              "label": "Gros œuvres – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-c-remarques-2",
-              "label": "Gros œuvres – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d01-installation-1",
-              "label": "Installations électriques – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d01-remarques-1",
-              "label": "Installations électriques – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d01-installation-2",
-              "label": "Installations électriques – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d01-remarques-2",
-              "label": "Installations électriques – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0201-installation-1",
-              "label": "Niveau de gestion – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0201-remarques-1",
-              "label": "Niveau de gestion – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0201-installation-2",
-              "label": "Niveau de gestion – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0201-remarques-2",
-              "label": "Niveau de gestion – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0202-installation-1",
-              "label": "Niveau d'automation – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0202-remarques-1",
-              "label": "Niveau d'automation – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0202-installation-2",
-              "label": "Niveau d'automation – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0202-remarques-2",
-              "label": "Niveau d'automation – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d03-installation-1",
-              "label": "Installations de sécurité – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d03-remarques-1",
-              "label": "Installations de sécurité – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d03-installation-2",
-              "label": "Installations de sécurité – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d03-remarques-2",
-              "label": "Installations de sécurité – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d04-installation-1",
-              "label": "Installations de protection contre l'incendie – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d04-remarques-1",
-              "label": "Installations de protection contre l'incendie – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d04-installation-2",
-              "label": "Installations de protection contre l'incendie – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d04-remarques-2",
-              "label": "Installations de protection contre l'incendie – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0502-installation-1",
-              "label": "Production de chaleur – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0502-remarques-1",
-              "label": "Production de chaleur – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0502-installation-2",
-              "label": "Production de chaleur – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0502-remarques-2",
-              "label": "Production de chaleur – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0504-installation-1",
-              "label": "Distribution de chaleur – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0504-remarques-1",
-              "label": "Distribution de chaleur – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0504-installation-2",
-              "label": "Distribution de chaleur – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0504-remarques-2",
-              "label": "Distribution de chaleur – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0505-installation-1",
-              "label": "Emission de chaleur – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0505-remarques-1",
-              "label": "Emission de chaleur – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0505-installation-2",
-              "label": "Emission de chaleur – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0505-remarques-2",
-              "label": "Emission de chaleur – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0602-installation-1",
-              "label": "Production de froid – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0602-remarques-1",
-              "label": "Production de froid – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0602-installation-2",
-              "label": "Production de froid – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0602-remarques-2",
-              "label": "Production de froid – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0604-installation-1",
-              "label": "Distribution de froid – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0604-remarques-1",
-              "label": "Distribution de froid – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0604-installation-2",
-              "label": "Distribution de froid – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0604-remarques-2",
-              "label": "Distribution de froid – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0702-installation-1",
-              "label": "Conditionnement d'air – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0702-remarques-1",
-              "label": "Conditionnement d'air – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0702-installation-2",
-              "label": "Conditionnement d'air – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d0702-remarques-2",
-              "label": "Conditionnement d'air – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d08-installation-1",
-              "label": "Installation de distribution d'eau – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d08-remarques-1",
-              "label": "Installation de distribution d'eau – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d08-installation-2",
-              "label": "Installation de distribution d'eau – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d08-remarques-2",
-              "label": "Installation de distribution d'eau – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d09-installation-1",
-              "label": "Installations pour eaux usées – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d09-remarques-1",
-              "label": "Installations pour eaux usées – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d09-installation-2",
-              "label": "Installations pour eaux usées – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d09-remarques-2",
-              "label": "Installations pour eaux usées – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d10-installation-1",
-              "label": "Installations de distribution de gaz – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d10-remarques-1",
-              "label": "Installations de distribution de gaz – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d10-installation-2",
-              "label": "Installations de distribution de gaz – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d10-remarques-2",
-              "label": "Installations de distribution de gaz – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d11-installation-1",
-              "label": "Installations pour agents et fluides spéciaux – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d11-remarques-1",
-              "label": "Installations pour agents et fluides spéciaux – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d11-installation-2",
-              "label": "Installations pour agents et fluides spéciaux – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d11-remarques-2",
-              "label": "Installations pour agents et fluides spéciaux – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1201-installation-1",
-              "label": "Ascenseurs – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1201-remarques-1",
-              "label": "Ascenseurs – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1201-installation-2",
-              "label": "Ascenseurs – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1201-remarques-2",
-              "label": "Ascenseurs – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1202-installation-1",
-              "label": "Ascenseurs de charge et de service – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1202-remarques-1",
-              "label": "Ascenseurs de charge et de service – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1202-installation-2",
-              "label": "Ascenseurs de charge et de service – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-d1202-remarques-2",
-              "label": "Ascenseurs de charge et de service – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e02-installation-1",
-              "label": "Revêtements de façades – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e02-remarques-1",
-              "label": "Revêtements de façades – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e02-installation-2",
-              "label": "Revêtements de façades – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e02-remarques-2",
-              "label": "Revêtements de façades – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e03-installation-1",
-              "label": "Fenêtres, portes, dispositifs de protection – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e03-remarques-1",
-              "label": "Fenêtres, portes, dispositifs de protection – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e03-installation-2",
-              "label": "Fenêtres, portes, dispositifs de protection – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-e03-remarques-2",
-              "label": "Fenêtres, portes, dispositifs de protection – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f01-installation-1",
-              "label": "Couvertures – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f01-remarques-1",
-              "label": "Couvertures – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f01-installation-2",
-              "label": "Couvertures – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f01-remarques-2",
-              "label": "Couvertures – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f02-installation-1",
-              "label": "Eléments incorporés dans toitures – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f02-remarques-1",
-              "label": "Eléments incorporés dans toitures – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f02-installation-2",
-              "label": "Eléments incorporés dans toitures – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-f02-remarques-2",
-              "label": "Eléments incorporés dans toitures – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-g-installation-1",
-              "label": "Aménagements intérieurs – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-g-remarques-1",
-              "label": "Aménagements intérieurs – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-g-installation-2",
-              "label": "Aménagements intérieurs – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-g-remarques-2",
-              "label": "Aménagements intérieurs – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-i-installation-1",
-              "label": "Abords de bâtiments – installation 1",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-i-remarques-1",
-              "label": "Abords de bâtiments – Remarques installation 1",
-              "type": "text",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-i-installation-2",
-              "label": "Abords de bâtiments – installation 2",
-              "type": "number",
-              "level": "L1"
-            },
-            {
-              "id": "vetuste-i-remarques-2",
-              "label": "Abords de bâtiments – Remarques installation 2",
-              "type": "text",
-              "level": "L1"
+              "id": "etat-vetuste-table",
+              "type": "vetusteTable",
+              "label": "État de vétusté",
+              "containsData": false,
+              "rows": [
+                {
+                  "code": "C",
+                  "label": "Gros œuvres",
+                  "baseId": "vetuste-c"
+                },
+                {
+                  "code": "D01",
+                  "label": "Installations électriques",
+                  "baseId": "vetuste-d01"
+                },
+                {
+                  "code": "D0201",
+                  "label": "Niveau de gestion",
+                  "baseId": "vetuste-d0201"
+                },
+                {
+                  "code": "D0202",
+                  "label": "Niveau d'automation",
+                  "baseId": "vetuste-d0202"
+                },
+                {
+                  "code": "D03",
+                  "label": "Installations de sécurité",
+                  "baseId": "vetuste-d03"
+                },
+                {
+                  "code": "D04",
+                  "label": "Installations de protection contre l'incendie",
+                  "baseId": "vetuste-d04"
+                },
+                {
+                  "code": "D0502",
+                  "label": "Production de chaleur",
+                  "baseId": "vetuste-d0502"
+                },
+                {
+                  "code": "D0504",
+                  "label": "Distribution de chaleur",
+                  "baseId": "vetuste-d0504"
+                },
+                {
+                  "code": "D0505",
+                  "label": "Emission de chaleur",
+                  "baseId": "vetuste-d0505"
+                },
+                {
+                  "code": "D0602",
+                  "label": "Production de froid",
+                  "baseId": "vetuste-d0602"
+                },
+                {
+                  "code": "D0604",
+                  "label": "Distribution de froid",
+                  "baseId": "vetuste-d0604"
+                },
+                {
+                  "code": "D0702",
+                  "label": "Conditionnement d'air",
+                  "baseId": "vetuste-d0702"
+                },
+                {
+                  "code": "D08",
+                  "label": "Installation de distribution d'eau",
+                  "baseId": "vetuste-d08"
+                },
+                {
+                  "code": "D09",
+                  "label": "Installations pour eaux usées",
+                  "baseId": "vetuste-d09"
+                },
+                {
+                  "code": "D10",
+                  "label": "Installations de distribution de gaz",
+                  "baseId": "vetuste-d10"
+                },
+                {
+                  "code": "D11",
+                  "label": "Installations pour agents et fluides spéciaux",
+                  "baseId": "vetuste-d11"
+                },
+                {
+                  "code": "D1201",
+                  "label": "Ascenseurs",
+                  "baseId": "vetuste-d1201"
+                },
+                {
+                  "code": "D1202",
+                  "label": "Ascenseurs de charge et de service",
+                  "baseId": "vetuste-d1202"
+                },
+                {
+                  "code": "E02",
+                  "label": "Revêtements de façades",
+                  "baseId": "vetuste-e02"
+                },
+                {
+                  "code": "E03",
+                  "label": "Fenêtres, portes, dispositifs de protection",
+                  "baseId": "vetuste-e03"
+                },
+                {
+                  "code": "F01",
+                  "label": "Couvertures",
+                  "baseId": "vetuste-f01"
+                },
+                {
+                  "code": "F02",
+                  "label": "Éléments incorporés dans toitures",
+                  "baseId": "vetuste-f02"
+                },
+                {
+                  "code": "G",
+                  "label": "Aménagements intérieurs",
+                  "baseId": "vetuste-g"
+                },
+                {
+                  "code": "I",
+                  "label": "Abords de bâtiments",
+                  "baseId": "vetuste-i"
+                }
+              ]
             }
           ]
         },

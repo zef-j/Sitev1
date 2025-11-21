@@ -696,5 +696,11 @@
   "field.notation-etat-vetuste.installations-techniques.vetuste-g-remarques-1.label": "Aménagements intérieurs – Remarques installation 1",
   "field.notation-etat-vetuste.installations-techniques.vetuste-g-remarques-2.label": "Aménagements intérieurs – Remarques installation 2",
   "field.notation-etat-vetuste.installations-techniques.vetuste-i-remarques-1.label": "Abords de bâtiments – Remarques installation 1",
-  "field.notation-etat-vetuste.installations-techniques.vetuste-i-remarques-2.label": "Abords de bâtiments – Remarques installation 2"
+  "field.notation-etat-vetuste.installations-techniques.vetuste-i-remarques-2.label": "Abords de bâtiments – Remarques installation 2",
+  "ui.vetuste.code": "Code",
+  "ui.vetuste.installationsTechniques": "Installations techniques",
+  "ui.vetuste.installation1": "Installation 1 (0–1)",
+  "ui.vetuste.remarques1": "Remarques 1",
+  "ui.vetuste.installation2": "Installation 2 (0–1)",
+  "ui.vetuste.remarques2": "Remarques 2"
 }

@@ -89,14 +89,38 @@ export function renderForm({ template, data, level='L1', onChange=()=>{} }) {
 
       (sub.fields || []).forEach((field) => {
         const fieldPath = `${section.id}.${sub.id}.${field.id}`;
-        const fieldEl = renderField(field, getAtPath(state, `${section.id}.${sub.id}`), (value) => {
-          const _curVal = getAtPath(state, fieldPath);
-const _nextVal = (typeof value === 'function') ? value(_curVal) : value;
-setAtPath(state, fieldPath, _nextVal);
-updateVisibilityForSubsection(secEl, section, sub, state);
-          scheduleProgress();
-          onChange(clone(state));
-        }, { sectionId: section.id, subId: sub.id });
+        let fieldEl;
+        if (field.type === 'vetusteTable') {
+          fieldEl = renderVetusteTable({
+            sectionId: section.id,
+            subsectionId: sub.id,
+            field,
+            data: state,
+            onChange: (fieldId, value) => {
+              const targetPath = `${section.id}.${sub.id}.${fieldId}`;
+              const _curVal = getAtPath(state, targetPath);
+              const _nextVal = (typeof value === 'function') ? value(_curVal) : value;
+              setAtPath(state, targetPath, _nextVal);
+              updateVisibilityForSubsection(secEl, section, sub, state);
+              scheduleProgress();
+              onChange(clone(state));
+            }
+          });
+        } else {
+          fieldEl = renderField(
+            field,
+            getAtPath(state, `${section.id}.${sub.id}`),
+            (value) => {
+              const _curVal = getAtPath(state, fieldPath);
+              const _nextVal = (typeof value === 'function') ? value(_curVal) : value;
+              setAtPath(state, fieldPath, _nextVal);
+              updateVisibilityForSubsection(secEl, section, sub, state);
+              scheduleProgress();
+              onChange(clone(state));
+            },
+            { sectionId: section.id, subId: sub.id }
+          );
+        }
         fieldEl.dataset.fieldPath = fieldPath;
         try { fieldEl.setAttribute('data-fieldpath', fieldPath); } catch {}
 grid.appendChild(fieldEl);
@@ -267,6 +291,109 @@ function subtitleClasses(style = {}) {
   const extra = Array.isArray(style.classList) ? style.classList.join(' ') : (style.className || '');
   return `${span} ${size} ${weight} ${align} ${italic} ${upper} ${margin} ${extra}`.trim();
 }
+
+function renderVetusteTable({ sectionId, subsectionId, field, data, onChange }) {
+  const wrap = document.createElement('div');
+  wrap.className = 'md:col-span-2';
+  const scroll = document.createElement('div');
+  scroll.className = 'overflow-x-auto';
+  const table = document.createElement('table');
+  table.className = 'min-w-full table-fixed text-sm border border-gray-200 rounded-md';
+  const thead = document.createElement('thead');
+  thead.className = 'bg-gray-50';
+  const headRow = document.createElement('tr');
+
+  const makeHeaderCell = (i18nKey, fallback) => {
+    const th = document.createElement('th');
+    th.className = 'px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border-b';
+    if (i18nKey) {
+      try {
+        th.setAttribute('data-i18n', i18nKey);
+        th.setAttribute('data-i18n-fallback', fallback);
+      } catch(e) {}
+      th.textContent = t(i18nKey, fallback);
+    } else {
+      th.textContent = fallback || '';
+    }
+    headRow.appendChild(th);
+  };
+
+  makeHeaderCell('ui.vetuste.code', 'Code');
+  makeHeaderCell('ui.vetuste.installationsTechniques', 'Installations techniques');
+  makeHeaderCell('ui.vetuste.installation1', 'Installation 1 (0–1)');
+  makeHeaderCell('ui.vetuste.remarques1', 'Remarques 1');
+  makeHeaderCell('ui.vetuste.installation2', 'Installation 2 (0–1)');
+  makeHeaderCell('ui.vetuste.remarques2', 'Remarques 2');
+
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  tbody.className = 'bg-white divide-y divide-gray-200';
+
+  const subsectionData = getAtPath(data || {}, `${sectionId}.${subsectionId}`) || {};
+
+  (field.rows || []).forEach((row) => {
+    const tr = document.createElement('tr');
+
+    // Code
+    const codeTd = document.createElement('td');
+    codeTd.className = 'px-4 py-2 whitespace-nowrap text-xs font-mono text-gray-700';
+    codeTd.textContent = row.code || '';
+    tr.appendChild(codeTd);
+
+    // Label
+    const labelTd = document.createElement('td');
+    labelTd.className = 'px-4 py-2 text-xs text-gray-700';
+    labelTd.textContent = row.label || '';
+    tr.appendChild(labelTd);
+
+    const baseId = row.baseId;
+
+    ['installation-1','remarques-1','installation-2','remarques-2'].forEach((suffix) => {
+      const fieldId = `${baseId}-${suffix}`;
+      const td = document.createElement('td');
+      td.className = 'px-2 py-2 align-top';
+      const current = subsectionData ? subsectionData[fieldId] : undefined;
+
+      if (suffix.indexOf('installation-') === 0) {
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.min = '0';
+        inp.max = '1';
+        inp.step = '0.1';
+        inp.className = 'w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right';
+        inp.value = (current ?? '') + '';
+        inp.addEventListener('input', () => {
+          const raw = inp.value;
+          const next = raw === '' ? null : Number(raw);
+          onChange(fieldId, next);
+        });
+        td.appendChild(inp);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.rows = 2;
+        ta.className = 'w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500';
+        ta.value = current ?? '';
+        ta.addEventListener('input', () => {
+          const raw = ta.value;
+          onChange(fieldId, raw === '' ? null : raw);
+        });
+        td.appendChild(ta);
+      }
+
+      tr.appendChild(td);
+    });
+
+    tbody.appendChild(tr);
+  });
+
+  table.appendChild(tbody);
+  scroll.appendChild(table);
+  wrap.appendChild(scroll);
+  return wrap;
+}
+
 function renderField(field, subsectionData, onValueChange, ctx) {
   const wrap = document.createElement('div'); wrap.className = '';
   const id = `${field.id}`;
