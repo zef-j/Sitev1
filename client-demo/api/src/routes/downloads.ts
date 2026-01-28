@@ -37,13 +37,27 @@ function getBuildingMeta(id: string): BuildingMeta {
   return meta || { id, name: `Bâtiment ${id}`, foundationId: 'f_default', foundationName: 'Default' };
 }
 function getPaths(meta: BuildingMeta){
-  const foundationId = meta.foundationId || 'f_default';
+  const foundationId = locateExistingFoundationFolder(meta.id) || meta.foundationId || 'f_default';
   const base = path.join(DATA_ROOT, 'orgs', CLIENT_ID, 'foundations', foundationId, 'buildings', meta.id);
   return {
     currentJson: path.join(base, 'current.json'),
     filesDir: path.join(base, 'files'),
     versionsDir: path.join(base, 'versions'),
   };
+}
+
+function locateExistingFoundationFolder(buildingId: string): string | null {
+  try {
+    const foundationsRoot = path.join(DATA_ROOT, 'orgs', CLIENT_ID, 'foundations');
+    if (!fs.existsSync(foundationsRoot)) return null;
+    const entries = fs.readdirSync(foundationsRoot, { withFileTypes: true });
+    for (const ent of entries) {
+      if (!ent.isDirectory()) continue;
+      const candidate = path.join(foundationsRoot, ent.name, 'buildings', buildingId);
+      if (fs.existsSync(candidate)) return ent.name;
+    }
+  } catch {}
+  return null;
 }
 function ensureCurrent(meta: BuildingMeta){
   const { currentJson } = getPaths(meta);
@@ -164,6 +178,7 @@ router.get('/download/all-foundations', async (_req, res) => {
     }
 
     const out = await zip.generateAsync({ type: 'nodebuffer' });
+    res.setHeader('Content-Length', String(out.length));
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${rootFolder}.zip"`);
     res.send(out);
