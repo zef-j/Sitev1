@@ -81,6 +81,41 @@ function safeName(t: string){
     .slice(0,80) || 'item';
 }
 
+function normZipPrefix(prefix: string){
+  const p = (prefix || '')
+    .replace(/\\/g,'/')
+    .replace(/^\/+/, '')
+    .replace(/\/+$/, '');
+  return p ? p + '/' : '';
+}
+
+async function addBuildingPayloadToZip(zip: JSZip, meta: BuildingMeta, prefix: string, tplJson?: string | null){
+  ensureCurrent(meta);
+  const { currentJson, filesDir } = getPaths(meta);
+  const curBuf = fs.readFileSync(currentJson);
+  const pfx = normZipPrefix(prefix);
+  const at = (rel: string) => `${pfx}${rel}`;
+
+  zip.file(at('rawData/current.json'), curBuf);
+
+  if (fs.existsSync(filesDir)) {
+    for (const fn of fs.readdirSync(filesDir)) {
+      const p = path.join(filesDir, fn);
+      if (fs.statSync(p).isFile()) {
+        zip.file(at(`files/${fn}`), fs.readFileSync(p));
+      }
+    }
+  }
+
+  if (tplJson) {
+    try{
+      const excelBuf = await buildExcelBuffer(tplJson, curBuf.toString('utf8'));
+      const excelName = `${safeName(meta.foundationName || 'Fondation')}_${safeName(meta.name || meta.id)}.xlsx`;
+      zip.file(at(`excel/${excelName}`), excelBuf);
+    }catch(e){ console.error('excel build failed', e); }
+  }
+}
+
 // --- Download current.json + files + Excel as ZIP -------------------------
 router.get('/buildings/:id/download', async (req, res) => {
   try{
