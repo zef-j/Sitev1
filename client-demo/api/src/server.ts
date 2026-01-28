@@ -249,13 +249,12 @@ app.get('/foundations', (_req, res) => {
     const fid = b.foundationId || 'f_default';
     const fname = b.foundationName || 'Default';
     if (!map.has(fid)) map.set(fid, { id: fid, name: fname });
+  }
+  res.json(Array.from(map.values()));
+});
 
 app.get('/foundation-aliases', (_req, res) => {
   res.json(getFoundationAliases());
-});
-
-  }
-  res.json(Array.from(map.values()));
 });
 
 // --- Form load -------------------------------------------------------------
@@ -471,55 +470,6 @@ app.get('/form',   (_req, res) => res.redirect('/form/app.html')); // optionnel
 
 app.get('/__health', (_req, res) => {
   res.json({ DATA_ROOT, cwd: process.cwd(), time: new Date().toISOString() });
-
-// --- Global overview Excel --------------------------------------------------
-app.get('/download/global-overview', async (_req, res) => {
-  try {
-    // Load template
-    const tplPath = path.join(DATA_ROOT, 'templates', 'active.json');
-    if (!fs.existsSync(tplPath)) {
-      res.status(404).json({ error: 'Template not found' });
-      return;
-    }
-    const tplJson = fs.readFileSync(tplPath, 'utf-8');
-
-    // Load registry
-    const regPath = path.join(DATA_ROOT, 'buildings.json');
-    const registry = fs.existsSync(regPath) ? JSON.parse(fs.readFileSync(regPath, 'utf-8')) : [];
-
-    // Prepare list of items (label + current.json content)
-    const items: Array<{label: string, current: any}> = [];
-    const seen = new Set<string>();
-    for (const it of registry) {
-      const id = it.id;
-      const fid = it.foundationId || 'f_default';
-      const fname = it.foundationName || fid;
-      const bname = it.name || id;
-      const labelBase = `${fname}_${bname}`;
-      let label = labelBase;
-      let k = 2;
-      while (seen.has(label)) { label = `${labelBase} (${k++})`; }
-      seen.add(label);
-      const meta = { id, name: bname, foundationId: fid, foundationName: fname };
-      ensureCurrent(meta as any);
-      const curPath = getCurrentJsonPath(meta as any);
-      let current: any = {};
-      try { current = JSON.parse(fs.readFileSync(curPath, 'utf-8')); } catch {}
-      items.push({ label, current });
-    }
-
-    const buf = await buildGlobalOverviewBuffer(tplJson, items);
-    const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
-    const fname = `global_overview-${ts}.xlsx`;
-    res.setHeader('Content-Type','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename="${fname}"`);
-    res.send(buf);
-  } catch (e: any) {
-    console.error(e);
-    res.status(500).json({ error: String(e?.message || e) });
-  }
-});
-
 });
 
 app.use(downloadsRouter);
