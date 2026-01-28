@@ -37,27 +37,13 @@ function getBuildingMeta(id: string): BuildingMeta {
   return meta || { id, name: `Bâtiment ${id}`, foundationId: 'f_default', foundationName: 'Default' };
 }
 function getPaths(meta: BuildingMeta){
-  const foundationId = locateExistingFoundationFolder(meta.id) || meta.foundationId || 'f_default';
+  const foundationId = meta.foundationId || 'f_default';
   const base = path.join(DATA_ROOT, 'orgs', CLIENT_ID, 'foundations', foundationId, 'buildings', meta.id);
   return {
     currentJson: path.join(base, 'current.json'),
     filesDir: path.join(base, 'files'),
     versionsDir: path.join(base, 'versions'),
   };
-}
-
-function locateExistingFoundationFolder(buildingId: string): string | null {
-  try {
-    const foundationsRoot = path.join(DATA_ROOT, 'orgs', CLIENT_ID, 'foundations');
-    if (!fs.existsSync(foundationsRoot)) return null;
-    const entries = fs.readdirSync(foundationsRoot, { withFileTypes: true });
-    for (const ent of entries) {
-      if (!ent.isDirectory()) continue;
-      const candidate = path.join(foundationsRoot, ent.name, 'buildings', buildingId);
-      if (fs.existsSync(candidate)) return ent.name;
-    }
-  } catch {}
-  return null;
 }
 function ensureCurrent(meta: BuildingMeta){
   const { currentJson } = getPaths(meta);
@@ -81,7 +67,6 @@ function safeName(t: string){
     .slice(0,80) || 'item';
 }
 
-<<<<<<< HEAD
 function normZipPrefix(prefix: string){
   const p = (prefix || '')
     .replace(/\\/g,'/')
@@ -108,6 +93,7 @@ async function addBuildingPayloadToZip(zip: any, meta: BuildingMeta, prefix: str
     }
   }
 
+  // Excel (if template exists)
   if (tplJson) {
     try{
       const excelBuf = await buildExcelBuffer(tplJson, curBuf.toString('utf8'));
@@ -117,39 +103,15 @@ async function addBuildingPayloadToZip(zip: any, meta: BuildingMeta, prefix: str
   }
 }
 
-=======
->>>>>>> parent of 36c2d57 (global Download 2)
 // --- Download current.json + files + Excel as ZIP -------------------------
 router.get('/buildings/:id/download', async (req, res) => {
   try{
     const id = req.params.id;
     const meta = getBuildingMeta(id);
-    ensureCurrent(meta);
-    const { currentJson, filesDir } = getPaths(meta);
-
-    const curBuf = fs.readFileSync(currentJson);
-    const zip = new JSZip();
-    zip.file('rawData/current.json', curBuf);
-
-    if (fs.existsSync(filesDir)) {
-      for (const fn of fs.readdirSync(filesDir)) {
-        const p = path.join(filesDir, fn);
-        if (fs.statSync(p).isFile()) {
-          zip.file(`files/${fn}`, fs.readFileSync(p));
-        }
-      }
-    }
-
-    // Excel (if template exists)
     const tplPath = path.join(DATA_ROOT, 'templates', 'active.json');
-    if (fs.existsSync(tplPath)) {
-      try{
-        const tpl = fs.readFileSync(tplPath, 'utf8');
-        const excelBuf = await buildExcelBuffer(tpl, curBuf.toString('utf8'));
-        const excelName = `${safeName(meta.foundationName || 'Fondation')}_${safeName(meta.name || id)}.xlsx`;
-        zip.file(`excel/${excelName}`, excelBuf);
-      }catch(e){ console.error('excel build failed', e); }
-    }
+    const tplJson = fs.existsSync(tplPath) ? fs.readFileSync(tplPath, 'utf8') : null;
+    const zip = new JSZip();
+    await addBuildingPayloadToZip(zip, meta, '', tplJson);
 
     const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
     const zipBase = `${safeName(meta.foundationName || 'Fondation')}-${safeName(meta.name || id)}-${ts}`;
@@ -163,7 +125,6 @@ router.get('/buildings/:id/download', async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 // --- Full snapshot (all foundations as folders, in one ZIP) ---------------
 router.get('/download/all-foundations', async (_req, res) => {
   try{
@@ -203,7 +164,6 @@ router.get('/download/all-foundations', async (_req, res) => {
     }
 
     const out = await zip.generateAsync({ type: 'nodebuffer' });
-    res.setHeader('Content-Length', String(out.length));
     res.setHeader('Content-Type', 'application/zip');
     res.setHeader('Content-Disposition', `attachment; filename="${rootFolder}.zip"`);
     res.send(out);
@@ -212,8 +172,7 @@ router.get('/download/all-foundations', async (_req, res) => {
     res.status(500).json({ error: String(e?.message || e) });
   }
 });
-=======
->>>>>>> parent of 36c2d57 (global Download 2)
+
 // --- Global overview (Excel) ----------------------------------------------
 router.get('/download/global-overview', async (_req, res) => {
   try{

@@ -22,56 +22,17 @@ function cmpNum(a, b, op) {
 
 export function evalSingle(rule, data) {
   if (!rule) return true;
-  const pick = (key) => {
-    if (rule.when) return { when: rule.when, value: rule[key] };
-    const raw = rule[key];
-    if (Array.isArray(raw) && raw.length >= 2) return { when: raw[0], value: raw[1] };
-    return null;
-  };
-  const eq = pick('eq');
-  if (eq) {
-    const val = getAtPath(data, eq.when);
-    return val === eq.value;
-  }
-  const ne = pick('ne');
-  if (ne) {
-    const val = getAtPath(data, ne.when);
-    return val !== ne.value;
-  }
-  if ('in' in rule) {
-    const val = getAtPath(data, rule.when || '');
-    if (!rule.when && Array.isArray(rule.in) && rule.in.length >= 2 && Array.isArray(rule.in[1])) {
-      const v = getAtPath(data, rule.in[0]);
-      return rule.in[1].includes(v);
-    }
-    return Array.isArray(rule.in) ? rule.in.includes(val) : false;
-  }
-  if ('nin' in rule) {
-    const val = getAtPath(data, rule.when || '');
-    if (!rule.when && Array.isArray(rule.nin) && rule.nin.length >= 2 && Array.isArray(rule.nin[1])) {
-      const v = getAtPath(data, rule.nin[0]);
-      return !rule.nin[1].includes(v);
-    }
-    return Array.isArray(rule.nin) ? !rule.nin.includes(val) : true;
-  }
-  const gt = pick('gt');
-  if (gt) return cmpNum(getAtPath(data, gt.when), gt.value, 'gt');
-  const gte = pick('gte');
-  if (gte) return cmpNum(getAtPath(data, gte.when), gte.value, 'gte');
-  const lt = pick('lt');
-  if (lt) return cmpNum(getAtPath(data, lt.when), lt.value, 'lt');
-  const lte = pick('lte');
-  if (lte) return cmpNum(getAtPath(data, lte.when), lte.value, 'lte');
-  if ('truthy' in rule) {
-    const when = rule.when || (Array.isArray(rule.truthy) ? rule.truthy[0] : rule.truthy);
-    const val = getAtPath(data, when || '');
-    return !!val;
-  }
-  if ('falsy' in rule) {
-    const when = rule.when || (Array.isArray(rule.falsy) ? rule.falsy[0] : rule.falsy);
-    const val = getAtPath(data, when || '');
-    return !val;
-  }
+  const val = getAtPath(data, rule.when);
+  if ('eq' in rule) return val === rule.eq;
+  if ('ne' in rule) return val !== rule.ne;
+  if ('in' in rule) return Array.isArray(rule.in) ? rule.in.includes(val) : false;
+  if ('nin' in rule) return Array.isArray(rule.nin) ? !rule.nin.includes(val) : true;
+  if ('gt' in rule) return cmpNum(val, rule.gt, 'gt');
+  if ('gte' in rule) return cmpNum(val, rule.gte, 'gte');
+  if ('lt' in rule) return cmpNum(val, rule.lt, 'lt');
+  if ('lte' in rule) return cmpNum(val, rule.lte, 'lte');
+  if ('truthy' in rule) return !!val;
+  if ('falsy' in rule) return !val;
   return true;
 }
 
@@ -90,8 +51,7 @@ function levelAllows(field, level) {
 
 export function isFieldVisible(field, data, level) {
   if (!levelAllows(field, level)) return false;
-  const raw = field.visibilityRules;
-  const rules = Array.isArray(raw) ? raw : (raw && typeof raw === 'object' ? [raw] : []);
+  const rules = field.visibilityRules || [];
   try {
     return rules.length ? rules.every(r => evalRule(r, data)) : true;
   } catch (e) {

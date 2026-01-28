@@ -76,11 +76,11 @@ function renderFallbackSections(tpl){
 };
 
 async function fetchFormDirect(buildingId){
-  const url = '/buildings/' + encodeURIComponent(buildingId) + '/form';
+  const url = 'http://localhost:3000/buildings/' + encodeURIComponent(buildingId) + '/form';
   const r = await fetch(url);
   if (!r.ok) throw new Error('direct fetch failed ' + r.status);
   return r.json();
-};
+};;
 
 async function main(){
   try{ await initI18n(); }catch{}

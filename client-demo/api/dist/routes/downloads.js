@@ -62,42 +62,97 @@ function safeName(t) {
         .replace(/^-+|-+$/g, '')
         .slice(0, 80) || 'item';
 }
+function normZipPrefix(prefix) {
+    const p = (prefix || '')
+        .replace(/\\/g, '/')
+        .replace(/^\/+/, '')
+        .replace(/\/+$/, '');
+    return p ? p + '/' : '';
+}
+async function addBuildingPayloadToZip(zip, meta, prefix, tplJson) {
+    ensureCurrent(meta);
+    const { currentJson, filesDir } = getPaths(meta);
+    const curBuf = fs.readFileSync(currentJson);
+    const pfx = normZipPrefix(prefix);
+    const at = (rel) => `${pfx}${rel}`;
+    zip.file(at('rawData/current.json'), curBuf);
+    if (fs.existsSync(filesDir)) {
+        for (const fn of fs.readdirSync(filesDir)) {
+            const p = path.join(filesDir, fn);
+            if (fs.statSync(p).isFile()) {
+                zip.file(at(`files/${fn}`), fs.readFileSync(p));
+            }
+        }
+    }
+    // Excel (if template exists)
+    if (tplJson) {
+        try {
+            const excelBuf = await buildExcelBuffer(tplJson, curBuf.toString('utf8'));
+            const excelName = `${safeName(meta.foundationName || 'Fondation')}_${safeName(meta.name || meta.id)}.xlsx`;
+            zip.file(at(`excel/${excelName}`), excelBuf);
+        }
+        catch (e) {
+            console.error('excel build failed', e);
+        }
+    }
+}
 // --- Download current.json + files + Excel as ZIP -------------------------
 router.get('/buildings/:id/download', async (req, res) => {
     try {
         const id = req.params.id;
         const meta = getBuildingMeta(id);
-        ensureCurrent(meta);
-        const { currentJson, filesDir } = getPaths(meta);
-        const curBuf = fs.readFileSync(currentJson);
-        const zip = new JSZip();
-        zip.file('rawData/current.json', curBuf);
-        if (fs.existsSync(filesDir)) {
-            for (const fn of fs.readdirSync(filesDir)) {
-                const p = path.join(filesDir, fn);
-                if (fs.statSync(p).isFile()) {
-                    zip.file(`files/${fn}`, fs.readFileSync(p));
-                }
-            }
-        }
-        // Excel (if template exists)
         const tplPath = path.join(DATA_ROOT, 'templates', 'active.json');
-        if (fs.existsSync(tplPath)) {
-            try {
-                const tpl = fs.readFileSync(tplPath, 'utf8');
-                const excelBuf = await buildExcelBuffer(tpl, curBuf.toString('utf8'));
-                const excelName = `${safeName(meta.foundationName || 'Fondation')}_${safeName(meta.name || id)}.xlsx`;
-                zip.file(`excel/${excelName}`, excelBuf);
-            }
-            catch (e) {
-                console.error('excel build failed', e);
-            }
-        }
+        const tplJson = fs.existsSync(tplPath) ? fs.readFileSync(tplPath, 'utf8') : null;
+        const zip = new JSZip();
+        await addBuildingPayloadToZip(zip, meta, '', tplJson);
         const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
         const zipBase = `${safeName(meta.foundationName || 'Fondation')}-${safeName(meta.name || id)}-${ts}`;
         const out = await zip.generateAsync({ type: 'nodebuffer' });
         res.setHeader('Content-Type', 'application/zip');
         res.setHeader('Content-Disposition', `attachment; filename="${zipBase}.zip"`);
+        res.send(out);
+    }
+    catch (e) {
+        console.error(e);
+        res.status(500).json({ error: String(e?.message || e) });
+    }
+});
+// --- Full snapshot (all foundations as folders, in one ZIP) ---------------
+router.get('/download/all-foundations', async (_req, res) => {
+    try {
+        const all = getRegistry();
+        const byFoundation = new Map();
+        for (const meta of all) {
+            const fid = meta.foundationId || 'f_default';
+            const fname = meta.foundationName || fid;
+            if (!byFoundation.has(fid))
+                byFoundation.set(fid, { fid, fname, buildings: [] });
+            byFoundation.get(fid).buildings.push(meta);
+        }
+        const tplPath = path.join(DATA_ROOT, 'templates', 'active.json');
+        const tplJson = fs.existsSync(tplPath) ? fs.readFileSync(tplPath, 'utf8') : null;
+        const zip = new JSZip();
+        const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
+        const rootFolder = `all_foundations_snapshot-${ts}`;
+        zip.folder(rootFolder);
+        for (const { fid, fname, buildings } of byFoundation.values()) {
+            const foundationFolder = `${safeName(fname)}_${safeName(fid)}`;
+            zip.folder(`${rootFolder}/${foundationFolder}`);
+            if (buildings.length <= 1) {
+                const meta = buildings[0];
+                if (meta)
+                    await addBuildingPayloadToZip(zip, meta, `${rootFolder}/${foundationFolder}`, tplJson);
+                continue;
+            }
+            for (const meta of buildings) {
+                const buildingFolder = `${safeName(meta.name || meta.id)}_${safeName(meta.id)}`;
+                zip.folder(`${rootFolder}/${foundationFolder}/${buildingFolder}`);
+                await addBuildingPayloadToZip(zip, meta, `${rootFolder}/${foundationFolder}/${buildingFolder}`, tplJson);
+            }
+        }
+        const out = await zip.generateAsync({ type: 'nodebuffer' });
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${rootFolder}.zip"`);
         res.send(out);
     }
     catch (e) {
