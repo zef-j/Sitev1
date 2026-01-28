@@ -16,20 +16,15 @@ function findHeader(){
   );
 }
 
-async function startDownload(){
-  const r = await fetch('/download/all-foundations');
-  if (!r.ok) throw new Error('Download failed: ' + (await r.text()).slice(0,200));
-  const cd = r.headers.get('Content-Disposition') || '';
-  const m = cd.match(/filename\*=UTF-8''([^;]+)|filename="?([^\";]+)"?/i);
-  const fname = m ? decodeURIComponent(m[1] || m[2]) : 'all_foundations_snapshot.zip';
-  const blob = await r.blob();
-  const url = URL.createObjectURL(blob);
+function startDownload(){
+  // Use direct navigation so the browser streams the ZIP to disk (better for large files)
+  const url = `/download/all-foundations?ts=${Date.now()}`;
   const a = document.createElement('a');
   a.href = url;
-  a.download = fname;
+  a.rel = 'noopener';
   document.body.appendChild(a);
   a.click();
-  setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 2000);
+  setTimeout(() => a.remove(), 1000);
 }
 
 function inject(){
@@ -41,17 +36,14 @@ function inject(){
     const globalBtn = document.getElementById('global-download-btn');
     const btn = createButton(!!globalBtn);
 
-    btn.addEventListener('click', async (ev) => {
+    btn.addEventListener('click', (ev) => {
       ev.preventDefault();
-      try { await startDownload(); }
+      try { startDownload(); }
       catch(e){ console.error(e); alert('Erreur lors du téléchargement'); }
     });
 
     if (globalBtn){
-      const anchor = (globalBtn.parentElement && globalBtn.parentElement !== header && globalBtn.parentElement.parentElement === header)
-        ? globalBtn.parentElement
-        : globalBtn;
-      anchor.insertAdjacentElement('afterend', btn);
+      globalBtn.insertAdjacentElement('afterend', btn);
     } else {
       header.appendChild(btn);
     }
