@@ -19,7 +19,6 @@ const dict = {
   fr: {
     'ui.progress':'Progression','ui.review':'Revue','ui.publish':'Sauvegarder','ui.save':'Sauvegarder',
     'ui.download':'Télécharger',
-    'ui.downloadAll':'Télécharger tout',
     'ui.foundations':'Fondations','ui.foundation':'Fondation','ui.completedTotal':'Total complété:',
     'ui.select':'Sélectionner','ui.chooseFile':'Choisir un fichier','ui.backHome':'← Accueil',
     'months.jan':'Janvier','months.feb':'Février','months.mar':'Mars','months.apr':'Avril','months.may':'Mai','months.jun':'Juin','months.jul':'Juillet','months.aug':'Août','months.sep':'Septembre','months.oct':'Octobre','months.nov':'Novembre','months.dec':'Décembre',
@@ -27,7 +26,6 @@ const dict = {
   de: {
     'ui.progress':'Fortschritt','ui.review':'Review','ui.publish':'Speichern','ui.save':'Speichern',
     'ui.download':'Herunterladen',
-    'ui.downloadAll':'Alles herunterladen',
     'ui.foundations':'Stiftungen','ui.foundation':'Stiftung','ui.completedTotal':'Insgesamt abgeschlossen:',
     'ui.select':'Auswählen','ui.chooseFile':'Datei wählen','ui.backHome':'← Startseite',
     'months.jan':'Januar','months.feb':'Februar','months.mar':'März','months.apr':'April','months.may':'Mai','months.jun':'Juni','months.jul':'Juli','months.aug':'August','months.sep':'September','months.oct':'Oktober','months.nov':'November','months.dec':'Dezember',
@@ -35,7 +33,6 @@ const dict = {
   en: {
     'ui.progress':'Progress','ui.review':'Review','ui.publish':'Save','ui.save':'Save',
     'ui.download':'Download',
-    'ui.downloadAll':'Download all',
     'ui.foundations':'Foundations','ui.foundation':'Foundation','ui.completedTotal':'Total completed:',
     'ui.select':'Select','ui.chooseFile':'Choose file','ui.backHome':'← Home',
     'months.jan':'January','months.feb':'February','months.mar':'March','months.apr':'April','months.may':'May','months.jun':'June','months.jul':'July','months.aug':'August','months.sep':'September','months.oct':'October','months.nov':'November','months.dec':'December',

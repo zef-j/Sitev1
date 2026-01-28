@@ -3,45 +3,11 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import multer from 'multer';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore - JS module default export
+
 import adminRouter from '../adminRouter.js';
-import { router as changeBuildingIdRouter } from './admin/changeBuildingId.js';
-import { buildGlobalOverviewBuffer } from './globalOverview.js';
-import { router as downloadsRouter } from './routes/downloads.js';
+import { buildExcelBuffer } from './excelExport.js';
+import { createZipBuffer } from './zipUtil.js';
 const app = express();
-// --- Static path resolvers (robust to cwd = api or api/dist) ---
-const __dirname2 = path.dirname(new URL(import.meta.url).pathname);
-function firstExisting(paths) {
-    for (const p of paths) {
-        try {
-            if (fs.existsSync(p))
-                return p;
-        }
-        catch { }
-    }
-    return paths[0];
-}
-const PORTAL_DIR = firstExisting([
-    path.resolve(__dirname2, '../../web/portal'),
-    path.resolve(process.cwd(), '../web/portal'),
-]);
-const FORM_DIR = firstExisting([
-    path.resolve(__dirname2, '../../web/form'),
-    path.resolve(process.cwd(), '../web/form'),
-]);
-const I18N_DIR = firstExisting([
-    path.resolve(__dirname2, '../../../i18n'), // if running from dist/
-    path.resolve(__dirname2, '../../../../i18n'), // safety in case layout differs
-    path.resolve(process.cwd(), '../../i18n'), // if cwd=api/
-    path.resolve(process.cwd(), '../i18n'),
-    path.resolve(process.cwd(), 'i18n'),
-]);
-// helpful logs once at boot
-try {
-    console.log('[static]', { PORTAL_DIR, FORM_DIR, I18N_DIR });
-}
-catch { }
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.set('etag', false);
@@ -57,26 +23,6 @@ process.on('uncaughtException', (e) => console.error('UNCAUGHT_EXCEPTION', e));
 const PORT = process.env.PORT || 3000;
 const DATA_ROOT = process.env.DATA_ROOT ? path.resolve(process.env.DATA_ROOT) : path.resolve(process.cwd(), './data');
 const CLIENT_ID = process.env.CLIENT_ID || 'main';
-// --- Aliases helpers --------------------------------------------------------
-function getFoundationAliases() {
-    try {
-        const p = path.join(DATA_ROOT, 'foundation-aliases.json');
-        return JSON.parse(fs.readFileSync(p, 'utf8'));
-    }
-    catch {
-        return {};
-    }
-}
-function getBuildingByIdOrAlias(id) {
-    const all = getBuildings();
-    let found = all.find(b => b.id === id);
-    if (found)
-        return { meta: found };
-    found = all.find(b => Array.isArray(b.aliases) && b.aliases.includes(id));
-    if (found)
-        return { meta: found };
-    return { meta: null };
-}
 // --- utilities --------------------------------------------------------------
 function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
 function readJSON(filePath, fallback) {
@@ -160,7 +106,9 @@ function getBuildings() {
     return readJSON(path.join(DATA_ROOT, 'buildings.json'), []);
 }
 function getBuildingMeta(id) {
-    return getBuildingByIdOrAlias(id).meta;
+    const all = getBuildings();
+    const found = all.find(b => b.id === id);
+    return found || null;
 }
 function getBuildingDir(meta) {
     const existing = locateExistingFoundationFolder(meta.id);
@@ -231,9 +179,6 @@ app.get('/foundations', (_req, res) => {
         const fname = b.foundationName || 'Default';
         if (!map.has(fid))
             map.set(fid, { id: fid, name: fname });
-        app.get('/foundation-aliases', (_req, res) => {
-            res.json(getFoundationAliases());
-        });
     }
     res.json(Array.from(map.values()));
 });
@@ -454,76 +399,58 @@ app.get('/portal', (_req, res) => res.redirect('/portal/index.html'));
 app.get('/form', (_req, res) => res.redirect('/form/app.html')); // optionnel
 app.get('/__health', (_req, res) => {
     res.json({ DATA_ROOT, cwd: process.cwd(), time: new Date().toISOString() });
-    // --- Global overview Excel --------------------------------------------------
-    app.get('/download/global-overview', async (_req, res) => {
-        try {
-            // Load template
-            const tplPath = path.join(DATA_ROOT, 'templates', 'active.json');
-            if (!fs.existsSync(tplPath)) {
-                res.status(404).json({ error: 'Template not found' });
-                return;
-            }
-            const tplJson = fs.readFileSync(tplPath, 'utf-8');
-            // Load registry
-            const regPath = path.join(DATA_ROOT, 'buildings.json');
-            const registry = fs.existsSync(regPath) ? JSON.parse(fs.readFileSync(regPath, 'utf-8')) : [];
-            // Prepare list of items (label + current.json content)
-            const items = [];
-            const seen = new Set();
-            for (const it of registry) {
-                const id = it.id;
-                const fid = it.foundationId || 'f_default';
-                const fname = it.foundationName || fid;
-                const bname = it.name || id;
-                const labelBase = `${fname}_${bname}`;
-                let label = labelBase;
-                let k = 2;
-                while (seen.has(label)) {
-                    label = `${labelBase} (${k++})`;
-                }
-                seen.add(label);
-                const meta = { id, name: bname, foundationId: fid, foundationName: fname };
-                ensureCurrent(meta);
-                const curPath = getCurrentJsonPath(meta);
-                let current = {};
-                try {
-                    current = JSON.parse(fs.readFileSync(curPath, 'utf-8'));
-                }
-                catch { }
-                items.push({ label, current });
-            }
-            const buf = await buildGlobalOverviewBuffer(tplJson, items);
-            const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 16);
-            const fname = `global_overview-${ts}.xlsx`;
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', `attachment; filename="${fname}"`);
-            res.send(buf);
-        }
-        catch (e) {
-            console.error(e);
-            res.status(500).json({ error: String(e?.message || e) });
-        }
-    });
 });
-app.use(downloadsRouter);
 // Static files (disable directory slash redirect for /portal)
 app.use('/admin', express.static(path.resolve(process.cwd(), '../admin-ui'), { redirect: false }));
-app.use('/admin/api', changeBuildingIdRouter);
 app.use('/admin/api', adminRouter());
-app.use((req, res, next) => {
-    if (req.method === 'GET') {
-        const m = req.path.match(/^\/(portal|form)\/(.+\.html)\/$/);
-        if (m) {
-            const i = req.url.indexOf('?');
-            const qs = i >= 0 ? req.url.slice(i) : '';
-            return res.redirect(301, `/${m[1]}/${m[2]}${qs}`);
-        }
+
+app.use('/portal', express.static(path.resolve(process.cwd(), '../web/portal'), { redirect: false }));
+app.use('/form', express.static(path.resolve(process.cwd(), '../web/form')));
+
+// --- Download current.json + files (+ Excel) as ZIP -----------------------
+app.get('/buildings/:id/download', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const meta = getBuildingMeta(id) || { id, name: `Bâtiment ${id}`, foundationId: 'f_default', foundationName: 'Default' };
+    ensureCurrent(meta);
+    const curPath = getCurrentJsonPath(meta);
+    const curBuf = fs.readFileSync(curPath);
+    const filesDir = getFilesDir(meta);
+
+    const safe = (t) => (t || '').toString().normalize('NFKD').replace(/[^\w\s.-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-+|-+$/g,'').slice(0,80) || 'item';
+    const ts = new Date().toISOString().replace(/[:.]/g,'-').slice(0,16);
+    const zipBase = `${safe(meta.foundationName)}-${safe(meta.name || id)}-${ts}`;
+    const entries = [];
+    entries.push({ name: `rawData/current.json`, data: curBuf });
+
+    if (fs.existsSync(filesDir)) {
+      for (const fn of fs.readdirSync(filesDir)) {
+        const p = path.join(filesDir, fn);
+        if (fs.statSync(p).isFile()) entries.push({ name: `files/${fn}`, data: fs.readFileSync(p) });
+      }
     }
-    next();
+
+    // Excel (if template exists)
+    const tplPath = path.join(DATA_ROOT, 'templates', 'active.json');
+    if (fs.existsSync(tplPath)) {
+      try {
+        const tpl = fs.readFileSync(tplPath, 'utf8');
+        const excelBuf = await buildExcelBuffer(tpl, curBuf.toString('utf8'));
+        entries.push({ name: `excel/${safe(meta.foundationName)}_${safe(meta.name || id)}.xlsx`, data: excelBuf });
+      } catch (e) {
+        console.error('excel build failed', e);
+      }
+    }
+
+    const zipBuf = await createZipBuffer(entries);
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${zipBase}.zip"`);
+    res.send(zipBuf);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: String(e.message || e) });
+  }
 });
-app.use('/portal', express.static(PORTAL_DIR, { redirect: false }));
-app.use('/form', express.static(FORM_DIR));
-app.use('/i18n', express.static(I18N_DIR));
 // --- Start -----------------------------------------------------------------
 app.listen(PORT, () => {
     console.log(`API listening on http://localhost:${PORT} (DATA_ROOT=${DATA_ROOT})`);
