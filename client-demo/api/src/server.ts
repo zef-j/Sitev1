@@ -414,7 +414,7 @@ app.post('/buildings/:id/restore', (req, res) => {
 // --- Uploads ---------------------------------------------------------------
 const upload = multer({ dest: path.join(DATA_ROOT, '.tmp') });
 app.post('/buildings/:id/upload', upload.single('file'), (req, res) => {
-  const id = req.params.id;
+  const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
   const meta = getBuildingMeta(id) || { id, foundationId: 'f_default' };
   ensureCurrent(meta);
   const fieldPath = (req.body?.fieldPath || '').toString();
