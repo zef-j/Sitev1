@@ -81,6 +81,7 @@ function safeName(t: string){
     .slice(0,80) || 'item';
 }
 
+<<<<<<< HEAD
 function normZipPrefix(prefix: string){
   const p = (prefix || '')
     .replace(/\\/g,'/')
@@ -116,6 +117,8 @@ async function addBuildingPayloadToZip(zip: any, meta: BuildingMeta, prefix: str
   }
 }
 
+=======
+>>>>>>> parent of 36c2d57 (global Download 2)
 // --- Download current.json + files + Excel as ZIP -------------------------
 router.get('/buildings/:id/download', async (req, res) => {
   try{
@@ -160,6 +163,7 @@ router.get('/buildings/:id/download', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // --- Full snapshot (all foundations as folders, in one ZIP) ---------------
 router.get('/download/all-foundations', async (_req, res) => {
   try{
@@ -208,6 +212,8 @@ router.get('/download/all-foundations', async (_req, res) => {
     res.status(500).json({ error: String(e?.message || e) });
   }
 });
+=======
+>>>>>>> parent of 36c2d57 (global Download 2)
 // --- Global overview (Excel) ----------------------------------------------
 router.get('/download/global-overview', async (_req, res) => {
   try{
