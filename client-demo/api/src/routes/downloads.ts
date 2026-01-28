@@ -89,7 +89,7 @@ function normZipPrefix(prefix: string){
   return p ? p + '/' : '';
 }
 
-async function addBuildingPayloadToZip(zip: JSZip, meta: BuildingMeta, prefix: string, tplJson?: string | null){
+async function addBuildingPayloadToZip(zip: any, meta: BuildingMeta, prefix: string, tplJson?: string | null){
   ensureCurrent(meta);
   const { currentJson, filesDir } = getPaths(meta);
   const curBuf = fs.readFileSync(currentJson);
