@@ -400,12 +400,9 @@ router.get('/download/all-foundations', async (_req, res) => {
       const foundationFolder = `${safeName(fname)}_${safeName(fid)}`;
       await addZipDir(ctx, `${rootFolder}/${foundationFolder}/`);
 
-      if (buildings.length <= 1) {
-        const meta = buildings[0];
-        if (meta) await addBuildingPayloadToZipStream(ctx, meta, `${rootFolder}/${foundationFolder}`, tplJson);
-        continue;
-      }
-
+      // Always include a per-building folder, even when a foundation has only one building.
+      // This keeps the ZIP layout stable:
+      //   <foundation>/<building>/{rawData,files,excel}/...
       for (const meta of buildings){
         const buildingFolder = `${safeName(meta.name || meta.id)}_${safeName(meta.id)}`;
         await addZipDir(ctx, `${rootFolder}/${foundationFolder}/${buildingFolder}/`);
